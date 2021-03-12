@@ -1,42 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/12 18:13:04 by zjamali          ###   ########.fr       */
+/*   Created: 2021/03/12 18:00:24 by zjamali           #+#    #+#             */
+/*   Updated: 2021/03/12 18:15:40 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minishell.h"
-#include <stdio.h>
 #include <string.h>
+#include "../src/libft/libft.h"
+typedef enum e_token_type{
+	NONE,
+	WORD,
+	SEMI,
+	GREAT,
+	LESS,
+	DOUBLE_GREAT,
+	PIPE,
+	NEWLINE,
+} t_token_type;
 
-void read_command_list(char **line)
+typedef struct s_token
 {
-	get_next_line(&(*line));
-}
+	int index;
+	t_token_type type;
+	char *value;
+	char *fields;
+	struct s_token *next;
+}t_token;
 
-void show_prompt()
-{
-	write(1,"minishell$ ",strlen("minishell$ "));
-}
-
-int main()
-{
-	t_token *tokens_list;
-	char *line;
-
-	tokens_list = NULL;
-	line = NULL;
-	while (1)
-	{
-		show_prompt();
-		read_command_list(&line);
-		if ( line[1] != '\0')
-			write(1, "\n",1);
-		tokens_list = ft_lexer(line);
-	}
-}
+t_token	*ft_lexer(char *line);

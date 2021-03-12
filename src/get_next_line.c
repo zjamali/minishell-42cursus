@@ -22,7 +22,7 @@ char *ft_strdup(char *str)
 	strdup[i] = '\0';
 	return strdup;
 }
-char *ft_substr(char *str,int start,int end)
+char *ft_substrr(char *str,int start,int end)
 {
 	char *sub;
 	int i = 0;
@@ -112,7 +112,7 @@ int get_next_line(char **line)
 			i++;
 		if (str[i] == '\n')
 		{
-			*line = ft_substr(str,0,i);
+			*line = ft_substrr(str,0,i);
 			tmp = str;
 			str = ft_strdup(str + i + 1);
 			free(tmp);

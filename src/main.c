@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/12 10:34:56 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/12 12:40:12 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ char *close_token(char *line,int j,int k)
 	write(1,"{",1);
 	write(1,token,ft_strlen(token));
 	write(1,"}",1);
+	write(1,"\n",1);
 	return token;
 }
 void create_tokens_list(t_token **tokens_list,char* line)
@@ -129,6 +130,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 			write(1,"{",1);
 			write(1,"|",1);
 			write(1,"}",1);
+			write(1,"\n",1);
 			add_token(tmp,PIPE,"|");
 			j++;
 		}
@@ -139,6 +141,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 			write(1,"{",1);
 			write(1,";",1);
 			write(1,"}",1);
+			write(1,"\n",1);
 			add_token(tmp,SEMI,";");
 			j++;
 		}
@@ -151,6 +154,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 				write(1,"{",1);
 				write(1,">>",2);
 				write(1,"}",1);
+				write(1,"\n",1);
 				add_token(tmp,DOUBLE_GREAT,">>");
 				j = j + 2;
 			}
@@ -159,6 +163,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 				write(1,"{",1);
 				write(1,">",1);
 				write(1,"}",1);
+				write(1,"\n",1);
 				add_token(tmp,GREAT,">");
 				j++;
 			}
@@ -170,6 +175,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 			write(1,"{",1);
 			write(1,"<",1);
 			write(1,"}",1);
+			write(1,"\n",1);
 			add_token(tmp,LESS,"<");
 			j++;
 		}
@@ -177,10 +183,10 @@ void create_tokens_list(t_token **tokens_list,char* line)
 		// GET WORD 
 		if(ft_strrchr("<> ;|",line[j]) == NULL)
 		{
+			
 			k = j;
 			if (quote == 0 && line[j] == 34) /// double quotes in begining of token
 			{
-				write(1,"---\n",4);
 				quote = 2;
 				k++;
 			}
@@ -201,6 +207,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 				token_value = close_token(line,j,k);
 				k++;
 				j = k;
+				quote  = 0;
 				//break;
 			}
 			else if( quote == 2 )
@@ -210,6 +217,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 				token_value = close_token(line,j,k);
 				k++;
 				j = k;
+				quote = 0;
 				//break;
 			}
 			else if( quote == 3 )
@@ -218,6 +226,7 @@ void create_tokens_list(t_token **tokens_list,char* line)
 					k++;
 				token_value= close_token(line,j,k - 1);
 				j = k;
+				quote = 0;
 				//break;
 			}
 		}

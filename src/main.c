@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/11 19:54:26 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/12 10:34:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,15 @@ void add_token(t_token *token_list,t_token_type type,char *content )
 	}
 
 }
-
+char *close_token(char *line,int j,int k)
+{
+	char *token;
+	token = ft_substr(line,j,k - j + 1);
+	write(1,"{",1);
+	write(1,token,ft_strlen(token));
+	write(1,"}",1);
+	return token;
+}
 void create_tokens_list(t_token **tokens_list,char* line)
 {
 	t_token *tmp;
@@ -110,7 +118,6 @@ void create_tokens_list(t_token **tokens_list,char* line)
 	i  = 0;
 	while (line[i])
 	{
-		
 		j = i;
 		/// escape spaces 
 		while (line[j] == ' ')
@@ -168,46 +175,54 @@ void create_tokens_list(t_token **tokens_list,char* line)
 		}
 		i = j;
 		// GET WORD 
-		if(ft_isdigit(line[j]) ||ft_isalpha(line[j]) || line[j] == 34 /* " */ 
-			|| line[j] == 39 /* ' */ || line[j] == 47 /* \ */)
+		if(ft_strrchr("<> ;|",line[j]) == NULL)
 		{
 			k = j;
-			while (line[k] && line[k] != ' ')
+			if (quote == 0 && line[j] == 34) /// double quotes in begining of token
 			{
-				if (line[k] == 39)
-				{
-					quote = 1;
+				write(1,"---\n",4);
+				quote = 2;
+				k++;
+			}
+			else if (quote == 0 && line[j] == 39) /// single quotes in brgining of token
+			{	
+				quote = 1;
+				k++;
+			}
+			else
+			{
+				quote = 3; /// no quotes in begining
+			}
+			
+			if( quote == 1 )
+			{
+				while (line[k] && line[k] != 39)
 					k++;
-					while (line[k] && line[k] != 34)
-						k++; //// increase intill find single quotes 
-					token_value = ft_substr(line,j,k - j + 1); // get form j to k
-					write(1,"{",1);
-					write(1,token_value,ft_strlen(token_value));
-					write(1,"}",1);
-					//add_token(tmp,WORD,token_value);
+				token_value = close_token(line,j,k);
+				k++;
+				j = k;
+				//break;
+			}
+			else if( quote == 2 )
+			{
+				while (line[k] && line[k] != 34)
 					k++;
-					j = k;
-				}
-				else if (line[k] == 34)
-				{
-					quote = 2;
+				token_value = close_token(line,j,k);
+				k++;
+				j = k;
+				//break;
+			}
+			else if( quote == 3 )
+			{
+				while (line[k] && ft_strrchr("' <>;|",line[k]) == NULL && line[k] != 34)
 					k++;
-					while (line[k] && line[k] != 34)
-						k++; //// increase intill find double quotes 
-					token_value = ft_substr(line,j,k - j + 1); // get form j to k
-					write(1,"zahya",ft_strlen("zahya"));	
-					write(1,"{",1);
-					write(1,token_value,ft_strlen(token_value));
-					write(1,"}\n",2);
-					k++; // get the character after "
-					//add_token(tmp,WORD,token_value);
-					j = k;
-				}
+				token_value= close_token(line,j,k - 1);
+				j = k;
+				//break;
 			}
 		}
-		i = j;		
+		i = j;
 	}
-	
 }
 
 void begin_token_list(t_token **tokens_list)

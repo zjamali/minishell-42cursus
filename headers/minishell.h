@@ -24,4 +24,4 @@ typedef struct s_token
 }t_token;
 
 
-void ft_lexer(t_token *tokens_list, char *line);
+t_token	*ft_lexer(char *line);

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/12 17:36:56 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/12 17:49:24 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,16 @@
 void read_command_list(char **line)
 {
 	get_next_line(&(*line));
+}
+t_token *first_token()
+{
+	t_token *new_token;
+	new_token = malloc(sizeof(t_token));
+	new_token->value = strdup("nan");
+	new_token->next = NULL;
+	new_token->type = NONE;
+	new_token->index = 0;
+	return new_token;
 }
 
 void show_prompt()
@@ -113,15 +123,16 @@ char *close_token(char *line,int j,int k)
 }
 void create_tokens_list(t_token *tokens_list,char* line)
 {
-	t_token *tmp;
+	//t_token *tmp;
 	int i;
 	int j;
 	int quote;
 	int k;
 	char *token_value;
-	tmp = tokens_list;
+	//tmp = tokens_list;
 	quote = 0;
 	i  = 0;
+
 	while (line[i])
 	{
 		j = i;
@@ -130,13 +141,13 @@ void create_tokens_list(t_token *tokens_list,char* line)
 		i = j;
 		if (line[j] == '|') 	/// get pipe
 		{
-			add_token(tmp,PIPE,"|");
+			add_token(tokens_list,PIPE,"|");
 			j++;
 		}
 		i = j;
 		if (line[j] == ';') // get semi
 		{
-			add_token(tmp,SEMI,";");
+			add_token(tokens_list,SEMI,";");
 			j++;
 		}
 		i = j;
@@ -144,12 +155,12 @@ void create_tokens_list(t_token *tokens_list,char* line)
 		{
 			if (line[j + 1] == '>')
 			{
-				add_token(tmp,DOUBLE_GREAT,">>");
+				add_token(tokens_list,DOUBLE_GREAT,">>");
 				j = j + 2;
 			}
 			else
 			{
-				add_token(tmp,GREAT,">");
+				add_token(tokens_list,GREAT,">");
 				j++;
 			}
 		}
@@ -157,7 +168,7 @@ void create_tokens_list(t_token *tokens_list,char* line)
 		
 		if (line[j] == '<') // GET LESS redirction
 		{
-			add_token(tmp,LESS,"<");
+			add_token(tokens_list,LESS,"<");
 			j++;
 		}
 		i = j;
@@ -186,7 +197,7 @@ void create_tokens_list(t_token *tokens_list,char* line)
 				while (line[k] && line[k] != 39)
 					k++;
 				token_value = close_token(line,j,k);
-				add_token(tmp,WORD,token_value);
+				add_token(tokens_list,WORD,token_value);
 				k++;
 				j = k;
 				quote  = 0;
@@ -196,7 +207,7 @@ void create_tokens_list(t_token *tokens_list,char* line)
 				while (line[k] && line[k] != 34)
 					k++;
 				token_value = close_token(line,j,k);
-				add_token(tmp,WORD,token_value);
+				add_token(tokens_list,WORD,token_value);
 				k++;
 				j = k;
 				quote = 0;
@@ -206,7 +217,7 @@ void create_tokens_list(t_token *tokens_list,char* line)
 				while (line[k] && ft_strrchr("' <>;|",line[k]) == NULL && line[k] != 34)
 					k++;
 				token_value= close_token(line,j,k - 1);
-				add_token(tmp,WORD,token_value);
+				add_token(tokens_list,WORD,token_value);
 				j = k;
 				quote = 0;
 			}
@@ -215,16 +226,6 @@ void create_tokens_list(t_token *tokens_list,char* line)
 	}
 }
 
-t_token *first_token()
-{
-	t_token *new_token;
-	new_token = malloc(sizeof(t_token));
-	new_token->value = strdup("nan");
-	new_token->next = NULL;
-	new_token->type = NONE;
-	new_token->index = 0;
-	return new_token;
-}
 
 void print_tokens(t_token *tokens_list)
 {
@@ -237,12 +238,22 @@ void print_tokens(t_token *tokens_list)
 		tokens_list = tokens_list->next;
 	}
 }
-
+//void ft_clear_tokens_list(t_token *tokens_list)
+//{
+//	while (tokens_list != NULL)
+//	{
+//		tokens_list
+//		
+//	}
+//	
+//	
+//}
 int main()
 {
 	t_token *tokens_list;
-	tokens_list = first_token();
 	char *line;
+
+	tokens_list = NULL;
 	line = NULL;
 	while (1)
 	{
@@ -250,7 +261,15 @@ int main()
 		read_command_list(&line);
 		if ( line[1] != '\0')
 			write(1, "\n",1);
-		create_tokens_list(tokens_list,line);
-		print_tokens(tokens_list);
+		ft_lexer(tokens_list,line);
+		//ft_clear_tokens_list(tokens_list);
 	}
+}
+
+
+void ft_lexer(t_token *tokens_list, char *line)
+{
+	tokens_list = first_token();
+	create_tokens_list(tokens_list,line);
+	print_tokens(tokens_list);
 }

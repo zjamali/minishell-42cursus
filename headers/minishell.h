@@ -22,3 +22,6 @@ typedef struct s_token
 	char *fields;
 	struct s_token *next;
 }t_token;
+
+
+void ft_lexer(t_token *tokens_list, char *line);

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/12 19:47:47 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/12 19:54:37 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	print_tokens(t_token *tokens_list)
 		write(1,"{",1);
 		write(1,tokens_list->value,strlen(tokens_list->value));
 		write(1,"}",1);
+		ft_putnbr_fd(tokens_list->index,1);
 		write(1,"\n",1);
 		tokens_list = tokens_list->next;
 	}
@@ -38,10 +39,11 @@ t_token	*first_token(void)
 
 void	add_token(t_token *token_list,t_token_type type,char *content)
 {
-	
+
 	int index;
 	t_token *tmp  = token_list;
-	
+
+	index = tmp->index;
 	while (tmp->next != NULL) /// get last node of list_tokens
 	{
 		index = tmp->index;

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/14 18:00:00 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/14 19:18:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,36 +112,27 @@ void	ft_check_the_begining_of_word(char *line, int *k, int *j, int *quote)
 
 void ft_get_word(t_token *tokens_list,char *line,int *tab)
 {
-	if( tab[4] == 1 )
+	int escape_ch;
+	char *word;
+
+	escape_ch = 0;
+	word = NULL;
+	while(line[tab[1]])
 	{
-		while (line[tab[2]] && line[tab[2]] != 39)
-			(tab[2])++;
-		add_token(tokens_list,WORD,ft_close_token(line,tab[1],tab[2]),tab[3]);
-		(tab[2])++;
-		tab[1] = tab[2];
-		tab[4]  = 0;
-		(tab[3])++;
+		if (escape_ch = 0 && line[tab[1]] == 47)
+			escape_ch = 1;
+		else
+			escape_ch = 0;
+		
+			
+		
+		
 	}
-	else if(tab[4] == 2 )
-	{
-		while (line[tab[2]] && line[tab[2]] != 34)
-			(tab[2])++;
-		add_token(tokens_list,WORD,ft_close_token(line,tab[1],tab[2]),tab[3]);
-		(tab[2])++;
-		tab[1] = tab[2];
-		tab[4] = 0;
-		(tab[3])++;
-	}
-	else if(tab[4] == 3 )
-	{
-		while (line[tab[2]] && ft_strrchr("' <>;|",line[tab[2]]) == NULL && line[tab[2]] != 34)
-			(tab[2])++;
-		add_token(tokens_list, WORD,ft_close_token(line, tab[1], tab[2] - 1),tab[3]);
-		tab[1] = tab[2];
-		tab[4] = 0;
-		(tab[3])++;
-	}	
+	add_token(tokens_list, WORD,word,tab[3]);
+	tab[1] = tab[2];
+	tab[3]++;
 }
+/*
 void get_backslash(t_token *tokens_list,char *line,int *j,int *index)
 {
 	char *word;
@@ -162,7 +153,7 @@ void get_backslash(t_token *tokens_list,char *line,int *j,int *index)
 		{
 			backslach_token = 1;
 			k++;
-		}	
+		}
 	}
 	add_token(tokens_list,WORD,word,*index);
 	(*index)++;
@@ -171,11 +162,11 @@ void get_backslash(t_token *tokens_list,char *line,int *j,int *index)
 	(*index)++;
 	*j = k;
 }
+*/
 void	create_tokens_list(t_token *tokens_list, char* line)
 {
 	int tab[5]; // 0 = i  ; 1 = j ; k = 2; index = 3 ; quote = 4; 
 	
-	//tab = malloc(sizeof(int)*5);
 	
 	tab[3] = 1;
 	tab[4] = 0;
@@ -187,14 +178,10 @@ void	create_tokens_list(t_token *tokens_list, char* line)
 			tab[1]++;
 		if (ft_strrchr( "|;><" , line[tab[1]]) != NULL)  //  GET space pipe semi redir 
 			get_space_pipe_semi_redir(tokens_list,line,&tab[1],&tab[3]);
-		if (line[tab[1]] == 92)
-			get_backslash(tokens_list,line,&tab[1],&tab[3]);
-		if (ft_strrchr(" <>;|", line[tab[1]]) == NULL && line[tab[1]] != 92) // GET WORD 
+		if (ft_strrchr(" <>;|", line[tab[1]]) == NULL || line[tab[1]] == 92) // GET WORD 
 		{
 			tab[2] = tab[1];
-			ft_check_the_begining_of_word(line, &tab[2], &tab[1], &tab[4]);
-			//ft_get_word(tokens_list, line, &tab[4], &tab[2], &tab[1],&tab[3]);
-			ft_get_word(tokens_list, line, tab);
+			ft_get_word(tokens_list,line,tab);
 		}
 		tab[0] = tab[1];
 	}

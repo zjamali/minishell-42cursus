@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 12:26:49 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 12:56:13 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void	print_tokens(t_token *tokens_list)
 		write(1,tokens_list->value,strlen(tokens_list->value));
 		write(1,"}",1);
 		ft_putnbr_fd(tokens_list->index,1);
+		ft_putstr_fd("  ",1);
+		ft_putnbr_fd(tokens_list->type,1);
 		write(1,"\n",1);
 		tokens_list = tokens_list->next;
 	}
@@ -57,6 +59,32 @@ char	*ft_close_token(char *line,int j,int k)
 	return ft_substr(line,j,k - j + 1);
 }
 
+void	get_redir(t_token *tokens_list, char *line, int *j,int *index)
+{
+	if (line[*j] == '>') ///  get GREAT and DGREAT redirection
+	{
+		if (line[*j + 1] == '>')
+		{
+			add_token(tokens_list,DOUBLE_GREAT,">>",*index);
+			*j = *j + 2;
+			(*index)++;
+		}
+		else
+		{
+			add_token(tokens_list,GREAT,">",*index);
+			(*j)++;
+			(*index)++;
+		}
+	}
+	else// GET LESS redirction
+	{
+		add_token(tokens_list, LESS, "<",*index);
+		(*j)++;
+		(*index)++;
+	}
+}
+
+
 void	get_space_pipe_semi_redir(t_token *tokens_list, char *line, int *j,int *index)
 {
 		if (line[*j] == '|') 	/// get pipe
@@ -71,27 +99,8 @@ void	get_space_pipe_semi_redir(t_token *tokens_list, char *line, int *j,int *ind
 			(*index)++;
 			(*j)++;
 		}
-		else if (line[*j] == '>') ///  get GREAT and DGREAT redirection
-		{
-			if (line[*j + 1] == '>')
-			{
-				add_token(tokens_list,DOUBLE_GREAT,">>",*index);
-				*j = *j + 2;
-				(*index)++;
-			}
-			else
-			{
-				add_token(tokens_list,GREAT,">",*index);
-				(*j)++;
-				(*index)++;
-			}
-		}
-		else if (line[*j] == '<') // GET LESS redirction
-		{
-			add_token(tokens_list, LESS, "<",*index);
-			(*j)++;
-			(*index)++;
-		}	
+		else
+			get_redir(tokens_list,line,j,index);
 }
 
 void	ft_check_the_begining_of_word(char *line, int *k, int *j, int *quote)
@@ -109,6 +118,7 @@ void	ft_check_the_begining_of_word(char *line, int *k, int *j, int *quote)
 	else
 		*quote = 3; /// no quotes in begining	
 }
+
 int  check_the_beginning_of_word(int c)
 {
 	
@@ -134,6 +144,7 @@ char *get_no_quoting_word(char *line,int *i)
 	*i = j;
 	return word;
 }
+
 char *get_quoting_word(char *line,int *i,int quoting)
 {
 	int j;
@@ -149,7 +160,7 @@ char *get_quoting_word(char *line,int *i,int quoting)
 	}
 	else if (quoting == 2)
 	{
-		j++;
+		j++; /// escape first quote
 		while(line[j] && line[j] != '\'')
 			j++;
 		word = ft_substr(line,*i,j - *i + 1);
@@ -181,68 +192,28 @@ void ft_get_word(t_token *tokens_list,char *line,int *tab)
 	while(line[j])
 	{
 		quoting = check_the_beginning_of_word(line[j]);
-		write(1,"[",1);
-		ft_putnbr_fd(quoting,1);
-		write(1,"]",1);
-		if (quoting == 0)
+		if (quoting == 0) /// not quoted word 
 		{
-			write(1,"zahya",5);
 			word = ft_strjoin(word,get_no_quoting_word(line,&j));
 			if (ft_strchr(" ><|;",line[j]))
 				break;  //  space after word 
-			//j++;
 		}
-		if (quoting > 0)
+		if (quoting > 0) /// get quoted word 
 		{
-			//ft_putstr_fd(line + j , 1);
 			word = ft_strjoin(word,get_quoting_word(line,&j,quoting));
 			quoting = -1;
 			if (line[j] == ' ') // get space after delimiters('" space)of word
-			{	
-				write(1,"sk",2);
 				break;
-			}
 		}
 	}
 	add_token(tokens_list, WORD,word,tab[3]);
 	tab[1] = j;
 	tab[3]++;
 }
-/*
-void get_backslash(t_token *tokens_list,char *line,int *j,int *index)
-{
-	char *word;
-	int backslach_token;
-	int k ;
 
-	k = *j;
-	word = NULL;
-	backslach_token = 0;
-	while(line[k] && line[k] == 92)
-	{
-		if (line[k + 1])
-		{
-			word = ft_strjoin(word,ft_substr(line,k + 1,1));
-			k = k + 2;
-		}
-		else
-		{
-			backslach_token = 1;
-			k++;
-		}
-	}
-	add_token(tokens_list,WORD,word,*index);
-	(*index)++;
-	if (backslach_token == 1)
-		add_token(tokens_list,WORD,"\\",*index);
-	(*index)++;
-	*j = k;
-}
-*/
 void	create_tokens_list(t_token *tokens_list, char* line)
 {
 	int tab[5]; // 0 = i  ; 1 = j ; k = 2; index = 3 ; quote = 4; 
-	
 	
 	tab[3] = 1;
 	tab[4] = 0;

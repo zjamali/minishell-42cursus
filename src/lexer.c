@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 12:56:13 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 14:12:42 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_token	*first_token(void)
 {
 	t_token *new_token;
 	new_token = malloc(sizeof(t_token));
-	new_token->value = strdup("nan");
+	new_token->value = strdup("NONE");
 	new_token->next = NULL;
 	new_token->type = NONE;
 	new_token->index = 0;

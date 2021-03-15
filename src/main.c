@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 18:15:10 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 19:23:10 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,29 +78,28 @@ int ft_check_closing_quotes(char *word)
 	quote = 0;
 	while (word[i])
 	{
-		if (quote == 0 && word[i] == 34)
+		if (quote == 0 && word[i] == 34 && word[i - 1] != 92)
 		{
 			quote += 2;
 			i++;
 		}
-		else if (quote == 0 && word[i] == '\'')
+		else if (quote == 0 && word[i] == '\''  && word[i - 1] != 92)
 		{
 			quote = 1;
 			i++;
 		}
-		else if (quote == 2 && word[i] == 34)
+		else if (quote == 2 && word[i] == 34  && word[i - 1] != 92)
 		{
 			quote -= 2;
 			i++;
 		}
-		else if (quote == 1 && word[i] == '\'')
+		else if (quote == 1 && word[i] == '\''  && word[i - 1] != 92)
 		{
 			i++;
 			quote -= 1;
 		}
 		else
 			i++;
-		
 	}
 	if (quote != 0)
 		return 1;
@@ -110,17 +109,29 @@ int ft_check_closing_quotes(char *word)
 int ft_check_backslash(char *word)
 {
 	int i;
+	int cont;
 	
 	i = 0;
+	cont = 0;
 	while (word[i])
 		i++;
-	
 	if (word[i - 1] == '\\')
-		return (1);
+	{
+		i--;
+		while(word[i] == '\\')
+		{
+			cont++;
+			i--;
+		}
+		if ((cont % 2) != 0)
+			return 1;
+		else
+		{
+			return 0;
+		}
+	}
 	else
 		return (0);
-	
-	
 }
 void ft_check_syntax(t_token *tokens_list)
 {
@@ -197,10 +208,8 @@ void ft_check_syntax(t_token *tokens_list)
 		}
 		tmp = tmp->next;
 	}
-	
-	
 }
 void ft_parser(t_token *tokens_list)
 {
-	ft_check_syntax(tokens_list);	
+	ft_check_syntax(tokens_list);
 }

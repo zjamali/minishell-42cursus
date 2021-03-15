@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 15:45:58 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 16:57:54 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	get_redir(t_token *tokens_list, char *line, int *j,int *index)
 			(*index)++;
 		}
 	}
-	else// GET LESS redirction
+	else if (line[*j] == '<')// GET LESS redirction
 	{
 		add_token(tokens_list, LESS, "<",*index);
 		(*j)++;
@@ -135,7 +135,7 @@ int  check_the_beginning_of_word(int c)
 char *get_no_quoting_word(char *line,int *i)
 {
 	char *word;
-	
+
 	int j = *i;
 	while (line[j] && !ft_strrchr(" '\"\\<>;|",line[j]))
 		j++;
@@ -200,7 +200,6 @@ void ft_get_word(t_token *tokens_list,char *line,int *tab)
 		}
 		if (quoting > 0) /// get quoted word 
 		{
-			write(1,"hehe",4);
 			word = ft_strjoin(word,get_quoting_word(line,&j,quoting));
 			quoting = -1;
 			if (line[j] == ' ') // get space after delimiters('" space)of word
@@ -233,7 +232,7 @@ void	create_tokens_list(t_token *tokens_list, char* line)
 		}
 		tab[0] = tab[1];
 	}
-	add_token(tokens_list,NEWLINE,"\\n",tab[3]);
+	add_token(tokens_list,NEWLINE,"newline",tab[3]);
 }
 
 t_token	*ft_lexer(char *line)

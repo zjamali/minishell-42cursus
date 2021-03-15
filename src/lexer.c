@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/14 19:18:59 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 11:43:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,27 +109,101 @@ void	ft_check_the_begining_of_word(char *line, int *k, int *j, int *quote)
 	else
 		*quote = 3; /// no quotes in begining	
 }
+int  check_the_beginning_of_word(int c)
+{
+	
+	if (c == 92) // begining is bach_slash "\"
+			return (1);
+	else if (c == 39) // begining is single_quoting ' 
+			return (2);
+	else if(c == 34) // // begining is double_quoting "
+		return  (3);
+	else // no quoting
+		return (0);
+}
+
+char *get_no_quoting_word(char *line,int *i)
+{
+	char *word;
+	
+	int j = *i;
+	while (line[j] && !ft_strrchr(" <>;|",line[j]))
+		j++;
+	
+	word = ft_substr(line,*i,j - *i);
+	*i = j;
+	return word;
+}
+char *get_quoting_word(char *line,int *i,int quoting)
+{
+	int j;
+	char *word;
+	
+	j = *i;
+	word = NULL;
+	if (quoting == 1) /// backslash quoting
+	{
+		word = ft_substr(line,*i,2);
+		*i += 2;
+		return word;
+	}
+	else if (quoting == 2)
+	{
+		j++;
+		while(line[j] && line[j] != '\'')
+			j++;
+		word = ft_substr(line,*i,j - *i + 1);
+		*i = j + 1;
+		return word;
+	}
+	else if (quoting == 3)
+	{
+		j++;
+		while(line[j] && (line[j] != 34))
+			j++;
+		word = ft_substr(line,*i,j - *i + 1);
+		*i = j + 1;
+		return word;
+	}
+	return word;
+}
 
 void ft_get_word(t_token *tokens_list,char *line,int *tab)
 {
-	int escape_ch;
+	int quoting;
 	char *word;
-
-	escape_ch = 0;
+	int j;
+	
+	j = 0;
+	quoting = -1;
 	word = NULL;
-	while(line[tab[1]])
+	j = tab[1];
+	while(line[j])
 	{
-		if (escape_ch = 0 && line[tab[1]] == 47)
-			escape_ch = 1;
-		else
-			escape_ch = 0;
-		
-			
-		
-		
+		quoting = check_the_beginning_of_word(line[j]);
+		write(1,"[",1);
+		ft_putnbr_fd(quoting,1);
+		write(1,"]",1);
+		if (quoting == 0)
+		{
+			write(1,"zahya",5);
+			word = ft_strjoin(word,get_no_quoting_word(line,&j));
+			break;  //  space after word 
+		}
+		if (quoting > 0)
+		{
+			//ft_putstr_fd(line + j , 1);
+			word = ft_strjoin(word,get_quoting_word(line,&j,quoting));
+			quoting = -1;
+			if (line[j] == ' ') // get space after delimiters('" space)of word
+			{	
+				write(1,"sk",2);
+				break;
+			}
+		}
 	}
 	add_token(tokens_list, WORD,word,tab[3]);
-	tab[1] = tab[2];
+	tab[1] = j;
 	tab[3]++;
 }
 /*

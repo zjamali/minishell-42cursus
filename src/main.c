@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 14:52:49 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 15:35:58 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int main()
 }
 void ft_print_systax_error(t_token *token)
 {
-	ft_putstr_fd("bash: syntax error near unexpected token `",1);
+	ft_putstr_fd("minishell: syntax error near unexpected token `",1);
 	ft_putstr_fd(token->value,1);
 	ft_putstr_fd("'\n",1);
 }

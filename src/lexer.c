@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 14:35:03 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 15:45:58 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,9 +137,8 @@ char *get_no_quoting_word(char *line,int *i)
 	char *word;
 	
 	int j = *i;
-	while (line[j] && !ft_strrchr(" \\<>;|",line[j]))
+	while (line[j] && !ft_strrchr(" '\"\\<>;|",line[j]))
 		j++;
-	
 	word = ft_substr(line,*i,j - *i);
 	*i = j;
 	return word;
@@ -161,6 +160,7 @@ char *get_quoting_word(char *line,int *i,int quoting)
 	else if (quoting == 2)
 	{
 		j++; /// escape first quote
+		
 		while(line[j] && line[j] != '\'')
 			j++;
 		word = ft_substr(line,*i,j - *i + 1);
@@ -200,6 +200,7 @@ void ft_get_word(t_token *tokens_list,char *line,int *tab)
 		}
 		if (quoting > 0) /// get quoted word 
 		{
+			write(1,"hehe",4);
 			word = ft_strjoin(word,get_quoting_word(line,&j,quoting));
 			quoting = -1;
 			if (line[j] == ' ') // get space after delimiters('" space)of word

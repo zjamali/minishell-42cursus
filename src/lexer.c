@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 14:12:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 14:35:03 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,8 @@ void	create_tokens_list(t_token *tokens_list, char* line)
 
 t_token	*ft_lexer(char *line)
 {
-	t_token *tokens_list;	
+	t_token *tokens_list;
+	tokens_list = NULL;
 	tokens_list = first_token();
 	create_tokens_list(tokens_list, line);
 	print_tokens(tokens_list);

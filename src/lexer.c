@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 11:43:59 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/15 12:26:49 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ char *get_no_quoting_word(char *line,int *i)
 	char *word;
 	
 	int j = *i;
-	while (line[j] && !ft_strrchr(" <>;|",line[j]))
+	while (line[j] && !ft_strrchr(" \\<>;|",line[j]))
 		j++;
 	
 	word = ft_substr(line,*i,j - *i);
@@ -188,7 +188,9 @@ void ft_get_word(t_token *tokens_list,char *line,int *tab)
 		{
 			write(1,"zahya",5);
 			word = ft_strjoin(word,get_no_quoting_word(line,&j));
-			break;  //  space after word 
+			if (ft_strchr(" ><|;",line[j]))
+				break;  //  space after word 
+			//j++;
 		}
 		if (quoting > 0)
 		{

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 10:56:44 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 12:01:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,23 +84,31 @@ void	get_redir(t_token *tokens_list, char *line, int *j,int *index)
 	}
 }
 
-
 void	get_space_pipe_semi_redir(t_token *tokens_list, char *line, int *j,int *index)
 {
-		if (line[*j] == '|') 	/// get pipe
-		{
-			add_token(tokens_list,PIPE,"|",*index);
-			(*index)++;
-			(*j)++;
-		}
-		else if (line[*j] == ';') // get semi
-		{
-			add_token(tokens_list,SEMI,";",*index);
-			(*index)++;
-			(*j)++;
-		}
+	char *token;
+	if (line[*j] == '|') 	/// get pipe
+	{
+		if (line[*j + 1] == '|')
+			token = ft_strdup("||");
 		else
-			get_redir(tokens_list,line,j,index);
+			token = ft_strdup("|");
+		add_token(tokens_list,PIPE,token,*index);
+		(*index)++;
+		(*j)++;
+	}
+	else if (line[*j] == ';') // get semi
+	{
+		if (line[*j + 1] == ';')
+			token = ft_strdup(";;");
+		else
+			token = ft_strdup(";");
+		add_token(tokens_list,SEMI,token,*index);
+		(*index)++;
+		(*j)++;
+	}
+	else
+		get_redir(tokens_list,line,j,index);
 }
 
 void	ft_check_the_begining_of_word(char *line, int *k, int *j, int *quote)

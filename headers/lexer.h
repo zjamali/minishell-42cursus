@@ -6,12 +6,16 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 18:00:24 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 14:21:36 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 11:45:33 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef LEXER_H
+#define LEXER_H
+
 #include <string.h>
 #include "../src/libft/libft.h"
+
 typedef enum e_token_type{
 	NONE,
 	WORD,
@@ -33,3 +37,5 @@ typedef struct s_token
 }t_token;
 
 t_token	*ft_lexer(char *line);
+
+#endif

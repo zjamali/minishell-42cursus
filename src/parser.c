@@ -6,11 +6,12 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 11:39:27 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 12:50:54 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/parser.h"
+///#include "../headers/parser.h"
+#include "../headers/minishell.h"
 
 void ft_print_systax_error(t_token *token)
 {
@@ -37,6 +38,7 @@ void ft_destoy_token_list(t_token *tokens_list)
 		//free(tokens_list->value);
 		free(tokens_list);
 		tokens_list = NULL;
+		write(1,CYAN,ft_strlen(CYAN));
 		ft_putstr_fd("token_list freed\n",1);
 	}
 }
@@ -201,6 +203,8 @@ void ft_check_syntax(t_token *tokens_list)
 
 void ft_parser(t_token *tokens_list)
 {
+	write(1,RED,ft_strlen(RED));
 	ft_check_syntax(tokens_list);
+	write(1,RED,ft_strlen(RED));
 }
 

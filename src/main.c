@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 11:38:49 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 12:43:28 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ void read_command_list(char **line)
 
 void show_prompt()
 {
+	write(1,GREEN,ft_strlen(GREEN));
 	write(1,"minishell$ ",strlen("minishell$ "));
+	write(1,RESET,ft_strlen(RESET));
 }
 void ft_parser(t_token *tokens_list);
 int main()

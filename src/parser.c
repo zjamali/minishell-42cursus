@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 15:56:59 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 16:48:36 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,6 @@ void ft_check_syntax(t_token *tokens_list)
 		}
 		else if (tmp->type == WORD) ///// check multiline
 		{
-			write(1,"zbi",3);
 			if (ft_check_closing_quotes(tmp->value))
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);

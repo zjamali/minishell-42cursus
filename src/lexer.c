@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 16:57:54 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 10:56:44 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ char *get_no_quoting_word(char *line,int *i)
 	char *word;
 
 	int j = *i;
-	while (line[j] && !ft_strrchr(" '\"\\<>;|",line[j]))
+	while (line[j] && !ft_strrchr("\t '\"\\<>;|",line[j]))
 		j++;
 	word = ft_substr(line,*i,j - *i);
 	*i = j;
@@ -170,8 +170,12 @@ char *get_quoting_word(char *line,int *i,int quoting)
 	else if (quoting == 3)
 	{
 		j++;
-		while(line[j] && (line[j] != 34))
+		while(line[j])
+		{
+			if (line[j] == '"' && line[j - 1] != '\\')
+				break;
 			j++;
+		}
 		word = ft_substr(line,*i,j - *i + 1);
 		*i = j + 1;
 		return word;
@@ -195,14 +199,14 @@ void ft_get_word(t_token *tokens_list,char *line,int *tab)
 		if (quoting == 0) /// not quoted word 
 		{
 			word = ft_strjoin(word,get_no_quoting_word(line,&j));
-			if (ft_strchr(" ><|;",line[j]))
+			if (ft_strchr("\t ><|;",line[j]))
 				break;  //  space after word 
 		}
 		if (quoting > 0) /// get quoted word 
 		{
 			word = ft_strjoin(word,get_quoting_word(line,&j,quoting));
 			quoting = -1;
-			if (line[j] == ' ') // get space after delimiters('" space)of word
+			if (line[j] == ' '|| line[j] == '\t') // get space after delimiters('" space)of word
 				break;
 		}
 	}
@@ -221,11 +225,11 @@ void	create_tokens_list(t_token *tokens_list, char* line)
 	while (line[tab[0]])
 	{
 		tab[1] = tab[0];
-		while (line[tab[1]] == ' ') /// escape spaces 
+		while (line[tab[1]] == ' ' || line[tab[1]] == '\t') /// escape spaces 
 			tab[1]++;
 		if (ft_strrchr( "|;><" , line[tab[1]]) != NULL)  //  GET space pipe semi redir 
 			get_space_pipe_semi_redir(tokens_list,line,&tab[1],&tab[3]);
-		if (ft_strrchr(" <>;|", line[tab[1]]) == NULL || line[tab[1]] == 92) // GET WORD 
+		if (ft_strrchr("\t <>;|", line[tab[1]]) == NULL || line[tab[1]] == 92) // GET WORD 
 		{
 			tab[2] = tab[1];
 			ft_get_word(tokens_list,line,tab);

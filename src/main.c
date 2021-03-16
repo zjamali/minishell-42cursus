@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/15 19:23:10 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 11:34:26 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int ft_check_closing_quotes(char *word)
 	int quote;
 	i = 0;
 	quote = 0;
+	write(1,"zbi",3);
 	while (word[i])
 	{
 		if (quote == 0 && word[i] == 34 && word[i - 1] != 92)
@@ -93,7 +94,7 @@ int ft_check_closing_quotes(char *word)
 			quote -= 2;
 			i++;
 		}
-		else if (quote == 1 && word[i] == '\''  && word[i - 1] != 92)
+		else if (quote == 1 && word[i] == '\'')
 		{
 			i++;
 			quote -= 1;
@@ -183,6 +184,7 @@ void ft_check_syntax(t_token *tokens_list)
 		}
 		else if (tmp->type == WORD && tmp->next->type == NEWLINE)
 		{
+			
 			if (ft_check_closing_quotes(tmp->value))
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
@@ -199,11 +201,26 @@ void ft_check_syntax(t_token *tokens_list)
 		}
 		else if (tmp->type == WORD) ///// check multiline
 		{
+			
 			if (ft_check_closing_quotes(tmp->value))
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
 				break;
+			}
+		}
+		else if (tmp->type == SEMI) ///// check multiline
+		{
+			if (tmp->next->type == PIPE || tmp->next->type == SEMI)
+			{
+				ft_print_systax_error(tmp->next);
+				ft_destoy_token_list(tokens_list);
+				break; //// for dont get segfault  in tmp = tmp->next;
+			}
+			else if (tmp->next->type == NEWLINE)
+			{
+				ft_destoy_token_list(tokens_list);
+				break; //// for dont get segfault  in tmp = tmp->next;
 			}
 		}
 		tmp = tmp->next;

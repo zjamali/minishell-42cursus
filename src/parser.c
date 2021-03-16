@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 12:50:54 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 15:56:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,41 @@ int ft_check_closing_quotes(char *word)
 {
 	int i ;
 	int quote;
+	int back_slash;
+
+	back_slash = 0;
 	i = 0;
 	quote = 0;
 	while (word[i])
 	{
-		if (quote == 0 && word[i] == 34 && word[i - 1] != 92)
+		
+		while (word[i] == 92) // get all backslashes and count them
 		{
-			quote += 2;
+			i++;
+			back_slash++;
+		}
+		if (quote == 0 && word[i] == 34/* && word[i - 1] != 92*/)
+		{
+			if (word[i - 1] != 92)
+				quote += 2;
+			else
+			{
+				if (back_slash % 2 == 0)
+					quote += 2;
+			}
 			i++;
 		}
-		else if (quote == 0 && word[i] == '\''  && word[i - 1] != 92)
+		else if (quote == 0 && word[i] == '\''/*  && word[i - 1] != 92*/)
 		{
-			quote = 1;
+			if (word[i - 1] != 92)
+			{
+				quote += 1;
+			}
+			else
+			{
+				if (back_slash % 2 == 0)
+					quote += 1 ;
+			}
 			i++;
 		}
 		else if (quote == 2 && word[i] == 34  && word[i - 1] != 92)
@@ -175,7 +198,7 @@ void ft_check_syntax(t_token *tokens_list)
 		}
 		else if (tmp->type == WORD) ///// check multiline
 		{
-			
+			write(1,"zbi",3);
 			if (ft_check_closing_quotes(tmp->value))
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);

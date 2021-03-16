@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 12:11:18 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/16 15:01:14 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,10 @@ void	get_space_pipe_semi_redir(t_token *tokens_list, char *line, int *j,int *ind
 	else if (line[*j] == ';') // get semi
 	{
 		if (line[*j + 1] == ';')
+		{
+			write(1,"bi",2);
 			token = ft_strdup(";;");
+		}
 		else
 			token = ft_strdup(";");
 		add_token(tokens_list,SEMI,token,*index);

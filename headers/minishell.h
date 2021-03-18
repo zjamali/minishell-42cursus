@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 12:51:34 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/17 17:54:47 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,8 @@
 #define GREEN "\e[1;32m"
 #define RESET "\e[0m"
 #define RED "\e[1;91m"
-#define CYAN "\e[0;36m"
+#define CYAN "\e[1;36m"
+#define YELLOW "\e[1;33m"
+#define PURPLE "\e[1;35m"
+#define BLUE "\e[1;34m"
 #endif

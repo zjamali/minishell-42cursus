@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 15:01:14 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/18 19:25:09 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@ void	print_tokens(t_token *tokens_list)
 		write(1,"{",1);
 		write(1,tokens_list->value,strlen(tokens_list->value));
 		write(1,"}",1);
+		ft_putstr_fd("     index : ",1);
 		ft_putnbr_fd(tokens_list->index,1);
-		ft_putstr_fd("  ",1);
+		ft_putstr_fd("      type : ",1);
 		ft_putnbr_fd(tokens_list->type,1);
 		write(1,"\n",1);
 		tokens_list = tokens_list->next;
@@ -32,7 +33,7 @@ t_token	*first_token(void)
 {
 	t_token *new_token;
 	new_token = malloc(sizeof(t_token));
-	new_token->value = strdup("NONE");
+	new_token->value = ft_strdup("NONE");
 	new_token->next = NULL;
 	new_token->type = NONE;
 	new_token->index = 0;
@@ -45,7 +46,6 @@ void	add_token(t_token *token_list,t_token_type type,char *content,int index)
 
 	while (tmp->next != NULL) /// get last node of list_tokens
 		tmp = tmp->next;
-	
 	tmp->next = malloc(sizeof(t_token));
 	tmp->next->index = index;
 	tmp->next->type = type;
@@ -65,20 +65,20 @@ void	get_redir(t_token *tokens_list, char *line, int *j,int *index)
 	{
 		if (line[*j + 1] == '>')
 		{
-			add_token(tokens_list,DOUBLE_GREAT,">>",*index);
+			add_token(tokens_list,DOUBLE_GREAT,ft_strdup(">>"),*index);
 			*j = *j + 2;
 			(*index)++;
 		}
 		else
 		{
-			add_token(tokens_list,GREAT,">",*index);
+			add_token(tokens_list,GREAT,ft_strdup(">"),*index);
 			(*j)++;
 			(*index)++;
 		}
 	}
 	else if (line[*j] == '<')// GET LESS redirction
 	{
-		add_token(tokens_list, LESS, "<",*index);
+		add_token(tokens_list, LESS,ft_strdup("<"),*index);
 		(*j)++;
 		(*index)++;
 	}
@@ -101,7 +101,6 @@ void	get_space_pipe_semi_redir(t_token *tokens_list, char *line, int *j,int *ind
 	{
 		if (line[*j + 1] == ';')
 		{
-			write(1,"bi",2);
 			token = ft_strdup(";;");
 		}
 		else
@@ -131,8 +130,7 @@ void	ft_check_the_begining_of_word(char *line, int *k, int *j, int *quote)
 }
 
 int  check_the_beginning_of_word(int c)
-{
-	
+{	
 	if (c == 92) // begining is bach_slash "\"
 			return (1);
 	else if (c == 39) // begining is single_quoting ' 
@@ -171,7 +169,6 @@ char *get_quoting_word(char *line,int *i,int quoting)
 	else if (quoting == 2)
 	{
 		j++; /// escape first quote
-		
 		while(line[j] && line[j] != '\'')
 			j++;
 		word = ft_substr(line,*i,j - *i + 1);
@@ -199,6 +196,8 @@ void ft_get_word(t_token *tokens_list,char *line,int *tab)
 	int quoting;
 	char *word;
 	int j;
+	char *tmp;
+	char *tmp1;
 	
 	j = 0;
 	quoting = -1;
@@ -209,13 +208,21 @@ void ft_get_word(t_token *tokens_list,char *line,int *tab)
 		quoting = check_the_beginning_of_word(line[j]);
 		if (quoting == 0) /// not quoted word 
 		{
-			word = ft_strjoin(word,get_no_quoting_word(line,&j));
+			tmp = word;
+			tmp1 = get_no_quoting_word(line,&j);
+			word = ft_strjoin(word,tmp1);
+			free(tmp);
+			free(tmp1);
 			if (ft_strchr("\t ><|;",line[j]))
 				break;  //  space after word 
 		}
 		if (quoting > 0) /// get quoted word 
 		{
-			word = ft_strjoin(word,get_quoting_word(line,&j,quoting));
+			tmp = word;
+			tmp1 = get_quoting_word(line,&j,quoting);
+			word = ft_strjoin(word,tmp1);
+			free(tmp1);
+			free(tmp);
 			quoting = -1;
 			if (line[j] == ' '|| line[j] == '\t') // get space after delimiters('" space)of word
 				break;
@@ -247,7 +254,7 @@ void	create_tokens_list(t_token *tokens_list, char* line)
 		}
 		tab[0] = tab[1];
 	}
-	add_token(tokens_list,NEWLINE,"newline",tab[3]);
+	add_token(tokens_list,NEWLINE,ft_strdup("newline"),tab[3]);
 }
 
 t_token	*ft_lexer(char *line)
@@ -256,6 +263,6 @@ t_token	*ft_lexer(char *line)
 	tokens_list = NULL;
 	tokens_list = first_token();
 	create_tokens_list(tokens_list, line);
-	print_tokens(tokens_list);
+	//print_tokens(tokens_list);
 	return tokens_list;
 }

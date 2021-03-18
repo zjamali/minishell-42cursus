@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/16 16:48:36 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/18 19:18:47 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,15 @@ void ft_destoy_token_list(t_token *tokens_list)
 	{
 		tmp = tokens_list;
 		tokens_list = tokens_list->next;
+		free(tmp->value);
+		tmp->value = NULL;
 		free(tmp);
 		tmp = NULL;
 	}
-	
 	if (tokens_list->type == NEWLINE)
 	{
-		//free(tokens_list->value);
+		free(tokens_list->value);
+		tokens_list->value = NULL;
 		free(tokens_list);
 		tokens_list = NULL;
 		write(1,CYAN,ft_strlen(CYAN));
@@ -131,11 +133,12 @@ int ft_check_backslash(char *word)
 		return (0);
 }
 
-void ft_check_syntax(t_token *tokens_list)
+int ft_check_syntax(t_token *tokens_list)
 {
-	
+	int result;
 	t_token *tmp;
 	
+	result = 0;
 	tmp = tokens_list;
 	while(tmp->type != NEWLINE)
 	{
@@ -146,11 +149,13 @@ void ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
 			else if (tmp->next->type == NEWLINE)
 			{
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
 		}
@@ -161,6 +166,7 @@ void ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break; /// for egfault
 			}
 		}
@@ -170,22 +176,24 @@ void ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break; /// for egfault
 			}
 			else if (tmp->next->type == NEWLINE)
 			{
 				ft_print_systax_error(tmp);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break; // for segfqult
 			}	
 		}
 		else if (tmp->type == WORD && tmp->next->type == NEWLINE)
 		{
-			
 			if (ft_check_closing_quotes(tmp->value))
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break;
 			}
 
@@ -193,6 +201,7 @@ void ft_check_syntax(t_token *tokens_list)
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break;
 			}
 		}
@@ -202,6 +211,7 @@ void ft_check_syntax(t_token *tokens_list)
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break;
 			}
 		}
@@ -211,22 +221,105 @@ void ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
+				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
-			else if (tmp->next->type == NEWLINE)
-			{
-				ft_destoy_token_list(tokens_list);
-				break; //// for dont get segfault  in tmp = tmp->next;
-			}
+			//else if (tmp->next->type == NEWLINE)
+			//{
+			//	ft_destoy_token_list(tokens_list);
+			//	result = 1;
+			//	break; //// for dont get segfault  in tmp = tmp->next;
+			//}
 		}
 		tmp = tmp->next;
 	}
+	return (result);
 }
 
-void ft_parser(t_token *tokens_list)
+int ft_count_command_list(t_token *tokens_list)
 {
-	write(1,RED,ft_strlen(RED));
-	ft_check_syntax(tokens_list);
-	write(1,RED,ft_strlen(RED));
+	t_token *tmp;
+	int count;
+	
+	count = 1;
+	tmp = tokens_list;
+	while(tmp->next->type != NEWLINE) /// dont count semi before newline
+	{
+		if (tmp->type == SEMI)
+			count++;
+		tmp = tmp->next;
+	}
+	return count;
 }
 
+
+int ft_count_pipe_line(t_token *begin_token,int *token_index)
+{
+	int count ;
+	
+	count = 1;
+	if (begin_token->type == SEMI && begin_token->next->type != NEWLINE)
+		begin_token = begin_token->next;
+	while (begin_token->type != NEWLINE && begin_token->type != SEMI)
+	{
+		if (begin_token->type == PIPE)
+			count++;
+		begin_token = begin_token->next;
+	}
+	*token_index = begin_token->index;
+	return count;
+}
+
+t_token *ft_begin_token(int token_index,t_token *begin_token)
+{
+	while (begin_token->index < token_index)
+	{
+		begin_token = begin_token->next;
+	}
+	return begin_token;
+}
+
+t_command_list *ft_create_ast(t_token *tokens_list)
+{
+	t_command_list *head;
+	t_command_list *tmp;
+	//int index;
+	int token_index;
+	t_token *begin_token;
+//	
+//
+//	token_index = 1; // escape none token 
+//	int count_cmd_list;
+//	head =  malloc(sizeof(t_command_list)); /// creat ast root;
+//	tmp = head;
+//	count_cmd_list = ft_count_command_list(tokens_list);
+//	write(1,YELLOW,ft_strlen(YELLOW));
+//	ft_putstr_fd("cmd list :",1);
+//	ft_putnbr_fd(count_cmd_list,1);
+//	ft_putstr_fd("\n",1);
+//	begin_token = tokens_list->next; // get token escape none
+//	token_index = begin_token->index;
+//	while (count_cmd_list > 0)
+//	{
+//		
+//		int pipeline = ft_count_pipe_line(begin_token,&token_index);
+//		write(1,PURPLE,ft_strlen(PURPLE));
+//		ft_putstr_fd("Simple CMD :",1);
+//		ft_putnbr_fd(pipeline,1);
+//		ft_putstr_fd("\n",1);
+//		
+//		begin_token = ft_begin_token(token_index,begin_token);
+//		count_cmd_list--;
+//	}
+	return head;
+}
+
+t_command_list *ft_parser(t_token *tokens_list)
+{
+	t_command_list *command_list;
+	command_list = NULL;
+	write(1,RED,ft_strlen(RED));
+	if (!ft_check_syntax(tokens_list))
+		command_list = ft_create_ast(tokens_list);
+	return (command_list);
+}

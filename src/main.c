@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/18 19:20:36 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/23 18:34:10 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,15 @@ int main()
 
 	tokens_list = NULL;
 	line = NULL;
-	int i = 1;
-	while (i > 0)
+	while (1)
 	{
 		show_prompt();
 		read_command_list(&line);
 		if ( line[1] != '\0')
 			write(1, "\n",1);
 		tokens_list = ft_lexer(line);
-		//free(line);
-		//line = NULL;
-		//cmd = ft_parser(tokens_list);
-		ft_destoy_token_list(tokens_list);
-		i--;
+		free(line);
+		cmd = ft_parser(tokens_list);
 	}
 	free(line);
 }

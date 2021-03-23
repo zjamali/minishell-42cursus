@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/18 19:18:47 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/23 18:45:52 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,15 @@ int ft_check_closing_quotes(char *word)
 			}
 			i++;
 		}
-		else if (quote == 2 && word[i] == 34  && word[i - 1] != 92)
+		else if (quote == 2 && word[i] == 34  /*&& word[i - 1] != 92*/)
 		{
-			quote -= 2;
+			if (word[i - 1] != 92)
+				quote -= 2;
+			else
+			{
+				if (back_slash % 2 == 0)
+					quote -= 2;
+			}
 			i++;
 		}
 		else if (quote == 1 && word[i] == '\'')
@@ -224,12 +230,12 @@ int ft_check_syntax(t_token *tokens_list)
 				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
-			//else if (tmp->next->type == NEWLINE)
-			//{
-			//	ft_destoy_token_list(tokens_list);
-			//	result = 1;
-			//	break; //// for dont get segfault  in tmp = tmp->next;
-			//}
+			else if (tmp->next->type == NEWLINE)
+			{
+				ft_destoy_token_list(tokens_list);
+				result = 1;
+				break; //// for dont get segfault  in tmp = tmp->next;
+			}
 		}
 		tmp = tmp->next;
 	}

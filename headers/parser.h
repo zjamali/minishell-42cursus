@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:38:09 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/18 19:06:37 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/23 18:27:31 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef struct s_pipe_line
 
 typedef struct s_command_list
 {
-	//char *command_line;
+	//char *command_line; // pipe = 0 
 	int pipe_line_count; // number of simple_cmd in one pipeline
 	struct s_command_list *next;
 	t_pipe_line *bottom;

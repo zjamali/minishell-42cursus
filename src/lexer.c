@@ -6,17 +6,20 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/18 19:25:09 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/23 18:37:52 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/lexer.h"
+
+#include "../headers/minishell.h"
 
 
 void	print_tokens(t_token *tokens_list)
 {
+	
 	while (tokens_list != NULL)
 	{
+		write(1,PURPLE,ft_strlen(PURPLE));
 		write(1,"{",1);
 		write(1,tokens_list->value,strlen(tokens_list->value));
 		write(1,"}",1);
@@ -263,6 +266,6 @@ t_token	*ft_lexer(char *line)
 	tokens_list = NULL;
 	tokens_list = first_token();
 	create_tokens_list(tokens_list, line);
-	//print_tokens(tokens_list);
+	print_tokens(tokens_list);
 	return tokens_list;
 }

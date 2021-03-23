@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/23 18:45:52 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/23 19:34:04 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,17 @@ int ft_check_closing_quotes(char *word)
 		{
 			i++;
 			quote -= 1;
+		}
+		else if (quote == 2 && word[i] == '`') // check ' case 
+		{
+			if (word[i - 1] != 92)
+				quote -= 2;
+			else
+			{
+				if (back_slash % 2 == 0)
+					quote -= 2;
+			}
+			i++;				
 		}
 		else
 			i++;

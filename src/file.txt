@@ -1,0 +1,4 @@
+Hello World After DUP2
+Testing Redirections.
+Are we out
+MBERI$> MBERI$> MBERI$> 

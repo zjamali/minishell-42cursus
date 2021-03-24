@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/23 18:34:10 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/24 18:57:53 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,18 @@ void show_prompt()
 	write(1,RESET,ft_strlen(RESET));
 }
 
-int main()
+int main(int ac,char **av,char **env)
 {
 	t_token *tokens_list;
 	t_command_list *cmd;
 	char *line;
 
+	//write(1,env[1],ft_strlen(env[1]));
 	tokens_list = NULL;
 	line = NULL;
+	(void)ac;
+	(void)av;
+	(void)env;
 	while (1)
 	{
 		show_prompt();

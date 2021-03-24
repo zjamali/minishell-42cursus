@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:38:09 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/23 19:18:09 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/24 18:47:17 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,23 @@
 
 void ft_destoy_token_list(t_token *tokens_list);
 typedef enum e_redirection_type{
-	STD_IN,
-	STD_OUT,
-	STD_ERROR,
-	OTHER,
+	RE_GREAT,
+	RE_DOUBLE_GREAT,
+	RE_LESS,
 } t_redirection_type;
 
 typedef struct s_redirection
 {
 	int index;
 	t_redirection_type type;
-	int io_number;
 	char *file_name;
 	struct s_redirection *next;
 }t_redirection;
 
+typedef struct s_args{
+	char *value;
+	struct s_args *next;
+}t_args;
 
 typedef struct s_simple_cmd
 {

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/25 11:53:37 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/25 16:17:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,6 @@ void ft_print_systax_error(t_token *token)
 	ft_putstr_fd("'\n",1);
 }
 
-int ft_calculate_args(char **args)
-{
-	int i = 0;
-
-	while (args[i])
-		i++;
-	
-	return i;
-}
 
 void ft_print_simple_cmd(t_simple_cmd *cmd)
 {
@@ -39,18 +30,17 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 	ft_putstr_fd(YELLOW,1);
 	
 	ft_putstr_fd("cmd -> ",1);
-	write(1,cmd->command,ft_strlen(cmd->command));
-	ft_putstr_fd("\n",1);
-	len = ft_calculate_args(cmd->args);
+	if (cmd->command)
+		write(1,cmd->command,ft_strlen(cmd->command));
+	ft_putstr_fd("\n",1); 
 	len++;
 	ft_putstr_fd("args -> ",1);
-	while (len > 1)
+	while (cmd->args[i])
 	{
 		ft_putstr_fd("[",1);
 		ft_putstr_fd(cmd->args[i],1);
 		ft_putstr_fd("] ",1);
 		i++;
-		len--;
 	}
 	ft_putstr_fd("\n",1);
 
@@ -83,6 +73,27 @@ void ft_print_pipeline_cmd(t_pipe_line *pipe_line)
 		ft_putnbr_fd(i,1);
 		ft_putstr_fd("\n",1);
 		ft_print_simple_cmd(tmp);
+		tmp = tmp->next;
+		i++;
+	}
+}
+
+void ft_print_cmd_list(t_command_list *cmd_list)
+{
+	t_pipe_line *tmp ;
+
+	tmp = cmd_list->childs;
+	int i = 0;
+	ft_putstr_fd("\n",1);
+	while (tmp)
+	{
+		ft_putstr_fd("\n",1);
+		ft_putstr_fd(BLUE,1);
+		ft_putstr_fd("pipeline  : ",1);
+		ft_putnbr_fd(i,1);
+		ft_putstr_fd("\n",1);
+		ft_print_pipeline_cmd(tmp);
+		ft_putstr_fd("\n",1);
 		tmp = tmp->next;
 		i++;
 	}
@@ -124,7 +135,6 @@ int ft_check_closing_quotes(char *word)
 	quote = 0;
 	while (word[i])
 	{
-		
 		while (word[i] == 92) // get all backslashes and count them
 		{
 			i++;
@@ -400,8 +410,10 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 	int i;
 	int r;
 	int len;
-	int j = 0;
+	int j;
 
+
+	j = 0;
 	i = 0;
 	r = 0;
 	len = 0;
@@ -434,17 +446,19 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 				{
 					cmd->args[j] = ft_strdup((*tokens)->value);
 					j++;
+					len--;
 				}
-				else
-				{
-					cmd->args[j] = 0;
-				}
+				//else if (len == 1)
+				//{
+				//	cmd->args[j] = 0;
+				//}
 			}
 			(*tokens) = (*tokens)->next;
 		}
 		else
 			(*tokens) = (*tokens)->next;
 	}
+	cmd->args[j] = 0;
 	return cmd;
 }
 
@@ -471,19 +485,18 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 	head = NULL;
 	while ((*tokens)->type != NEWLINE)
 	{
-		if ((*tokens)->type == SEMI && (*tokens)->type == PIPE)
-			break;
 		if (head == NULL)
-		{
 			head =  ft_create_simple_cmd(tokens);
-		}
 		else
 		{
+			if ((*tokens)->type == SEMI || (*tokens)->type == NEWLINE)
+				break;
 			(*tokens) = (*tokens)->next;
 			current_cmd = ft_create_simple_cmd(tokens);
 			ft_insert_simple_cmd(head,current_cmd);
 		}
-		
+		//if ((*tokens)->type == SEMI)
+		//	break;
 	}
 	pipe_line->child = head;
 	return pipe_line;
@@ -504,30 +517,32 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 		if (head->childs == NULL)
 		{
 			head->childs = ft_create_pieline(&tokens_list);
-			ft_print_pipeline_cmd(head->childs);
 		}
-		else if (tokens_list->type == PIPE)
+		else if (tokens_list->type == SEMI)
 		{
+			tokens_list = tokens_list->next; /// escape semi
 			current_pipeline = head->childs;
 			while (current_pipeline->next != NULL)
 				current_pipeline = current_pipeline->next;
 			if (tokens_list->type != NEWLINE && tokens_list->type != SEMI)
 			{
-				tokens_list = tokens_list->next;
+				//tokens_list = tokens_list->next;
 				current_pipeline->next = ft_create_pieline(&tokens_list);
+				//ft_print_pipeline_cmd(current_pipeline->next);
 			}
-			//ft_print_pipeline_cmd(head->childs);
 		}
 		else
 		{
 			tokens_list = tokens_list->next;
 		}
 	}
+	//ft_print_pipeline_cmd(head->childs);
+	ft_print_cmd_list(head);
+	ft_destoy_token_list(tokens_list);
 	return head;
 }
 
 /***************************************/
-
 
 t_command_list *ft_parser(t_token *tokens_list)
 {

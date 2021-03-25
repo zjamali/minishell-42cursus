@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/24 19:49:26 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/25 10:18:11 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,12 +275,12 @@ int ft_check_syntax(t_token *tokens_list)
 				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
-			else if (tmp->next->type == NEWLINE)
-			{
-				ft_destoy_token_list(tokens_list);
-				result = 1;
-				break; //// for dont get segfault  in tmp = tmp->next;
-			}
+			//else if (tmp->next->type == NEWLINE)
+			//{
+			//	ft_destoy_token_list(tokens_list);
+			//	result = 1;
+			//	break; //// for dont get segfault  in tmp = tmp->next;
+			//}
 		}
 		tmp = tmp->next;
 	}
@@ -305,7 +305,8 @@ t_command_list *init_cmd_list(void)
 {
 	t_command_list *cmd_list;
 
-	cmd_list = malloc(sizeof(t_command_list));
+	if (!(cmd_list = malloc(sizeof(t_command_list))))
+		return NULL;
 	cmd_list->childs = NULL;
 	cmd_list->pipe_line_count = 0;
 	return cmd_list;
@@ -316,7 +317,8 @@ t_redirection *ft_create_redirection(t_token **tokens,int index)
 	t_redirection *redirection ;
 
 
-	redirection = malloc(sizeof(t_redirection));
+	if (!(redirection = malloc(sizeof(t_redirection))))
+		return NULL;
 	redirection->index = index;
 	if ((*tokens)->type == GREAT)
 		redirection->type = RE_GREAT;
@@ -374,10 +376,16 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 	i = 0;
 	r = 0;
 	len = 0;
-	cmd = malloc(sizeof(t_simple_cmd));
+	if (!(cmd = malloc(sizeof(t_simple_cmd))))
+		return NULL;
+	cmd->args = NULL;
+	cmd->command = NULL;
+	cmd->next = NULL;
+	cmd->redirections = NULL;
 	len = ft_get_number_of_arguments(*tokens);
 	if (len > 0)
-		cmd->args = malloc(sizeof(char*) * (len));
+		if (!(cmd->args = malloc(sizeof(char*) * (len))))
+			return NULL;
 	while ((*tokens)->type != PIPE && (*tokens)->type != SEMI && (*tokens)->type != NEWLINE)
 	{
 		if ((*tokens)->type == GREAT || (*tokens)->type == DOUBLE_GREAT || (*tokens)->type == LESS)
@@ -423,15 +431,22 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 	t_pipe_line *pipe_line;
 	t_simple_cmd *head;
 	t_simple_cmd *current_cmd;
-	pipe_line = malloc(sizeof(t_pipe_line));
+
+	if (!(pipe_line = malloc(sizeof(t_pipe_line))))
+		return NULL;
+	pipe_line->next = NULL;
+	pipe_line->child = NULL;
 	pipe_line->simple_command_count = 0;
+	current_cmd = NULL;
 	while ((*tokens)->type != NEWLINE)
 	{
 		if ((*tokens)->type == PIPE ||  (*tokens)->type == SEMI)
 			break;
 		
 		if (pipe_line->simple_command_count == 0)
+		{
 			head =  ft_create_simple_cmd(tokens);
+		}
 		else
 		{
 			current_cmd = ft_create_simple_cmd(tokens);
@@ -456,19 +471,26 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 	current_pipeline = NULL;
 	while (tokens_list->type != NEWLINE)
 	{
-		//if (head->pipe_line_count == 0)
-		//{
+		if (head->childs == NULL)
+		{
 			head->childs = ft_create_pieline(&tokens_list);
+		}
+		else if (tokens_list->type == PIPE)
+		{
+			current_pipeline = head->childs;
+			while (current_pipeline->next != NULL)
+				current_pipeline = current_pipeline->next;
+			if (tokens_list->type != NEWLINE && tokens_list->type != SEMI)
+			{
+				tokens_list = tokens_list->next;
+				current_pipeline->next = ft_create_pieline(&tokens_list);
+			}
 			head->pipe_line_count++;
-		//}
-		//else
-		//{
-		//	current_pipeline = head->childs;
-		//	while (current_pipeline->next != NULL)
-		//		current_pipeline = current_pipeline->next;
-		//	current_pipeline->next = ft_create_pieline(&tokens_list);
-		//	head->pipe_line_count++;
-		//}
+		}
+		else
+		{
+			tokens_list = tokens_list->next;
+		}
 	}
 	return head;
 }

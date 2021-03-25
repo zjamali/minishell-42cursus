@@ -12,6 +12,6 @@ libft:
 
 
 all: libft $(NAME)
-	
+
 $(NAME):
 	gcc $(CFLAGS) $(SRC) 

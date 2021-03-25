@@ -1,6 +1,7 @@
 #include "libft/libft.h"
 #include "../headers/get_next_line.h"
 #include <fcntl.h>
+#include <stdio.h>
 #include "../headers/execution.h"
 
 void	exec(char *input, char **env)
@@ -58,11 +59,51 @@ void	do_backups(int flag)
 	}
 }
 
-t_env init_env(char **env)
+t_env     *ft_create_node(char *name, char *value)
 {
-	t_env listenv;
+    t_env *new;
 
-	return (listenv);
+    new = malloc(sizeof(t_env));
+    if (new)
+    {
+        new->name = name;
+        new->values = value;
+        new->next = NULL;
+    }
+    return (new);
+}
+
+void    ft_add_to_list(t_env **head, t_env *new)
+{
+    t_env *list;
+    if (!head || !new)
+        return ;
+    if (*head)
+    {
+        list = *head;
+        while (list && list->next)
+            list = list->next;
+        list->next = new;
+    }
+    else
+        *head = new;
+}
+
+void init_env(t_env **head, char **env)
+{
+	t_env *newnode;
+	char **var;
+	int i;
+
+	i = 0;
+	while (env[i])
+	{
+		var = ft_split(env[i], '=');
+		newnode = ft_create_node(var[0], var[1]);
+		ft_add_to_list(head, newnode);
+		free(var);
+		i++;
+	}
 }
 
 int		main(int ac, char **av, char **env)
@@ -71,20 +112,23 @@ int		main(int ac, char **av, char **env)
 	int		fd;
 
 	input = NULL;
-	t_env env = init_env(env);
-	(void)ac;
-	(void)av;
-	(void)env;
+	t_env *head = NULL;
+	init_env(&head, env);
+	while (head->next != NULL)
+	{
+		printf("NAME: %s\nVALUE: %s\n", head->name, head->values);
+		head = head->next;
+	}
 	/*do_backups(1);
 	fd = open("file.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
 	dup2(fd, 1);
 	ft_putstr_fd("Hello World After DUP2\n", fd);
 	ft_putstr_fd("Testing Redirections.\n", fd);
 	ft_putstr_fd("Are we out\n", 1);*/
-	while (1)
-	{
-		ft_putstr_fd("MBARI $> ", 1);
-		get_next_line(&input);
-		exec(input, env);
-	}
+	// while (1)
+	// {
+	// 	ft_putstr_fd("MBARI $> ", 1);
+	// 	get_next_line(&input);
+	// 	exec(input, env);
+	// }
 }

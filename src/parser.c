@@ -176,11 +176,9 @@ int ft_check_backslash(char *word)
 			i--;
 		}
 		if ((cont % 2) != 0)
-			return 1;
+			return (1);
 		else
-		{
-			return 0;
-		}
+			return (0);
 	}
 	else
 		return (0);
@@ -316,7 +314,8 @@ t_command_list *init_cmd_list(void)
 t_redirection *ft_create_redirection(t_token **tokens,int index)
 {
 	t_redirection *redirection ;
-	
+
+
 	redirection = malloc(sizeof(t_redirection));
 	redirection->index = index;
 	if ((*tokens)->type == GREAT)
@@ -334,20 +333,18 @@ t_redirection *ft_create_redirection(t_token **tokens,int index)
 t_redirection *ft_insert_redirection(t_redirection *redirection,t_token **tokens,int index)
 {
 	t_redirection *tmp;
-	tmp = redirection;
-	if (tmp == NULL)
-	{
-		tmp = ft_create_redirection(tokens,index);
-	}
+
+	tmp = NULL;
+	if (redirection == NULL)
+		redirection = ft_create_redirection(tokens,index);
 	else
 	{
+		tmp = redirection;
 		while (tmp->next != NULL)
-		{
 			tmp = tmp->next;
-		}
-		tmp = ft_create_redirection(tokens,index);
+		tmp->next = ft_create_redirection(tokens,index);
 	}
-	return redirection;
+	return (redirection);
 }
 
 int ft_get_number_of_arguments(t_token *tokens)
@@ -439,7 +436,7 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 		{
 			current_cmd = ft_create_simple_cmd(tokens);
 			ft_insert_simple_cmd(head,current_cmd);
-		}	
+		}
 	}
 	pipe_line->child = head;
 	return pipe_line;
@@ -448,15 +445,29 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 t_command_list *ft_create_ast(t_token *tokens_list)
 {
 	t_command_list *head;
-	//t_token *current_token;
+	t_pipe_line *current_pipeline;
+	int pipe_count;
 	//t_simple_cmd *current_cmd_list;
 
+	pipe_count = 0;
+
 	head = init_cmd_list(); // create first pipeline
+
+	current_pipeline = NULL;
 	while (tokens_list->type != NEWLINE)
 	{
 		//if (head->pipe_line_count == 0)
 		//{
 			head->childs = ft_create_pieline(&tokens_list);
+			head->pipe_line_count++;
+		//}
+		//else
+		//{
+		//	current_pipeline = head->childs;
+		//	while (current_pipeline->next != NULL)
+		//		current_pipeline = current_pipeline->next;
+		//	current_pipeline->next = ft_create_pieline(&tokens_list);
+		//	head->pipe_line_count++;
 		//}
 	}
 	return head;

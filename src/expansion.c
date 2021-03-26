@@ -37,7 +37,7 @@ char *ft_remove_double_quotes(char *word,int *i,int *env)
 				tmp = expand;
 				expand = ft_strjoin(expand,ft_substr(word,j,1));
 				j++;
-				env++;
+				(*env)++;
 			}
 			else
 			{
@@ -119,16 +119,30 @@ int ft_remove_quote(char **string)
 			free(tmp1);
 			i++;
 		}
-		
 	}
+	free(word);
 	*string = expanded;
-	//free(string);
 	return env;
 }
 
 void ft_expande_simple_cmd(t_simple_cmd **cmd)
 {
+	t_args *args;
+	t_redirection *redis;
+
 	(*cmd)->cmd_env = ft_remove_quote(&((*cmd)->command));
+	args = (*cmd)->args;
+	while (args)
+	{
+		args->env_variable = ft_remove_quote(&args->value);
+		args = args->next;
+	}
+	redis = (*cmd)->redirections;
+	while (redis)
+	{
+		redis->filename_env = ft_remove_quote(&redis->file_name);
+		redis = redis->next;
+	}
 
 }
 

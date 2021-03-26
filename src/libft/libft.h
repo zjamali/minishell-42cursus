@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:51:44 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/24 16:11:37 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/26 16:11:17 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,6 @@ int					ft_toupper(int i);
 char				*ft_strtrim(char const *s1, char const *set);
 char				**ft_split(char const *s, char c);
 char				*ft_strmapi(const char *s, char (*f)(unsigned int, char));
+int					ft_strcmp(char *s1, char *s2);
 
 #endif

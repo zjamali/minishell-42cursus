@@ -1,6 +1,6 @@
 NAME= minishell
 
-SRC=  src/main.c src/get_next_line.c
+SRC=  src/main.c src/get_next_line.c src/lexer.c src/parser.c 
 
 INC= headers/get_next_line.h headers/minishell.h
 OBJ= $(SRC:.c=.o)
@@ -14,4 +14,4 @@ libft:
 all: libft $(NAME)
 
 $(NAME):
-	gcc $(CFLAGS) $(SRC) 
+	gcc $(CFLAGS) $(SRC) src/libft/libft.a

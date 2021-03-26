@@ -1,8 +1,17 @@
-#include "libft/libft.h"
-#include "../headers/get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   temp.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
+/*   Updated: 2021/03/26 17:05:58 by mbari            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../headers/execution.h"
+#include "../headers/minishell.h"
 
 void	exec(char *input, char **env)
 {
@@ -59,36 +68,6 @@ void	do_backups(int flag)
 	}
 }
 
-t_env     *ft_create_node(char *name, char *value)
-{
-    t_env *new;
-
-    new = malloc(sizeof(t_env));
-    if (new)
-    {
-        new->name = name;
-        new->values = value;
-        new->next = NULL;
-    }
-    return (new);
-}
-
-void    ft_add_to_list(t_env **head, t_env *new)
-{
-    t_env *list;
-    if (!head || !new)
-        return ;
-    if (*head)
-    {
-        list = *head;
-        while (list && list->next)
-            list = list->next;
-        list->next = new;
-    }
-    else
-        *head = new;
-}
-
 void init_env(t_env **head, char **env)
 {
 	t_env *newnode;
@@ -106,6 +85,13 @@ void init_env(t_env **head, char **env)
 	}
 }
 
+void show_prompt()
+{
+	write(1,GREEN,ft_strlen(GREEN));
+	ft_putstr_fd("MINISHELL $> ", 1);
+	write(1,RESET,ft_strlen(RESET));
+}
+
 int		main(int ac, char **av, char **env)
 {
 	char	*input;
@@ -113,22 +99,35 @@ int		main(int ac, char **av, char **env)
 
 	input = NULL;
 	t_env *head = NULL;
+	char *line;
 	init_env(&head, env);
-	while (head->next != NULL)
+	//ft_delete_from_list(&head, "SHELL");
+	ft_replaceit(&head, "SHELL", "replaced ubadiubfabaiubaibpiadsbipuabdsipabfsibipbdsiubdsiadsbipadsbadisub");
+	t_env *temp = head;
+	while (temp != NULL)
 	{
-		printf("NAME: %s\nVALUE: %s\n", head->name, head->values);
-		head = head->next;
+		printf("NAME: %s\nVALUE: %s\n", temp->name, temp->value);
+		temp = temp->next;
 	}
+	printf("|----------------------------------------------------------------------------|\n");
+	// ft_delete_from_list(&head, "TMPDIR");
+	// ft_delete_from_list(&head, "LANG");
+	// temp = head;
+	// while (temp != NULL)
+	// {
+	// 	printf("NAME: %s\nVALUE: %s\n", temp->name, temp->value);
+	// 	temp = temp->next;
+	// }
 	/*do_backups(1);
 	fd = open("file.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
 	dup2(fd, 1);
 	ft_putstr_fd("Hello World After DUP2\n", fd);
 	ft_putstr_fd("Testing Redirections.\n", fd);
 	ft_putstr_fd("Are we out\n", 1);*/
-	// while (1)
-	// {
-	// 	ft_putstr_fd("MBARI $> ", 1);
-	// 	get_next_line(&input);
-	// 	exec(input, env);
-	// }
+	while (1)
+	{
+		show_prompt();
+		get_next_line(&input);
+		exec(input, env);
+	}
 }

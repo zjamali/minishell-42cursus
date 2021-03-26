@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/17 17:54:47 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/26 16:13:01 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "get_next_line.h"
 # include "lexer.h"
 # include "parser.h"
+#include "expansion.h"
 
 #define GREEN "\e[1;32m"
 #define RESET "\e[0m"

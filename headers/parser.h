@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:38:09 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/25 11:03:51 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/26 16:07:54 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,25 +25,29 @@ typedef struct s_redirection
 {
 	int index;
 	t_redirection_type type;
+	int filename_env; // 1 if file_name is a env varaible
 	char *file_name;
 	struct s_redirection *next;
 }t_redirection;
 
 typedef struct s_args{
-	char *value;
+	int env_variable; // 1 speacial meaning ; 0 
+	char *value; // argument 
 	struct s_args *next;
 }t_args;
 
 typedef struct s_simple_cmd
 {
+	int cmd_env; // check if command is env variable
 	char *command;
-	char **args;
+	t_args *args;
 	t_redirection *redirections;
 	struct s_simple_cmd *next;
 }t_simple_cmd;
 
 typedef struct s_pipe_line
 {
+	int simple_cmd_count;
 	struct s_pipe_line *next; ///  next pipeline
 	t_simple_cmd *child;
 }t_pipe_line;
@@ -57,5 +61,7 @@ typedef struct s_command_list
 }t_command_list;
 
 t_command_list *ft_parser(t_token *tokens_list);
+void ft_destroy_ast(t_command_list *cmd_list);
+int ft_check_syntax(t_token *tokens_list);
 
 #endif

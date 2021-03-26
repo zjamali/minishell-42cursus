@@ -6,12 +6,86 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/25 16:17:56 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/26 16:40:39 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 ///#include "../headers/parser.h"
 #include "../headers/minishell.h"
+
+void ft_destroy_redirection(t_redirection *redis)
+{
+	t_redirection *current_redi;
+	t_redirection *parent_redi;
+	
+	parent_redi = redis;
+	while (parent_redi)
+	{
+		current_redi = parent_redi;
+		parent_redi = parent_redi->next;
+		
+		free(current_redi->file_name);
+		free(current_redi);
+	}
+}
+
+
+void ft_destroy_simple(t_simple_cmd *cmd)
+{
+	int i;
+	char *tmp;
+
+	i = 0;
+	tmp = NULL;
+	if (cmd->command)
+		free(cmd->command);
+	
+	//while (cmd->args[0] != 0)
+	//{
+	//	tmp = cmd->args[i];
+	//	cmd->args[0] =  cmd->args[i + 1];
+	//	free(tmp);
+	//	i++;
+	//}
+	tmp = NULL;
+	if (cmd->redirections)
+		ft_destroy_redirection(cmd->redirections);
+	cmd->redirections = NULL;
+	free(cmd);
+}
+
+void ft_destroy_pipe_line(t_pipe_line *pipe_line)
+{
+	t_simple_cmd *current_cmd;
+	t_simple_cmd *parent_cmd;
+	
+	parent_cmd = pipe_line->child;
+	while (parent_cmd)
+	{
+		current_cmd = parent_cmd;
+		parent_cmd = parent_cmd->next;
+		ft_destroy_simple(current_cmd);
+		current_cmd = NULL;
+	}
+	free(pipe_line);
+}
+
+void ft_destroy_ast(t_command_list *cmd_list)
+{
+	t_pipe_line *current_pipe;
+	t_pipe_line *parent_pipe;
+
+	ft_putstr_fd("destroy ast\n",1);
+	parent_pipe = cmd_list->childs;
+	while(parent_pipe)
+	{
+		current_pipe = parent_pipe;
+		parent_pipe = parent_pipe->next;
+		ft_destroy_pipe_line(current_pipe);
+		current_pipe = NULL;
+	}
+	free(cmd_list);
+}
 
 void ft_print_systax_error(t_token *token)
 {
@@ -24,23 +98,22 @@ void ft_print_systax_error(t_token *token)
 void ft_print_simple_cmd(t_simple_cmd *cmd)
 {
 	t_redirection *tmp;
-	int len = 0;
+	t_args *tmp1;
+
+	tmp1 = cmd->args;
 	tmp = cmd->redirections;
-	int i = 0;
 	ft_putstr_fd(YELLOW,1);
-	
 	ft_putstr_fd("cmd -> ",1);
 	if (cmd->command)
 		write(1,cmd->command,ft_strlen(cmd->command));
 	ft_putstr_fd("\n",1); 
-	len++;
 	ft_putstr_fd("args -> ",1);
-	while (cmd->args[i])
+	while (tmp1)
 	{
 		ft_putstr_fd("[",1);
-		ft_putstr_fd(cmd->args[i],1);
+		ft_putstr_fd(tmp1->value,1);
 		ft_putstr_fd("] ",1);
-		i++;
+		tmp1 = tmp1->next;
 	}
 	ft_putstr_fd("\n",1);
 
@@ -52,9 +125,7 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 		ft_putstr_fd(" ",1);
 		ft_putstr_fd(tmp->file_name,1);
 		ft_putstr_fd(") ",1);
-		i++;
 		tmp= tmp->next;
-		len--;
 	}
 	ft_putstr_fd("\n",1);
 }
@@ -65,6 +136,9 @@ void ft_print_pipeline_cmd(t_pipe_line *pipe_line)
 	int i;
 
 	i  = 0;
+	ft_putstr_fd("simple_cmd :",1);
+	ft_putnbr_fd(pipe_line->simple_cmd_count,1);
+	ft_putstr_fd("\n",1);
 	tmp = pipe_line->child;
 	while (tmp != NULL)
 	{
@@ -85,6 +159,8 @@ void ft_print_cmd_list(t_command_list *cmd_list)
 	tmp = cmd_list->childs;
 	int i = 0;
 	ft_putstr_fd("\n",1);
+	ft_putstr_fd("pipeline_count :",1);
+	ft_putnbr_fd(cmd_list->pipe_line_count,1);
 	while (tmp)
 	{
 		ft_putstr_fd("\n",1);
@@ -340,7 +416,6 @@ t_token *ft_begin_token(int token_index,t_token *begin_token)
 	return begin_token;
 }
 
-
 /*****************************/
 
 t_command_list *init_cmd_list(void)
@@ -390,18 +465,24 @@ t_redirection *ft_insert_redirection(t_redirection *redirection,t_token **tokens
 	return (redirection);
 }
 
-int ft_get_number_of_arguments(t_token *tokens)
+void ft_insert_arg(t_args *head,t_args *current_args)
 {
-	int len;
+	t_args *tmp;
+	tmp = head;
+	while (tmp->next != NULL)
+		tmp = tmp->next;
+	tmp->next = current_args;
+}
 
-	len = 1;
-	while(tokens->type != PIPE && tokens->type != SEMI && tokens->type != NEWLINE)
-	{
-		if (tokens->type != LESS && tokens->type != GREAT && tokens->type != DOUBLE_GREAT && tokens->next->type == WORD)
-			len++;
-		tokens = tokens->next;
-	}
-	return (len);  
+t_args *ft_create_arg(char *value)
+{
+	t_args *arg;
+	
+	arg = malloc(sizeof(t_args));
+	arg->value = ft_strdup(value);
+	arg->next = NULL;
+	arg->env_variable = 0;
+	return arg;
 }
 
 t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
@@ -409,24 +490,21 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 	t_simple_cmd *cmd;
 	int i;
 	int r;
-	int len;
 	int j;
-
+	t_args *tmp;
+	
 
 	j = 0;
 	i = 0;
 	r = 0;
-	len = 0;
+	tmp = NULL;
 	if (!(cmd = malloc(sizeof(t_simple_cmd))))
 		return NULL;
 	cmd->args = NULL;
 	cmd->command = NULL;
 	cmd->next = NULL;
+	cmd->args = NULL;
 	cmd->redirections = NULL;
-	len = ft_get_number_of_arguments(*tokens);
-	if (!(cmd->args = malloc(sizeof(char*) * (len))))
-		return NULL;
-	
 	while ((*tokens)->type != PIPE && (*tokens)->type != SEMI && (*tokens)->type != NEWLINE)
 	{
 		if ((*tokens)->type == GREAT || (*tokens)->type == DOUBLE_GREAT || (*tokens)->type == LESS)
@@ -442,23 +520,22 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 			}
 			else
 			{
-				if (len > 1)
+				if (cmd->args == NULL)
 				{
-					cmd->args[j] = ft_strdup((*tokens)->value);
-					j++;
-					len--;
+					cmd->args = ft_create_arg((*tokens)->value);
 				}
-				//else if (len == 1)
-				//{
-				//	cmd->args[j] = 0;
-				//}
+				else
+				{
+					tmp = ft_create_arg((*tokens)->value);
+					ft_insert_arg(cmd->args,tmp);
+				}
 			}
 			(*tokens) = (*tokens)->next;
 		}
 		else
 			(*tokens) = (*tokens)->next;
 	}
-	cmd->args[j] = 0;
+	//cmd->args[j] = 0;
 	return cmd;
 }
 
@@ -481,12 +558,16 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 		return NULL;
 	pipe_line->next = NULL;
 	pipe_line->child = NULL;
+	pipe_line->simple_cmd_count = 0;
 	current_cmd = NULL;
 	head = NULL;
 	while ((*tokens)->type != NEWLINE)
 	{
 		if (head == NULL)
+		{
 			head =  ft_create_simple_cmd(tokens);
+			pipe_line->simple_cmd_count+=1;
+		}
 		else
 		{
 			if ((*tokens)->type == SEMI || (*tokens)->type == NEWLINE)
@@ -494,6 +575,7 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 			(*tokens) = (*tokens)->next;
 			current_cmd = ft_create_simple_cmd(tokens);
 			ft_insert_simple_cmd(head,current_cmd);
+			pipe_line->simple_cmd_count+=1;
 		}
 		//if ((*tokens)->type == SEMI)
 		//	break;
@@ -517,6 +599,7 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 		if (head->childs == NULL)
 		{
 			head->childs = ft_create_pieline(&tokens_list);
+			head->pipe_line_count += 1;
 		}
 		else if (tokens_list->type == SEMI)
 		{
@@ -526,17 +609,13 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 				current_pipeline = current_pipeline->next;
 			if (tokens_list->type != NEWLINE && tokens_list->type != SEMI)
 			{
-				//tokens_list = tokens_list->next;
 				current_pipeline->next = ft_create_pieline(&tokens_list);
-				//ft_print_pipeline_cmd(current_pipeline->next);
+				head->pipe_line_count += 1;
 			}
 		}
 		else
-		{
 			tokens_list = tokens_list->next;
-		}
 	}
-	//ft_print_pipeline_cmd(head->childs);
 	ft_print_cmd_list(head);
 	ft_destoy_token_list(tokens_list);
 	return head;

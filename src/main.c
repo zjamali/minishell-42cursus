@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/24 18:57:53 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/26 16:23:07 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,10 @@ int main(int ac,char **av,char **env)
 	(void)ac;
 	(void)av;
 	(void)env;
-	while (1)
+	int i = 0;
+	while (i == 0)
 	{
+		//i++;
 		show_prompt();
 		read_command_list(&line);
 		if ( line[1] != '\0')
@@ -47,6 +49,14 @@ int main(int ac,char **av,char **env)
 		tokens_list = ft_lexer(line);
 		free(line);
 		cmd = ft_parser(tokens_list);
+		//ft_expanding(&cmd->childs);
+		//ft_destroy_ast(cmd);
+		cmd = NULL;
+		line = NULL;
 	}
-	free(line);
 }
+
+//ls > s > s > d > f > g > h >> j>> j>>  jj < j < j < j
+// \e\c\h\o
+// export s= 2116 sdf sdfdsf !=  sdf sdfdsf
+// 

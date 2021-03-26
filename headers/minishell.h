@@ -30,4 +30,5 @@
 #define BLUE "\e[1;34m"
 
 void ft_print_cmd_list(t_command_list *cmd_list);
+void ft_print_simple_cmd(t_simple_cmd *cmd);
 #endif

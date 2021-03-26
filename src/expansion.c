@@ -34,15 +34,15 @@ char *ft_remove_double_quotes(char *word,int *i,int *env)
 		{
 			if (word[j] == '$')
 			{
-			tmp = expand;
-			expand = ft_strjoin(expand,ft_substr(word,j,1));
-			j++;
-			env++;
+				tmp = expand;
+				expand = ft_strjoin(expand,ft_substr(word,j,1));
+				j++;
+				env++;
 			}
 			else
 			{
 				tmp = expand;
-				expand = ft_strjoin(expand,ft_substr(word,j+1,1));
+				expand = ft_strjoin(expand,ft_substr(word,j,1));
 				j++;
 				free(tmp);
 				
@@ -83,28 +83,32 @@ int ft_remove_quote(char **string)
 				tmp1 = expanded;
 				expanded = ft_strjoin(expanded,ft_substr(word,j+1,1));
 				free(tmp1);
-				j = j + 2;
+				j += 2;
 			}
 			i = j;
 		}
 		else if (word[i] == '\'')
 		{
-			j = i;	
+			i++;
+			j = i;
 			while (word[j] != '\'')
 				j++;
 			tmp1 = expanded;
-			expanded = ft_strjoin(expanded,ft_substr(word,i+1,j - i));
+			expanded = ft_strjoin(expanded,ft_substr(word,i,j - i));
+			free(tmp1);
 			i = j + 1;
 		}
 		else if (word[i] == '"')
 		{
 			tmp1 = expanded;
-			expanded = ft_remove_double_quotes(word,&i,&env);
+			expanded = ft_strjoin(expanded,ft_remove_double_quotes(word,&i,&env));
+			free(tmp1);
 		}
 		else if (word[i] == '$')
 		{
 			tmp1 = expanded;
 			expanded = ft_strjoin(expanded,ft_substr(word,i,1));
+			free(tmp1);
 			i++;
 			env++;
 		}
@@ -112,17 +116,20 @@ int ft_remove_quote(char **string)
 		{
 			tmp1 = expanded;
 			expanded = ft_strjoin(expanded,ft_substr(word,i,1));
+			free(tmp1);
 			i++;
 		}
 		
 	}
+	*string = expanded;
 	//free(string);
 	return env;
 }
 
 void ft_expande_simple_cmd(t_simple_cmd **cmd)
 {
-	(*cmd)->cmd_env = ft_remove_quote(&(*cmd)->command);
+	(*cmd)->cmd_env = ft_remove_quote(&((*cmd)->command));
+
 }
 
 void ft_expanding(t_pipe_line **pipe_line)

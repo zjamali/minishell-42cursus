@@ -535,7 +535,6 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 		else
 			(*tokens) = (*tokens)->next;
 	}
-	//cmd->args[j] = 0;
 	return cmd;
 }
 

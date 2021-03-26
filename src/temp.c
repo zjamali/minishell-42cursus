@@ -6,12 +6,11 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/26 17:05:58 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/26 19:56:39 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/execution.h"
-#include "../headers/minishell.h"
 
 void	exec(char *input, char **env)
 {
@@ -92,24 +91,60 @@ void show_prompt()
 	write(1,RESET,ft_strlen(RESET));
 }
 
+void show_command(t_simple_cmd *cmd)
+{
+	ft_putstr_fd(cmd->command, 1);
+	ft_putchar_fd(' ', 1);
+	ft_putstr_fd(cmd->args->value, 1);
+	ft_putchar_fd(' ', 1);
+	ft_putstr_fd(cmd->args->next->value, 1);
+	ft_putchar_fd(' ', 1);
+	ft_putstr_fd(cmd->args->next->next->value, 1);
+	ft_putchar_fd('\n', 1);
+}
+
+void ft_init(t_simple_cmd *command)
+{
+	
+	command->args = (t_args *)malloc(sizeof(t_args));
+	command->args->next = (t_args *)malloc(sizeof(t_args));
+	command->args->next->next = (t_args *)malloc(sizeof(t_args));
+	command->command = ft_strdup("echo");
+	command->args->value = ft_strdup("-n");
+	command->args->next->value = ft_strdup("-n");
+	command->args->next->next->value = ft_strdup("how are u ?");
+	command->args->next->next->next = NULL;
+}
+
+void ft_is_builtins(t_simple_cmd *cmd)
+{
+	if (!(ft_strcmp(cmd->command, "echo")))
+		ft_echo(cmd->args);
+
+}
+
 int		main(int ac, char **av, char **env)
 {
 	char	*input;
 	int		fd;
+	char	*line;
+	t_env *head;
+	t_simple_cmd *cmd_list = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
 
+	ft_init(cmd_list);
 	input = NULL;
-	t_env *head = NULL;
-	char *line;
+	head = NULL;
 	init_env(&head, env);
 	//ft_delete_from_list(&head, "SHELL");
-	ft_replaceit(&head, "SHELL", "replaced ubadiubfabaiubaibpiadsbipuabdsipabfsibipbdsiubdsiadsbipadsbadisub");
+	//ft_replaceit(&head, "SHELL", "replaced");
 	t_env *temp = head;
-	while (temp != NULL)
-	{
-		printf("NAME: %s\nVALUE: %s\n", temp->name, temp->value);
-		temp = temp->next;
-	}
-	printf("|----------------------------------------------------------------------------|\n");
+	// while (temp != NULL)
+	// {
+	// 	printf("NAME: %s\nVALUE: %s\n", temp->name, temp->value);
+	// 	temp = temp->next;
+	// }
+	// printf("|----------------------------------------------------------------------------|\n");
+	printf("cmd : %s\narg 1: %s\narg 2: %s\n\n", cmd_list->command, cmd_list->args->value, cmd_list->args->next->value);
 	// ft_delete_from_list(&head, "TMPDIR");
 	// ft_delete_from_list(&head, "LANG");
 	// temp = head;
@@ -124,10 +159,13 @@ int		main(int ac, char **av, char **env)
 	ft_putstr_fd("Hello World After DUP2\n", fd);
 	ft_putstr_fd("Testing Redirections.\n", fd);
 	ft_putstr_fd("Are we out\n", 1);*/
-	while (1)
-	{
-		show_prompt();
-		get_next_line(&input);
-		exec(input, env);
-	}
+	// while (1)
+	// {
+	// 	show_prompt();
+	// 	get_next_line(&input);
+	// 	exec(input, env);
+	// }
+	show_prompt();
+	show_command(cmd_list);
+	ft_echo(cmd_list->args);
 }

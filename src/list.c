@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/26 16:57:44 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/27 16:00:57 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,23 @@ void	ft_delete_from_list(t_env **head, char *name)
 	
 }
 
-void	ft_replaceit(t_env **head, char *name, char *value)
+t_env	*ft_search_in_list(t_env **head, char *name)
 {
 	t_env *temp;
 
 	temp = *head;
 	if (temp == NULL)
-		return ;
+		return (NULL);
 	while (temp != NULL && ft_strcmp(temp->name, name) != 0)
 		temp = temp->next;
+	return (temp);
+}
+
+void	ft_replaceit(t_env **head, char *name, char *value)
+{
+	t_env *temp;
+	
+	temp = ft_search_in_list(head, name);
 	if (temp != NULL)
 		temp->value = value;
 }

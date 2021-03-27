@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/26 16:13:01 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/26 20:02:42 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,7 @@
 #define YELLOW "\e[1;33m"
 #define PURPLE "\e[1;35m"
 #define BLUE "\e[1;34m"
+
+void ft_print_cmd_list(t_command_list *cmd_list);
+void ft_print_simple_cmd(t_simple_cmd *cmd);
 #endif

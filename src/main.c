@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/26 16:54:04 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/27 16:33:43 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int main(int ac,char **av,char **env)
 	(void)av;
 	(void)env;
 	int i = 0;
+	cmd = NULL;
 	while (i == 0)
 	{
 		//i++;
@@ -49,8 +50,17 @@ int main(int ac,char **av,char **env)
 		tokens_list = ft_lexer(line);
 		free(line);
 		cmd = ft_parser(tokens_list);
-		//ft_expanding(&cmd->childs);
-		//ft_destroy_ast(cmd);
+		//if (tokens_list)
+		//	ft_destoy_token_list(tokens_list);
+		if (cmd)
+		{
+			
+			ft_expanding(&cmd->childs);
+			ft_print_cmd_list(cmd);
+		}
+		ft_execute(cmd);
+		if (cmd)
+			ft_destroy_ast(cmd);
 		cmd = NULL;
 		line = NULL;
 	}
@@ -59,4 +69,4 @@ int main(int ac,char **av,char **env)
 //ls > s > s > d > f > g > h >> j>> j>>  jj < j < j < j
 // \e\c\h\o
 // export s= 2116 sdf sdfdsf !=  sdf sdfdsf
-// 
+// "\dkjjkd\"dghj" 

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 15:24:47 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 15:54:15 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -454,7 +454,6 @@ t_command_list *init_cmd_list(void)
 t_redirection *ft_create_redirection(t_token **tokens,int index)
 {
 	t_redirection *redirection ;
-
 	if (!(redirection = malloc(sizeof(t_redirection))))
 		return NULL;
 	redirection->index = index;
@@ -476,7 +475,9 @@ t_redirection *ft_insert_redirection(t_redirection *redirection,t_token **tokens
 
 	tmp = NULL;
 	if (redirection == NULL)
+	{
 		redirection = ft_create_redirection(tokens,index);
+	}
 	else
 	{
 		tmp = redirection;
@@ -484,6 +485,7 @@ t_redirection *ft_insert_redirection(t_redirection *redirection,t_token **tokens
 			tmp = tmp->next;
 		tmp->next = ft_create_redirection(tokens,index);
 	}
+	
 	return (redirection);
 }
 
@@ -635,7 +637,7 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 			}
 		}
 		else
-			tokens_list = tokens_list->next;
+				tokens_list = tokens_list->next;
 	}
 	return head;
 }
@@ -650,7 +652,7 @@ t_command_list *ft_parser(t_token *tokens_list)
 	if (!ft_check_syntax(tokens_list))
 	{
 		command_list = ft_create_ast(tokens_list);
-		ft_destoy_token_list(tokens_list);
+		//ft_destoy_token_list(tokens_list);
 	}
 	return (command_list);
 }

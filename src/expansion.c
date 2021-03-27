@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 13:20:16 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 15:53:16 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,8 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd)
 	char *tmp;
 	
 	tmp = NULL;
-	(*cmd)->cmd_env = ft_remove_quote(&((*cmd)->command));
+	if ((*cmd)->command )
+		(*cmd)->cmd_env = ft_remove_quote(&((*cmd)->command));
 	args = (*cmd)->args;
 	while (args)
 	{

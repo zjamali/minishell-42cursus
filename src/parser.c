@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 15:54:15 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 16:24:42 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -457,6 +457,7 @@ t_redirection *ft_create_redirection(t_token **tokens,int index)
 	if (!(redirection = malloc(sizeof(t_redirection))))
 		return NULL;
 	redirection->index = index;
+	redirection->next = NULL;
 	if ((*tokens)->type == GREAT)
 		redirection->type = RE_GREAT;
 	else if ((*tokens)->type == DOUBLE_GREAT)
@@ -656,3 +657,6 @@ t_command_list *ft_parser(t_token *tokens_list)
 	}
 	return (command_list);
 }
+
+
+//// ""

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 15:26:27 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 16:02:33 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int main(int ac,char **av,char **env)
 		//	ft_destoy_token_list(tokens_list);
 		if (cmd)
 		{
+			
 			ft_expanding(&cmd->childs);
 			ft_print_cmd_list(cmd);
 		}

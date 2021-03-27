@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 15:53:16 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 16:25:40 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,12 @@ int ft_remove_quote(char **string)
 		{
 			tmp1 = expanded;
 			tmp = ft_remove_double_quotes(word,&i,&env);
-			expanded = ft_strjoin(expanded,tmp);
-			free(tmp);
-			free(tmp1);
+			if (tmp)
+			{
+				expanded = ft_strjoin(expanded,tmp);
+				free(tmp);
+				free(tmp1);
+			}
 		}
 		else if (word[i] == '$')
 		{
@@ -151,7 +154,8 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd)
 	char *tmp;
 	
 	tmp = NULL;
-	if ((*cmd)->command )
+	redis = NULL;
+	if ((*cmd)->command)
 		(*cmd)->cmd_env = ft_remove_quote(&((*cmd)->command));
 	args = (*cmd)->args;
 	while (args)
@@ -190,3 +194,6 @@ void ft_expanding(t_pipe_line **pipe_line)
 		pipe = pipe->next;
 	}
 }
+
+//// ?^H""
+///// >""

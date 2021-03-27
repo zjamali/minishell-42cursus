@@ -6,11 +6,11 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/27 16:31:36 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/27 16:58:45 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/execution.h"
+#include "../headers/minishell.h"
 
 void	exec(char *input, char **env)
 {
@@ -84,41 +84,6 @@ void init_env(t_env **head, char **env)
 	}
 }
 
-void show_prompt()
-{
-	write(1,GREEN,ft_strlen(GREEN));
-	ft_putstr_fd("MINISHELL $> ", 1);
-	write(1,RESET,ft_strlen(RESET));
-}
-
-void show_command(t_simple_cmd *cmd)
-{
-	ft_putstr_fd(cmd->command, 1);
-	ft_putchar_fd(' ', 1);
-	ft_putstr_fd(cmd->args->value, 1);
-	ft_putchar_fd(' ', 1);
-	ft_putstr_fd(cmd->args->next->value, 1);
-	ft_putchar_fd(' ', 1);
-	ft_putstr_fd(cmd->args->next->next->value, 1);
-	ft_putchar_fd(' ', 1);
-	ft_putstr_fd(cmd->args->next->next->next->value, 1);
-	ft_putchar_fd('\n', 1);
-}
-
-void ft_init(t_simple_cmd *command)
-{	
-	command->args = (t_args *)malloc(sizeof(t_args));
-	command->args->next = (t_args *)malloc(sizeof(t_args));
-	command->args->next->next = (t_args *)malloc(sizeof(t_args));
-	command->args->next->next->next = (t_args *)malloc(sizeof(t_args));
-	command->command = ft_strdup("env");
-	command->args->value = ft_strdup("-n");
-	command->args->next->value = ft_strdup("hello");
-	command->args->next->next->value = ft_strdup("-n");
-	command->args->next->next->next->value = ft_strdup("how are u ?");
-	command->args->next->next->next->next = NULL;
-}
-
 void ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
 	if (!(ft_strcmp(cmd->command, "echo")))
@@ -127,24 +92,24 @@ void ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 		ft_pwd(head);
 	if (!(ft_strcmp(cmd->command, "env")))
 		ft_env(head);
-	if (!(ft_strcmp(cmd->command, "unset")))
-		ft_unset(head);
+	// if (!(ft_strcmp(cmd->command, "unset")))
+	// 	ft_unset(head);
 
 }
 
-int		main(int ac, char **av, char **env)
+int		ft_execute(t_command_list *cmd, char **env)
 {
 	char	*input;
 	int		fd;
 	char	*line;
 	t_env *head;
-	t_simple_cmd *cmd_list = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
 
-	ft_init(cmd_list);
 	input = NULL;
 	head = NULL;
 	init_env(&head, env);
 	/*
+	ft_init(cmd_list);
+	t_simple_cmd *cmd_list = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
 	//ft_delete_from_list(&head, "SHELL");
 	// ft_replaceit(&head, "SHELL", "replaced");
 	// t_env *temp = head;
@@ -175,9 +140,10 @@ int		main(int ac, char **av, char **env)
 	// 	get_next_line(&input);
 	// 	exec(input, env);
 	// }
-	*/
 	show_prompt();
 	show_command(cmd_list);
 	//ft_echo(cmd_list->args);
-	ft_is_builtins(cmd_list, &head);
+	*/
+	ft_is_builtins(cmd->childs->child, &head);
+	return (0);
 }

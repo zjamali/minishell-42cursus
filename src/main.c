@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 16:33:43 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/27 16:59:13 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,10 @@ int main(int ac,char **av,char **env)
 		//	ft_destoy_token_list(tokens_list);
 		if (cmd)
 		{
-			
 			ft_expanding(&cmd->childs);
 			ft_print_cmd_list(cmd);
 		}
-		ft_execute(cmd);
+		ft_execute(cmd, env);
 		if (cmd)
 			ft_destroy_ast(cmd);
 		cmd = NULL;

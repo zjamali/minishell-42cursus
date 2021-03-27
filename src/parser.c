@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 10:15:11 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 15:24:47 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,21 +33,25 @@ void ft_destroy_redirection(t_redirection *redis)
 void ft_destroy_simple(t_simple_cmd *cmd)
 {
 	int i;
-	char *tmp;
+	t_args *head;
+	t_args *current_arg;
 
 	i = 0;
-	tmp = NULL;
+	head = NULL;
 	if (cmd->command)
 		free(cmd->command);
-	
-	//while (cmd->args[0] != 0)
-	//{
-	//	tmp = cmd->args[i];
-	//	cmd->args[0] =  cmd->args[i + 1];
-	//	free(tmp);
-	//	i++;
-	//}
-	tmp = NULL;
+	head= cmd->args ;
+	while (head != 0)
+	{
+		current_arg = head;
+		head = head->next;
+		
+		free(current_arg->value);
+		free(current_arg);
+		current_arg = NULL;
+		i++;
+	}
+	current_arg = NULL;
 	if (cmd->redirections)
 		ft_destroy_redirection(cmd->redirections);
 	cmd->redirections = NULL;
@@ -255,7 +259,7 @@ int ft_check_closing_quotes(char *word)
 			}
 			i++;
 		}
-		else if (quote == 2 && word[i] == 34  /*&& word[i - 1] != 92*/)
+		else if (quote == 2 && word[i] == 34  /*&& back_slash % 2 == 0 && word[i - 1] != 92*/)
 		{
 			if (word[i - 1] != 92)
 				quote -= 2;
@@ -283,7 +287,10 @@ int ft_check_closing_quotes(char *word)
 			i++;				
 		}
 		else
+		{
 			i++;
+			back_slash = 0;
+		}
 	}
 	if (quote != 0)
 		return 1;
@@ -630,8 +637,6 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 		else
 			tokens_list = tokens_list->next;
 	}
-	//ft_print_cmd_list(head);
-	ft_destoy_token_list(tokens_list);
 	return head;
 }
 
@@ -643,6 +648,9 @@ t_command_list *ft_parser(t_token *tokens_list)
 	command_list = NULL;
 	write(1,RED,ft_strlen(RED));
 	if (!ft_check_syntax(tokens_list))
+	{
 		command_list = ft_create_ast(tokens_list);
+		ft_destoy_token_list(tokens_list);
+	}
 	return (command_list);
 }

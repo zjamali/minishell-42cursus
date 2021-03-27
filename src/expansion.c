@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/26 20:03:11 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 10:23:24 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd)
 		redis->filename_env = ft_remove_quote(&redis->file_name);
 		redis = redis->next;
 	}
-
 }
 
 void ft_expanding(t_pipe_line **pipe_line)
@@ -152,14 +151,20 @@ void ft_expanding(t_pipe_line **pipe_line)
 	t_simple_cmd *current_cmd;
 	t_simple_cmd *head_cmd;
 
-	head_cmd = (*pipe_line)->child;
+	//head_cmd = (*pipe_line)->child;
 	current_cmd = NULL;
 	pipe = *pipe_line;
+	head_cmd = NULL;
+	ft_putstr_fd(PURPLE,1);
 	while (pipe)
 	{
-		current_cmd = head_cmd;
-		head_cmd = head_cmd->next;
-		ft_expande_simple_cmd(&current_cmd);
+		head_cmd = pipe->child;
+		while (head_cmd)
+		{
+			current_cmd = head_cmd;
+			ft_expande_simple_cmd(&current_cmd);
+			head_cmd = head_cmd->next;
+		}
 		pipe = pipe->next;
 	}
 }

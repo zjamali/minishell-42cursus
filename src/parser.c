@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/26 16:40:39 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 10:15:11 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,10 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 	tmp = cmd->redirections;
 	ft_putstr_fd(YELLOW,1);
 	ft_putstr_fd("cmd -> ",1);
+	ft_putstr_fd("{",1);
 	if (cmd->command)
 		write(1,cmd->command,ft_strlen(cmd->command));
+	ft_putstr_fd("}",1);
 	ft_putstr_fd("\t",1);
 	ft_putstr_fd("env_cmd -> ",1);
 	ft_putnbr_fd(cmd->cmd_env,1);
@@ -114,7 +116,9 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 	while (tmp1)
 	{
 		ft_putstr_fd("[",1);
+		ft_putstr_fd("{",1);
 		ft_putstr_fd(tmp1->value,1);
+		ft_putstr_fd("}",1);
 		ft_putstr_fd("\t",1);
 		ft_putstr_fd("env_arg -> ",1);
 		ft_putnbr_fd(tmp1->env_variable,1);
@@ -129,7 +133,9 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 		ft_putstr_fd("(",1);
 		ft_putnbr_fd(tmp->type,1);
 		ft_putstr_fd(" ",1);
+		ft_putstr_fd("{",1);
 		ft_putstr_fd(tmp->file_name,1);
+		ft_putstr_fd("}",1);
 		ft_putstr_fd("\t",1);
 		ft_putstr_fd("redis -> ",1);
 		ft_putnbr_fd(tmp->filename_env,1);
@@ -624,7 +630,7 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 		else
 			tokens_list = tokens_list->next;
 	}
-	ft_print_cmd_list(head);
+	//ft_print_cmd_list(head);
 	ft_destoy_token_list(tokens_list);
 	return head;
 }

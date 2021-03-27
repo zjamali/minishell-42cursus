@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/26 20:03:23 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 10:17:41 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int main(int ac,char **av,char **env)
 	(void)av;
 	(void)env;
 	int i = 0;
+	cmd = NULL;
 	while (i == 0)
 	{
 		//i++;
@@ -49,8 +50,11 @@ int main(int ac,char **av,char **env)
 		tokens_list = ft_lexer(line);
 		free(line);
 		cmd = ft_parser(tokens_list);
-		ft_expanding(&cmd->childs);
-		ft_print_cmd_list(cmd);
+		if (cmd)
+		{
+			ft_expanding(&cmd->childs);
+			ft_print_cmd_list(cmd);
+		}
 		//ft_destroy_ast(cmd);
 		cmd = NULL;
 		line = NULL;

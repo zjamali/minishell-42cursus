@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 15:23:20 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 15:26:27 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int main(int ac,char **av,char **env)
 	cmd = NULL;
 	while (i == 0)
 	{
-		i++;
+		//i++;
 		show_prompt();
 		read_command_list(&line);
 		if ( line[1] != '\0')

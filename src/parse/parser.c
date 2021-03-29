@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 13:10:04 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/29 14:51:21 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -601,8 +601,6 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 			ft_insert_simple_cmd(head,current_cmd);
 			pipe_line->simple_cmd_count+=1;
 		}
-		//if ((*tokens)->type == SEMI)
-		//	break;
 	}
 	pipe_line->child = head;
 	return pipe_line;
@@ -613,7 +611,6 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 	t_command_list *head;
 	t_pipe_line *current_pipeline;
 	int pipe_count;
-	//t_simple_cmd *current_cmd_list;
 
 	pipe_count = 0;
 	head = init_cmd_list(); // create first pipeline
@@ -640,7 +637,7 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 		else
 				tokens_list = tokens_list->next;
 	}
-	return head;
+	return (head);
 }
 
 /***************************************/
@@ -648,6 +645,7 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 t_command_list *ft_parser(t_token *tokens_list)
 {
 	t_command_list *command_list;
+
 	command_list = NULL;
 	write(1,RED,ft_strlen(RED));
 	if (!ft_check_syntax(tokens_list))

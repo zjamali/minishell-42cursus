@@ -6,11 +6,11 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/27 16:00:57 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/29 15:12:14 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/execution.h"
+#include "../../headers/execution.h"
 
 t_env     *ft_create_node(char *name, char *value)
 {

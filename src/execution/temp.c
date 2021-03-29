@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/29 15:12:19 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/29 15:26:29 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,7 @@ int		ft_execute(t_command_list *cmd, t_env **head)
 	show_command(cmd_list);
 	//ft_echo(cmd_list->args);
 	*/
+	ft_putstr_fd(BLUE,1);
 	ft_is_builtins(cmd->childs->child, head);
 	return (0);
 }

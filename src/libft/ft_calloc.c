@@ -3,25 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mbari <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/21 14:57:25 by zjamali           #+#    #+#             */
-/*   Updated: 2019/11/09 15:47:40 by zjamali          ###   ########.fr       */
+/*   Created: 2019/11/18 16:46:52 by mbari             #+#    #+#             */
+/*   Updated: 2019/11/19 16:46:47 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void		*ft_calloc(size_t count, size_t size)
+void	*ft_calloc(size_t count, size_t size)
 {
-	void *ptr;
+	void	*rest;
 
-	ptr = malloc(count * size);
-	if (ptr == NULL)
+	rest = malloc(count * size);
+	if (!rest)
 		return (NULL);
-	else
-	{
-		ft_bzero(ptr, size * count);
-		return (ptr);
-	}
+	ft_bzero(rest, count * size);
+	return (rest);
 }

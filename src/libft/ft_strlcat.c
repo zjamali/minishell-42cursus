@@ -3,29 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mbari <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/19 22:04:36 by zjamali           #+#    #+#             */
-/*   Updated: 2019/11/09 20:14:11 by zjamali          ###   ########.fr       */
+/*   Created: 2019/11/19 16:31:49 by mbari             #+#    #+#             */
+/*   Updated: 2019/11/19 16:44:29 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t		ft_strlcat(char *dst, const char *src, size_t size)
+size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
-	size_t srclen;
-	size_t dstlen;
+	size_t i;
+	size_t ldst;
+	size_t lsrc;
+	size_t cut;
+	size_t res;
 
-	srclen = ft_strlen(src);
-	if (!dst && size == 0)
-		return (srclen);
-	dstlen = ft_strlen(dst);
-	if (size <= dstlen)
-		return (srclen + size);
-	size = size - dstlen;
-	while (*dst)
-		dst++;
-	ft_strlcpy(dst, src, size);
-	return (srclen + dstlen);
+	cut = 0;
+	lsrc = ft_strlen(src);
+	if (!dst && !size)
+		return (lsrc);
+	ldst = ft_strlen(dst);
+	if (size > ldst)
+	{
+		cut = size - ldst - 1;
+		res = ldst + lsrc;
+	}
+	else
+		res = lsrc + size;
+	i = 0;
+	while (i < cut && src[i])
+		dst[ldst++] = src[i++];
+	if (cut)
+		dst[ldst] = '\0';
+	return (res);
 }

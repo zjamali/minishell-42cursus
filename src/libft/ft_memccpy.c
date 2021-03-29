@@ -3,30 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memccpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: mbari <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/18 18:02:32 by zjamali           #+#    #+#             */
-/*   Updated: 2019/11/09 15:35:11 by zjamali          ###   ########.fr       */
+/*   Created: 2019/11/18 16:40:23 by mbari             #+#    #+#             */
+/*   Updated: 2019/11/19 16:41:22 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void		*ft_memccpy(void *dst, const void *src, int c, size_t n)
+void	*ft_memccpy(void *dst, const void *src, int c, size_t n)
 {
-	size_t	i;
-	char	*s1;
-	char	*s2;
+	size_t			i;
+	unsigned char	*dstt;
+	unsigned char	*srcc;
 
+	srcc = (unsigned char *)src;
+	dstt = (unsigned char *)dst;
 	i = 0;
-	s1 = (char *)dst;
-	s2 = (char *)src;
 	while (i < n)
 	{
-		s1[i] = s2[i];
-		if ((unsigned char)s2[i] == (unsigned char)c)
-			return (s1 + i + 1);
+		dstt[i] = srcc[i];
+		if (srcc[i] == (unsigned char)c)
+			return (dstt + ++i);
 		i++;
 	}
-	return (NULL);
+	return (0);
 }

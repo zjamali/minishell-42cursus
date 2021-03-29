@@ -1,17 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.c                                        :+:      :+:    :+:   */
+/*   ft_intsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mbari <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+<<<<<<< HEAD:src/libft/ft_intsize.c
+/*   Created: 2019/10/20 16:39:05 by mbari             #+#    #+#             */
+/*   Updated: 2019/11/01 14:16:33 by mbari            ###   ########.fr       */
+=======
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 15:01:41 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/27 16:25:40 by zjamali          ###   ########.fr       */
+>>>>>>> 4fdce2cc34214cd0200a950ae223f17afc18680b:src/expansion.c
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../headers/minishell.h"
+#include "libft.h"
 
+<<<<<<< HEAD:src/libft/ft_intsize.c
+int		ft_intsize(int n)
+{
+	int		i;
+
+	i = 0;
+	while (n != 0)
+	{
+		n /= 10;
+		i++;
+	}
+	return (i);
+}
+=======
 char *ft_remove_double_quotes(char *word,int *i,int *env)
 {
 	int j ;
@@ -19,7 +38,7 @@ char *ft_remove_double_quotes(char *word,int *i,int *env)
 	char *tmp;
 	char *tmp1;
 
-	expand = NULL;//ft_strdup("");
+	expand = NULL;
 	j = *i + 1; // escape first "
 
 	while (word[j] != '"')
@@ -39,7 +58,7 @@ char *ft_remove_double_quotes(char *word,int *i,int *env)
 			{
 				tmp = expand;
 				tmp1 = ft_substr(word,j,1);
-				expand = ft_strjoin(expand,tmp1);
+				expand = ft_strjoin(expand,tmp);
 				free(tmp);
 				free(tmp1);
 				j++;
@@ -197,3 +216,4 @@ void ft_expanding(t_pipe_line **pipe_line)
 
 //// ?^H""
 ///// >""
+>>>>>>> 4fdce2cc34214cd0200a950ae223f17afc18680b:src/expansion.c

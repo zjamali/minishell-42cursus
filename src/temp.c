@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/28 13:22:04 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/29 14:59:22 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,7 @@ void ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	// 	ft_unset(head);
 
 }
-
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 int		ft_execute(t_command_list *cmd, t_env **head)
 {
 	char	*input;

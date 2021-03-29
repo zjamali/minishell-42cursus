@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 16:24:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/29 13:10:04 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -653,7 +653,7 @@ t_command_list *ft_parser(t_token *tokens_list)
 	if (!ft_check_syntax(tokens_list))
 	{
 		command_list = ft_create_ast(tokens_list);
-		//ft_destoy_token_list(tokens_list);
+		ft_destoy_token_list(tokens_list);
 	}
 	return (command_list);
 }

@@ -6,12 +6,12 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 14:51:21 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/29 15:00:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 ///#include "../headers/parser.h"
-#include "../headers/minishell.h"
+#include "../../headers/minishell.h"
 
 void ft_destroy_redirection(t_redirection *redis)
 {

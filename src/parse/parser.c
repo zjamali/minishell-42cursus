@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 14:51:21 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/29 15:27:06 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 ///#include "../headers/parser.h"
-#include "../headers/minishell.h"
+#include "../../headers/minishell.h"
 
 void ft_destroy_redirection(t_redirection *redis)
 {
@@ -79,6 +79,7 @@ void ft_destroy_ast(t_command_list *cmd_list)
 	t_pipe_line *current_pipe;
 	t_pipe_line *parent_pipe;
 
+	ft_putstr_fd(RED,1);
 	ft_putstr_fd("destroy ast\n",1);
 	parent_pipe = cmd_list->childs;
 	while(parent_pipe)

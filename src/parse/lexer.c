@@ -6,11 +6,11 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 14:50:06 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/29 15:01:09 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minishell.h"
+#include "../../headers/minishell.h"
 
 void	print_tokens(t_token *tokens_list)
 {

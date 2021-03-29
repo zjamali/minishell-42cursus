@@ -6,11 +6,11 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 12:23:22 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/29 15:01:41 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minishell.h"
+#include "../../headers/minishell.h"
 
 char *ft_remove_double_quotes(char *word,int *i,int *env)
 {

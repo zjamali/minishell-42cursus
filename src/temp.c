@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/27 16:58:45 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/28 13:22:04 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,29 +84,48 @@ void init_env(t_env **head, char **env)
 	}
 }
 
+void	ft_check_env_var(t_env **head, t_args *arg)
+{
+	t_env *temp;
+	
+
+	temp = *head;
+	while (arg != NULL)
+	{
+		if (arg->env_variable == 1)
+		{
+			temp = ft_search_in_list(head, arg->value + 1);
+			if (temp != NULL)
+				arg->value = temp->value;
+		}
+		arg = arg->next;
+	}
+}
+
 void ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
+	ft_check_env_var(head, cmd->args);
 	if (!(ft_strcmp(cmd->command, "echo")))
 		ft_echo(cmd->args);
 	if (!(ft_strcmp(cmd->command, "pwd")))
 		ft_pwd(head);
 	if (!(ft_strcmp(cmd->command, "env")))
 		ft_env(head);
+	if (!(ft_strcmp(cmd->command, "export")))
+		ft_export(head, cmd->args);
 	// if (!(ft_strcmp(cmd->command, "unset")))
 	// 	ft_unset(head);
 
 }
 
-int		ft_execute(t_command_list *cmd, char **env)
+
+int		ft_execute(t_command_list *cmd, t_env **head)
 {
 	char	*input;
 	int		fd;
 	char	*line;
-	t_env *head;
 
 	input = NULL;
-	head = NULL;
-	init_env(&head, env);
 	/*
 	ft_init(cmd_list);
 	t_simple_cmd *cmd_list = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
@@ -144,6 +163,6 @@ int		ft_execute(t_command_list *cmd, char **env)
 	show_command(cmd_list);
 	//ft_echo(cmd_list->args);
 	*/
-	ft_is_builtins(cmd->childs->child, &head);
+	ft_is_builtins(cmd->childs->child, head);
 	return (0);
 }

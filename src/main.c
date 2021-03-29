@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 16:59:13 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/28 13:43:54 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int main(int ac,char **av,char **env)
 {
 	t_token *tokens_list;
 	t_command_list *cmd;
+	t_env *head;
 	char *line;
 
 	//write(1,env[1],ft_strlen(env[1]));
@@ -37,9 +38,9 @@ int main(int ac,char **av,char **env)
 	line = NULL;
 	(void)ac;
 	(void)av;
-	(void)env;
 	int i = 0;
 	cmd = NULL;
+	init_env(&head, env);
 	while (i == 0)
 	{
 		//i++;
@@ -57,7 +58,8 @@ int main(int ac,char **av,char **env)
 			ft_expanding(&cmd->childs);
 			ft_print_cmd_list(cmd);
 		}
-		ft_execute(cmd, env);
+		if (cmd)
+			ft_execute(cmd, &head);
 		if (cmd)
 			ft_destroy_ast(cmd);
 		cmd = NULL;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/27 16:25:40 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/28 13:50:37 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char *ft_remove_double_quotes(char *word,int *i,int *env)
 	char *tmp;
 	char *tmp1;
 
-	expand = NULL;
+	expand = NULL;//ft_strdup("");
 	j = *i + 1; // escape first "
 
 	while (word[j] != '"')
@@ -39,7 +39,7 @@ char *ft_remove_double_quotes(char *word,int *i,int *env)
 			{
 				tmp = expand;
 				tmp1 = ft_substr(word,j,1);
-				expand = ft_strjoin(expand,tmp);
+				expand = ft_strjoin(expand,tmp1);
 				free(tmp);
 				free(tmp1);
 				j++;

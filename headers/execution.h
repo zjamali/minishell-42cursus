@@ -6,15 +6,15 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/27 16:28:03 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/28 12:39:08 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTION_H
 #define EXECUTION_H
+#include "minishell.h"
 #include "../src/libft/libft.h"
 #include "../headers/get_next_line.h"
-#include "../headers/minishell.h"
 #include <fcntl.h>
 #include <stdio.h>
 
@@ -33,7 +33,10 @@ void	ft_loop(t_args *args);
 void	ft_echo(t_args *args);
 void	ft_pwd(t_env **head);
 void	ft_env(t_env **head);
+void	ft_export(t_env **head, t_args *args);
 void	ft_is_builtins(t_simple_cmd *cmd, t_env **head);
 t_env	*ft_search_in_list(t_env **head, char *name);
+int		ft_execute(t_command_list *cmd, t_env **head);
+void	init_env(t_env **head, char **env);
 
 #endif

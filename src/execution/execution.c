@@ -1,30 +1,67 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   temp.c                                             :+:      :+:    :+:   */
+/*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/30 15:55:25 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/30 17:29:07 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 #include "../../headers/execution.h"
 
-void	exec(char *input, char **env)
+int		ft_count_args(t_args **args)
 {
-	char	**cmd;
+	int i;
+	t_args *temp;
+
+	i = 0;
+	temp = *args;
+	while (temp != NULL)
+	{
+		temp = temp->next;
+		i++;
+	}
+	return (i);
+}
+
+char **ft_args_to_arr(t_simple_cmd *cmd)
+{
+	t_args *temp;
+	char **arg;
+	int i;
+
+	temp = cmd->args;
+	i = ft_count_args(&temp) + 1;
+	arg = (char **)malloc(sizeof(char *) * i + 1);
+	i = 0;
+	arg[i++] = cmd->command;
+	while (temp != NULL)
+	{
+		ft_putendl_fd(temp->value, 1);
+		arg[i] = temp->value;
+		i++;
+		temp = temp->next;
+	}
+	arg[i] = NULL;
+	return (arg);
+}
+
+void	ft_exec(t_simple_cmd *cmd, t_env **head)
+{
 	int		pid;
 	int		status;
 	int		f_status;
 
-	cmd = ft_split(input, ' ');
 	if (!(pid = fork()))
 	{
+		ft_putendl_fd("--------------------", 1);
 		//child_process;
-		if (execve(cmd[0], cmd, env) == -1)
+		ft_putendl_fd(cmd->command, 1);
+		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
 			ft_putstr_fd("Command not found or permission denied.\n", 2);
 	}
 	else if (pid == -1)
@@ -103,20 +140,22 @@ void	ft_check_env_var(t_env **head, t_args *arg)
 	}
 }
 
-void ft_is_builtins(t_simple_cmd *cmd, t_env **head)
+int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
 	ft_check_env_var(head, cmd->args);
 	if (!(ft_strcmp(cmd->command, "echo")))
 		ft_echo(cmd->args);
-	if (!(ft_strcmp(cmd->command, "pwd")))
+	else if (!(ft_strcmp(cmd->command, "pwd")))
 		ft_pwd(head);
-	if (!(ft_strcmp(cmd->command, "env")))
+	else if (!(ft_strcmp(cmd->command, "env")))
 		ft_env(head);
-	if (!(ft_strcmp(cmd->command, "export")))
+	else if (!(ft_strcmp(cmd->command, "export")))
 		ft_export(head, cmd->args);
+	else
+		return (0);
 	// if (!(ft_strcmp(cmd->command, "unset")))
 	// 	ft_unset(head);
-
+	return (1);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 int		ft_execute(t_command_list *cmd, t_env **head)
@@ -164,6 +203,8 @@ int		ft_execute(t_command_list *cmd, t_env **head)
 	//ft_echo(cmd_list->args);
 	*/
 	ft_putstr_fd(BLUE,1);
-	ft_is_builtins(cmd->childs->child, head);
+	if (ft_is_builtins(cmd->childs->child, head))
+		return (0);
+	ft_exec(cmd->childs->child, head);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/29 19:45:05 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/30 16:49:29 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,28 +27,25 @@ int		ft_count_args(t_args **args)
 	return (i);
 }
 
-char **ft_args_to_arr(t_args **args)
+char **ft_args_to_arr(t_simple_cmd *cmd)
 {
 	t_args *temp;
 	char **arg;
 	int i;
 
-	temp = *args;
-	i = ft_count_args(&temp);
+	temp = cmd->args;
+	i = ft_count_args(&temp) + 1;
 	arg = (char **)malloc(sizeof(char *) * i + 1);
 	i = 0;
+	arg[i++] = cmd->command;
 	while (temp != NULL)
 	{
+		ft_putendl_fd(temp->value, 1);
 		arg[i] = temp->value;
 		i++;
 		temp = temp->next;
 	}
 	arg[i] = NULL;
-	// while (*arg != NULL)
-	// {
-	// 	ft_putendl_fd(*arg, 1);
-	// 	arg++;
-	// }	
 	return (arg);
 }
 
@@ -57,14 +54,13 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 	int		pid;
 	int		status;
 	int		f_status;
-	char 	**env;
-	
-	env = ft_list_to_arr(head);
+
 	if (!(pid = fork()))
 	{
+		ft_putendl_fd("--------------------", 1);
 		//child_process;
-		//ft_putendl_fd(cmd->command, 1);
-		if (execve(cmd->command, ft_args_to_arr(&cmd->args), env) == -1)
+		ft_putendl_fd(cmd->command, 1);
+		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
 			ft_putstr_fd("Command not found or permission denied.\n", 2);
 	}
 	else if (pid == -1)

@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   temp.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/29 15:26:29 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/30 15:55:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
+#include "../../headers/execution.h"
 
 void	exec(char *input, char **env)
 {
@@ -121,8 +122,8 @@ void ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 int		ft_execute(t_command_list *cmd, t_env **head)
 {
 	char	*input;
-	int		fd;
-	char	*line;
+	//int		fd;
+	//char	*line;
 
 	input = NULL;
 	/*

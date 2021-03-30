@@ -6,13 +6,14 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 15:33:56 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/30 17:12:04 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
+#include "../../headers/execution.h"
 
-char *ft_remove_double_quotes(char *word,int *i,int *env)
+char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 {
 	int j ;
 	char *expand;
@@ -61,21 +62,33 @@ char *ft_remove_double_quotes(char *word,int *i,int *env)
 	return expand;
 }
 
-int ft_remove_quote(char **string)
+char *get_env_value(char *env_variable,t_env **env)
+{
+	t_env *tmp;
+	
+	
+	tmp = ft_search_in_list(env,env_variable + 1);
+	if(tmp)
+		return ft_strdup(tmp->value);
+	else
+	{
+		return NULL;
+	}
+}
+
+void ft_remove_quote(char **string,t_env **env_list)
 {
 	char *word;
 	char *expanded;
 	int i;
 	int j;
 	int k;
-	int env;
 	char *tmp1;
 	int back_slash;
 	char *tmp;
 
 	word = *string;
 	i = 0;
-	env = 0;
 	k = 0;
 	expanded = NULL;
 	back_slash = 0;
@@ -114,7 +127,7 @@ int ft_remove_quote(char **string)
 		else if (word[i] == '"')
 		{
 			tmp1 = expanded;
-			tmp = ft_remove_double_quotes(word,&i,&env);
+			tmp = ft_remove_double_quotes(word,&i,env_list);
 			if (tmp)
 			{
 				expanded = ft_strjoin(expanded,tmp);
@@ -125,12 +138,14 @@ int ft_remove_quote(char **string)
 		else if (word[i] == '$')
 		{
 			tmp1 = expanded;
-			tmp = ft_substr(word,i,1);
-			expanded = ft_strjoin(expanded,tmp);
-			free(tmp1);
-			free(tmp);
-			i++;
-			env++;
+			tmp = get_env_value(word + i,env_list);
+			if (tmp)
+			{
+				expanded = ft_strjoin(expanded,tmp);
+				free(tmp1);
+				free(tmp);
+			}
+			i+= ft_strlen(word + i);
 		}
 		else
 		{
@@ -144,10 +159,9 @@ int ft_remove_quote(char **string)
 	}
 	free(word);
 	*string = expanded;
-	return env;
 }
 
-void ft_expande_simple_cmd(t_simple_cmd **cmd)
+void ft_expande_simple_cmd(t_simple_cmd **cmd,t_env **env)
 {
 	t_args *args;
 	t_redirection *redis;
@@ -156,42 +170,36 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd)
 	tmp = NULL;
 	redis = NULL;
 	if ((*cmd)->command)
-		(*cmd)->cmd_env = ft_remove_quote(&((*cmd)->command));
+		ft_remove_quote(&((*cmd)->command),env);
 	args = (*cmd)->args;
 	while (args)
 	{
-		args->env_variable = ft_remove_quote(&args->value);
+		ft_remove_quote(&args->value,env);
 		args = args->next;
 	}
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
-		redis->filename_env = ft_remove_quote(&redis->file_name);
+		ft_remove_quote(&redis->file_name,env);
 		redis = redis->next;
 	}
 }
 
-void ft_expanding(t_pipe_line **pipe_line)
+void ft_expanding(t_pipe_line *pipe_line,t_env **env)
 {
-	t_pipe_line *pipe;
 	t_simple_cmd *current_cmd;
 	t_simple_cmd *head_cmd;
 
 	//head_cmd = (*pipe_line)->child;
 	current_cmd = NULL;
-	pipe = *pipe_line;
 	head_cmd = NULL;
 	ft_putstr_fd(PURPLE,1);
-	while (pipe)
+	head_cmd = pipe_line->child;
+	while (head_cmd)
 	{
-		head_cmd = pipe->child;
-		while (head_cmd)
-		{
-			current_cmd = head_cmd;
-			ft_expande_simple_cmd(&current_cmd);
-			head_cmd = head_cmd->next;
-		}
-		pipe = pipe->next;
+		current_cmd = head_cmd;
+		ft_expande_simple_cmd(&current_cmd,env);
+		head_cmd = head_cmd->next;
 	}
 }
 

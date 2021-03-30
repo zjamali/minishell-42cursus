@@ -3,27 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/28 12:39:08 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/29 16:54:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTION_H
 #define EXECUTION_H
 #include "minishell.h"
-#include "../src/libft/libft.h"
-#include "../headers/get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
-
-typedef struct s_env
-{
-	char *name;
-	char *value;
-	struct s_env *next;
-}				t_env;
 
 t_env	*ft_create_node(char *name, char *value);
 void    ft_add_to_list(t_env **head, t_env *newnode);

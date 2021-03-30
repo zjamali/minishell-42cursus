@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/30 17:14:08 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/30 17:25:30 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ int main(int ac,char **av,char **env)
 		tokens_list = ft_lexer(line);
 		free(line);
 		cmd = ft_parser(tokens_list);
-		current_pipe_line = cmd->childs;
+		if (cmd)
+			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
 		{
 			ft_expanding(current_pipe_line,&head);

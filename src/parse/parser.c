@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 15:27:06 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/30 17:24:24 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -612,7 +612,6 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 	t_command_list *head;
 	t_pipe_line *current_pipeline;
 	int pipe_count;
-
 	pipe_count = 0;
 	head = init_cmd_list(); // create first pipeline
 	current_pipeline = NULL;
@@ -646,7 +645,6 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 t_command_list *ft_parser(t_token *tokens_list)
 {
 	t_command_list *command_list;
-
 	command_list = NULL;
 	write(1,RED,ft_strlen(RED));
 	if (!ft_check_syntax(tokens_list))

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/29 15:12:14 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/29 19:18:41 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,4 +92,39 @@ void	ft_replaceit(t_env **head, char *name, char *value)
 	temp = ft_search_in_list(head, name);
 	if (temp != NULL)
 		temp->value = value;
+}
+
+int		ft_count_list(t_env **head)
+{
+	int i;
+	t_env *temp;
+
+	i = 0;
+	temp = *head;
+	while (temp != NULL)
+	{
+		temp = temp->next;
+		i++;
+	}
+	return (i);
+}
+
+char **ft_list_to_arr(t_env **head)
+{
+	t_env *temp;
+	char **env;
+	int i;
+
+	temp = *head;
+	i = ft_count_list(head);
+	env = (char **)malloc(sizeof(char *) * i + 1);
+	i = 0;
+	while (temp != NULL)
+	{
+		env[i] = ft_strjoin(ft_strjoin(temp->name, "="), temp->value);
+		i++;
+		temp = temp->next;
+	}
+	env[i] = NULL;
+	return (env);
 }

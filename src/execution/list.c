@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/29 19:18:41 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/30 20:03:42 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,4 +127,30 @@ char **ft_list_to_arr(t_env **head)
 	}
 	env[i] = NULL;
 	return (env);
+}
+
+t_env	*ft_sort_lsit(t_env **head)
+{
+	t_env *prev;
+	t_env *temp;
+	int i, j;
+	
+	i = ft_count_list(head);
+	temp = *head;
+	j = 0;	
+	while (j < i)
+	{
+		prev = temp;
+		while(temp->next != NULL)
+		{
+			if(ft_strcmp(temp->name,temp->next->name) > 0)
+			{
+				prev->next = temp->next;
+				temp->next = prev;
+			}
+			temp = temp->next;
+		}
+		i++;
+	}
+	return (temp);
 }

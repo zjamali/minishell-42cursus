@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/01 18:10:38 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/01 18:32:53 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,8 @@ char *get_env_value(char *env_variable,t_env **env,int inside_dq)
 	{
 		while (env_variable[j] && env_variable[j] != ' ')
 			j++;
-		
 		str = ft_substr(env_variable,1,j - 2);
-		ft_putstr_fd(str,1);
+		//ft_putstr_fd(str,1);
 	}
 	
 	tmp = ft_search_in_list(env,str);
@@ -64,20 +63,51 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 		{
 			if (word[j] == '$')
 			{
+				//if (word[j + 1] == '$')
+				//	j++;
+				//else
+				//{
+				//	tmp = expand;
+				//	//tmp1 = ft_substr(word,j,1);
+				//	tmp1 = get_env_value(word + j,env,1);
+				//	if (tmp1)
+				//	{
+				//		expand = ft_strjoin(expand,tmp1);
+				//		free(tmp);
+				//		free(tmp1);
+				//	}
+				//	while (word[j] && word[j] != ' ')
+				//		j++;
+				//}
 				if (word[j + 1] == '$')
-					j++;
+				{
+					tmp1 = expand;
+					tmp = ft_substr(word,j,2);
+					expand = ft_strjoin(expand,tmp);
+					free(tmp1);
+					free(tmp);
+					j+= 2;
+				}
 				else
 				{
-					tmp = expand;
-					//tmp1 = ft_substr(word,j,1);
-					tmp1 = get_env_value(word + j,env,1);
-					if (tmp1)
+					tmp1 = expand;
+					tmp = get_env_value(word + j,env,1);
+					if (tmp)
 					{
-						expand = ft_strjoin(expand,tmp1);
-						free(tmp);
+						expand = ft_strjoin(expand,tmp);
 						free(tmp1);
+						free(tmp);
+						while (word[j] && word[j] != ' ')
+							j++;
 					}
-					while (word[j] && word[j] != ' ')
+					else if (word[j - 1] != '$')
+					{
+						expand = ft_strjoin(expand,word + j);
+						free(tmp1);
+						free(tmp);
+						j++;
+					}
+					else 
 						j++;
 				}
 			}

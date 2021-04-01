@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/01 18:10:38 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/01 18:32:53 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,16 @@ char *get_env_value(char *env_variable,t_env **env,int inside_dq)
 	j = 0;
 	if (inside_dq == 1)
 	{
-		while (env_variable[j] && env_variable[j] != ' ')
+		while (env_variable[j] && env_variable[j] != ' ' && env_variable[j] != '"')
 			j++;
-		
-		str = ft_substr(env_variable,1,j - 2);
-		ft_putstr_fd(str,1);
+		str = ft_substr(env_variable,1,j - 1);
 	}
 	
 	tmp = ft_search_in_list(env,str);
 	if(tmp)
 		return ft_strdup(tmp->value);
 	else
-	{
 		return NULL;
-	}
 }
 
 char *ft_remove_double_quotes(char *word,int *i,t_env **env)
@@ -65,19 +61,42 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 			if (word[j] == '$')
 			{
 				if (word[j + 1] == '$')
-					j++;
-				else
 				{
-					tmp = expand;
-					//tmp1 = ft_substr(word,j,1);
-					tmp1 = get_env_value(word + j,env,1);
-					if (tmp1)
+					tmp1 = expand;
+					tmp = ft_substr(word,j,2);
+					expand = ft_strjoin(expand,tmp);
+					free(tmp1);
+					free(tmp);
+					j+= 2;
+				}
+				else 
+				{
+					tmp1 = expand;
+					tmp = get_env_value(word + j,env,1);
+					if (tmp)
 					{
-						expand = ft_strjoin(expand,tmp1);
-						free(tmp);
+						expand = ft_strjoin(expand,tmp);
 						free(tmp1);
+						free(tmp);
+						while (word[j] && word[j] != ' ' && word[j] != '"')
+							j++;
 					}
-					while (word[j] && word[j] != ' ')
+					else if (word[j - 1] != '$')
+					{
+						tmp1 = expand;
+						tmp = ft_substr(word,j,1);
+						expand = ft_strjoin(expand,tmp);
+						ft_putstr_fd(expand,1);
+						free(tmp1);
+						free(tmp);
+						j++;
+					}
+					else if (tmp == NULL)
+					{
+						while (word[j] && word[j] != ' ' && word[j] != '"')
+							j++;
+					}
+					else
 						j++;
 				}
 			}
@@ -94,6 +113,7 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 	}
 	j++; // last "
 	*i = j;
+	//ft_putstr_fd(expand,1);
 	return expand;
 }
 
@@ -178,15 +198,23 @@ void ft_remove_quote(char **string,t_env **env_list)
 					free(tmp);
 					i+= ft_strlen(word + i);
 				}
-				else if (word[i - 1] != '$')
+				else if (word[i - 1] != '$') 
 				{
-					expanded = ft_strjoin(expanded,word + i);
-					free(tmp1);
-					free(tmp);
+					if (word[i + 1] != '"')
+					{
+						tmp1 = expanded;
+						tmp = ft_substr(word,i,1);
+						expanded = ft_strjoin(expanded,tmp);
+						free(tmp1);
+						free(tmp);
+					}
 					i++;
-			
 				}
-				else 
+				else if (tmp == NULL)
+				{
+					i+= ft_strlen(word + i);
+				}
+				else
 					i++;
 				//else
 				//{

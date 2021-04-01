@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/30 19:04:18 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/01 18:10:38 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,14 @@ void ft_remove_quote(char **string,t_env **env_list)
 					free(tmp1);
 					free(tmp);
 					i+= ft_strlen(word + i);
+				}
+				else if (word[i - 1] != '$')
+				{
+					expanded = ft_strjoin(expanded,word + i);
+					free(tmp1);
+					free(tmp);
+					i++;
+			
 				}
 				else 
 					i++;

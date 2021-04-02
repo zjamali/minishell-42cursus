@@ -7,6 +7,7 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
 /*   Updated: 2021/04/02 17:02:46 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/02 16:41:45 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +52,7 @@ int main(int ac,char **av,char **env)
 		free(line);
 		cmd = ft_parser(tokens_list);
 		if (cmd)
-		{
 			current_pipe_line = cmd->childs;
-		}
 		while (current_pipe_line)
 		{
 			ft_expanding(current_pipe_line,&head);

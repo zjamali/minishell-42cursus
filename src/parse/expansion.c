@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/01 18:32:53 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/02 14:14:31 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 					{
 						if (word[j + 1] != '"' && word[j + 1] != ' ')
 						{
-								while (word[j] && word[j] != ' ' && word[j] != '"')
-									j++;
+							while (word[j] && word[j] != ' ' && word[j] != '"')
+								j++;
 						}
 						else
 						{
@@ -100,7 +100,22 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 						}
 					}
 					else
-						j++;
+					{
+						if (word[j + 1] == '"' || word[j + 1] == ' ')
+						{
+							tmp = expand;
+							tmp1 = ft_substr(word,j,1);
+							expand = ft_strjoin(expand,tmp1);
+							free(tmp);
+							free(tmp1);
+							j++;
+						}
+						else
+						{
+							while (word[j] && word[j] != ' ' && word[j] != '"')
+								j++;
+						}
+					}
 				}
 			}
 			else
@@ -218,20 +233,22 @@ void ft_remove_quote(char **string,t_env **env_list)
 					}
 					i++;
 				}
-				//else if (tmp == NULL)
-				//{
-				//	i+= ft_strlen(word + i);
-				//}
 				else
-					i++;
-				//else
-				//{
-				//	expanded = ft_strjoin(expanded,word + i);
-				//	free(tmp1);
-				//	free(tmp);
-				//	i++;
-				//}
-				
+				{
+					if (!word[i + 1])
+					{
+						tmp = expanded;
+						tmp1 = ft_substr(word,i,1);
+						expanded = ft_strjoin(expanded,tmp1);
+						free(tmp);
+						free(tmp1);
+						i++;
+					}
+					else
+					{
+						i+= ft_strlen(word + i);
+					}
+				}
 			}
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/30 19:54:56 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/31 19:15:25 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,5 @@ int		ft_execute(t_command_list *cmd, t_env **head)
 		return (0);
 	ft_chech_path(cmd->childs->child, head);
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
-	ft_sort_lsit(head);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/29 15:10:07 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/31 19:21:44 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,24 @@ void ft_env(t_env **head)
 void ft_export(t_env **head, t_args *args)
 {
 	char **var;
+	t_env *sort_list;
 	t_env *newnode;
 	
+	if (args == NULL)
+	{
+		sort_list = ft_sort_list(head);
+		newnode = sort_list;
+		while (newnode != NULL)
+		{
+			ft_putstr_fd("declare -x ", 1);
+			ft_putstr_fd(newnode->name, 1);
+			ft_putstr_fd("=\"", 1);
+			ft_putstr_fd(newnode->value, 1);
+			ft_putendl_fd("\"",1);
+			newnode = newnode->next;
+		}
+		return ;
+	}
 	while (args != NULL)
 	{
 		var = ft_split(args->value, '=');

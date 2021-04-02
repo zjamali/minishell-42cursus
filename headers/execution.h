@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/30 19:54:46 by mbari            ###   ########.fr       */
+/*   Updated: 2021/03/31 19:15:03 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,5 @@ int		ft_execute(t_command_list *cmd, t_env **head);
 void	init_env(t_env **head, char **env);
 int		ft_count_list(t_env **head);
 char	**ft_list_to_arr(t_env **head);
-t_env	*ft_sort_lsit(t_env **head);
+t_env	*ft_sort_list(t_env **head);
 #endif

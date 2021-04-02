@@ -1,17 +1,29 @@
 NAME= minishell
 
-SRC=  src/main.c src/get_next_line.c src/lexer.c src/parser.c 
+SRC_EXECUTE= src/execution/builtins.c  src/execution/execution.c src/execution/list.c
 
-INC= headers/get_next_line.h headers/minishell.h
-OBJ= $(SRC:.c=.o)
+SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/parser.c src/parse/expansion.c
 
-CFLAGS=  -Wall -Wextra -Werror
+SRC_MAIN= src/main.c 
 
-libft:
-	make -sC src/libft/
+LIBFT= src/libft/libft.a
 
+# *****     flags     ***** #
+
+COM= gcc
+CFLAGE= -Wall -Wextra -Werror
 
 all: libft $(NAME)
 
+libft:
+	@make -sC src/libft/
 $(NAME):
-	gcc $(CFLAGS) $(SRC) src/libft/libft.a
+	@echo "         Made by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
+	@echo "███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     "
+	@echo "████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║     "
+	@echo "██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║     "
+	@echo "██║╚██╔╝██║██║██║╚██╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║     "
+	@echo "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗"
+	@echo "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝"
+	@echo "Compilation of minishell:  \033[1;32mOK\033[m"
+	@$(COM) $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT)

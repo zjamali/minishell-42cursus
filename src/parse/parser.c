@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/30 17:24:24 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/02 15:27:17 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -466,7 +466,7 @@ t_redirection *ft_create_redirection(t_token **tokens,int index)
 	else if ((*tokens)->type == LESS)
 		redirection->type = RE_LESS;
 	(*tokens) = (*tokens)->next;
-	redirection->file_name = (*tokens)->value;
+	redirection->file_name = ft_strdup((*tokens)->value);
 	(*tokens) = (*tokens)->next;
 	return redirection;
 }
@@ -478,6 +478,7 @@ t_redirection *ft_insert_redirection(t_redirection *redirection,t_token **tokens
 	tmp = NULL;
 	if (redirection == NULL)
 	{
+		
 		redirection = ft_create_redirection(tokens,index);
 	}
 	else

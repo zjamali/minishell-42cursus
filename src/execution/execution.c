@@ -6,11 +6,12 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/31 19:15:25 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/02 17:04:09 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
+#include "../../headers/execution.h"
 
 int		ft_count_args(t_args **args)
 {
@@ -165,11 +166,11 @@ void	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 		ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-int		ft_execute(t_command_list *cmd, t_env **head)
+int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
 	char	*input;
-	int		fd;
-	char	*line;
+	//int		fd;
+	//char	*line;
 
 	input = NULL;
 	/*
@@ -210,9 +211,9 @@ int		ft_execute(t_command_list *cmd, t_env **head)
 	//ft_echo(cmd_list->args);
 	*/
 	ft_putstr_fd(BLUE,1);
-	if (ft_is_builtins(cmd->childs->child, head))
+	if (ft_is_builtins(cmd->child, head))
 		return (0);
-	ft_chech_path(cmd->childs->child, head);
+	ft_chech_path(cmd->child, head);
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	return (0);
 }

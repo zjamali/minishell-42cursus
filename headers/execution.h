@@ -6,24 +6,13 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/31 19:15:03 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/02 17:04:36 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTION_H
 #define EXECUTION_H
 #include "minishell.h"
-#include "../src/libft/libft.h"
-#include "../headers/get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
-
-typedef struct s_env
-{
-	char *name;
-	char *value;
-	struct s_env *next;
-}				t_env;
 
 t_env	*ft_create_node(char *name, char *value);
 void    ft_add_to_list(t_env **head, t_env *newnode);
@@ -36,7 +25,7 @@ void	ft_env(t_env **head);
 void	ft_export(t_env **head, t_args *args);
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head);
 t_env	*ft_search_in_list(t_env **head, char *name);
-int		ft_execute(t_command_list *cmd, t_env **head);
+int		ft_execute(t_pipe_line *cmd, t_env **head);
 void	init_env(t_env **head, char **env);
 int		ft_count_list(t_env **head);
 char	**ft_list_to_arr(t_env **head);

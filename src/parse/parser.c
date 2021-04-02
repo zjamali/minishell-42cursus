@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 15:27:06 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/02 15:27:17 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -466,7 +466,7 @@ t_redirection *ft_create_redirection(t_token **tokens,int index)
 	else if ((*tokens)->type == LESS)
 		redirection->type = RE_LESS;
 	(*tokens) = (*tokens)->next;
-	redirection->file_name = (*tokens)->value;
+	redirection->file_name = ft_strdup((*tokens)->value);
 	(*tokens) = (*tokens)->next;
 	return redirection;
 }
@@ -478,6 +478,7 @@ t_redirection *ft_insert_redirection(t_redirection *redirection,t_token **tokens
 	tmp = NULL;
 	if (redirection == NULL)
 	{
+		
 		redirection = ft_create_redirection(tokens,index);
 	}
 	else
@@ -612,7 +613,6 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 	t_command_list *head;
 	t_pipe_line *current_pipeline;
 	int pipe_count;
-
 	pipe_count = 0;
 	head = init_cmd_list(); // create first pipeline
 	current_pipeline = NULL;
@@ -646,7 +646,6 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 t_command_list *ft_parser(t_token *tokens_list)
 {
 	t_command_list *command_list;
-
 	command_list = NULL;
 	write(1,RED,ft_strlen(RED));
 	if (!ft_check_syntax(tokens_list))

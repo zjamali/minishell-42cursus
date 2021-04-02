@@ -6,11 +6,13 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 15:14:24 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 15:14:26 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/03/30 17:02:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../headers/get_next_line.h"
+#include "stdlib.h"
+#include "string.h"
+#include <unistd.h>
 
 size_t ft_strlen(char *str)
 {
@@ -50,7 +52,7 @@ char *ft_substrr(char *str,int start,int end)
 	return sub;
 }
 
-char *ft_strjoin(char *str1, char *str2)
+char *ft_strjoin_l(char *str1, char *str2)
 {
 	if (str1 == NULL)
 		return ft_strdup(str2);
@@ -105,7 +107,7 @@ int get_next_line(char **line)
 	{
 		buff[r] = '\0';
 		tmp = str;
-		str = ft_strjoin(str,buff);
+		str = ft_strjoin_l(str,buff);
 		free(tmp);
 		if (ft_strchr(str,'\n'))
 			break;

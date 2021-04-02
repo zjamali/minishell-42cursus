@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/31 19:24:56 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/02 17:23:25 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ t_env *ft_copy_list(t_env **head)
 	copy = NULL;
 	if (*head == NULL)
 		return (NULL);
-
 	while (temp != NULL)
 	{
 		newnode = ft_create_node(temp->name, temp->value);
@@ -180,14 +179,14 @@ t_env	*ft_sort_list(t_env **head)
 					ft_strcpy(temp->next->value,tmp);
 				*/
 				tmp = ft_strdup(temp->next->name);
-				free(temp->next->name);
+				//free(temp->next->name);
 				temp->next->name = ft_strdup(temp->name);
-				free(temp->name);
+				//free(temp->name);
 				temp->name = tmp;
 				tmp = ft_strdup(temp->next->value);
-				free(temp->next->value);
+				//free(temp->next->value);
 				temp->next->value = ft_strdup(temp->value);
-				free(temp->value);
+				//free(temp->value);
 				temp->value = tmp;
 			}
 			temp = temp->next;
@@ -196,47 +195,3 @@ t_env	*ft_sort_list(t_env **head)
 	}
 	return (sort_list);
 }
-
-/*
-t_env	*ft_sort_lsit(t_env **head)
-{
-	t_env *prev;
-	t_env *temp;
-	char	*tmp;
-	int i, j;
-	
-	
-	i = ft_count_list(head);
-	//ft_putnbr_fd(i, 1);
-	//temp = *head;
-	j = 0;	
-	while (j < i)
-	{
-		prev = *head;
-		temp = prev->next;
-		while (temp != NULL)
-		{
-			if (ft_strcmp(prev->name, temp->name) > 0)
-			{
-				t_env *swap = temp->next;
-				temp->next = prev;
-				prev->next = swap;
-			}
-			if (j == 0)
-				*head = temp;
-			prev = temp;
-			temp = temp->next;
-		}
-		j++;
-	}
-	temp = *head;
-	while(temp != NULL)
-	{
-		ft_putstr_fd(temp->name, 1);
-		ft_putchar_fd('=', 1);
-		ft_putendl_fd(temp->value, 1);
-		temp = temp->next;
-	}
-	return (temp);
-}
-*/

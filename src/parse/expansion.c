@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/02 14:14:31 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/02 15:27:38 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,7 @@ void ft_remove_quote(char **string,t_env **env_list)
 	j = 0;
 	tmp1 = NULL;
 	tmp = NULL;
+	
 	while (word[i])
 	{
 		if (word[i] == '\\')

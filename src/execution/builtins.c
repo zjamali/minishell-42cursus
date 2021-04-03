@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/31 19:21:44 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/03 15:58:51 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void ft_loop(t_args *args)
 
 void ft_echo(t_args *args)
 {
+	if (args ==  NULL)
+		return ;
 	if (!(ft_strcmp(args->value, "-n")))
 	{
 		while ((ft_strcmp(args->value, "-n") == 0))
@@ -97,4 +99,53 @@ void ft_export(t_env **head, t_args *args)
 			args = args->next;
 		}
 	}
+}
+
+void ft_unset(t_args *args, t_env **head)
+{
+	while (args != NULL)
+	{
+		ft_delete_from_list(head, args->value);
+		args = args->next;
+	}
+}
+
+void ft_cd(t_args *args, t_env **head)
+{
+	char *buff;
+	char *dir;
+	t_env *temp;
+	
+	buff = NULL;
+	if (args == NULL)
+	{
+		temp = ft_search_in_list(head, "HOME");
+		dir = temp->value;
+	}
+	else if (!(ft_strcmp(args->value, "-")))
+	{
+		temp = ft_search_in_list(head, "OLDPWD");
+		dir = temp->value;
+	}
+	else
+		dir = args->value;
+	if (chdir(dir) == -1)
+	{
+		ft_putstr_fd("minishell: cd: ",2);
+		ft_putstr_fd(dir, 2);
+		ft_putendl_fd(": No such file or directory", 2);
+	}
+	temp = ft_search_in_list(head, "PWD");
+	ft_replaceit(head, "OLDPWD", temp->value);
+	ft_replaceit(head, "PWD", getcwd(buff, 100));
+}
+
+void ft_exit(t_args *args)
+{
+	if (args->next != NULL)
+	{
+		ft_putendl_fd("minishell: exit: too many arguments",2);
+		return ;
+	}
+	exit(ft_atoi(args->value));
 }

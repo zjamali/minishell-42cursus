@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/02 17:04:09 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/03 15:56:18 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,16 +145,20 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	ft_check_env_var(head, cmd->args);
 	if (!(ft_strcmp(cmd->command, "echo")))
 		ft_echo(cmd->args);
+	else if (!(ft_strcmp(cmd->command, "cd")))
+		ft_cd(cmd->args, head);
 	else if (!(ft_strcmp(cmd->command, "pwd")))
 		ft_pwd(head);
 	else if (!(ft_strcmp(cmd->command, "env")))
 		ft_env(head);
 	else if (!(ft_strcmp(cmd->command, "export")))
 		ft_export(head, cmd->args);
+	else if (!(ft_strcmp(cmd->command, "unset")))
+		ft_unset(cmd->args, head);
+	else if (!(ft_strcmp(cmd->command, "exit")))
+		ft_exit(cmd->args);
 	else
 		return (0);
-	// if (!(ft_strcmp(cmd->command, "unset")))
-	// 	ft_unset(head);
 	return (1);
 }
 

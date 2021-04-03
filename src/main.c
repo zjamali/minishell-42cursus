@@ -3,9 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
+/*   Updated: 2021/04/02 17:02:46 by mbari            ###   ########.fr       */
 /*   Updated: 2021/04/02 16:41:45 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -56,7 +57,7 @@ int main(int ac,char **av,char **env)
 		{
 			ft_expanding(current_pipe_line,&head);
 			ft_print_pipeline_cmd(current_pipe_line);
-			//ft_execute(current_pipe_line, &head);
+			ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)

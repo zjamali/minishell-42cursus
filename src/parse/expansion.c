@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/02 15:27:38 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/03 18:47:58 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,9 +217,9 @@ void ft_remove_quote(char **string,t_env **env_list)
 					free(tmp);
 					i+= ft_strlen(word + i);
 				}
-				else if (word[i - 1] != '$') 
+				else if (word[i - 1] != '$')
 				{
-					if (word[i + 1] != '"')
+					if (word[i + 1] != '"' && word[i + 1] != '\'')
 					{
 						if (word[i + 1])
 							i+= ft_strlen(word + i);
@@ -236,19 +236,23 @@ void ft_remove_quote(char **string,t_env **env_list)
 				}
 				else
 				{
-					if (!word[i + 1])
+					if (word[i + 1] != '"' && word[i + 1] != '\'')
 					{
-						tmp = expanded;
-						tmp1 = ft_substr(word,i,1);
-						expanded = ft_strjoin(expanded,tmp1);
-						free(tmp);
-						free(tmp1);
-						i++;
+						if (!word[i + 1])
+						{
+							tmp = expanded;
+							tmp1 = ft_substr(word,i,1);
+							expanded = ft_strjoin(expanded,tmp1);
+							free(tmp);
+							free(tmp1);
+							i++;
+						}
+						else
+						{
+							i+= ft_strlen(word + i);
+						}
 					}
-					else
-					{
-						i+= ft_strlen(word + i);
-					}
+					i++;
 				}
 			}
 		}

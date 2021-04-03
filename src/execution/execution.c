@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/30 17:29:07 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/03 15:56:18 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,20 +145,32 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	ft_check_env_var(head, cmd->args);
 	if (!(ft_strcmp(cmd->command, "echo")))
 		ft_echo(cmd->args);
+	else if (!(ft_strcmp(cmd->command, "cd")))
+		ft_cd(cmd->args, head);
 	else if (!(ft_strcmp(cmd->command, "pwd")))
 		ft_pwd(head);
 	else if (!(ft_strcmp(cmd->command, "env")))
 		ft_env(head);
 	else if (!(ft_strcmp(cmd->command, "export")))
 		ft_export(head, cmd->args);
+	else if (!(ft_strcmp(cmd->command, "unset")))
+		ft_unset(cmd->args, head);
+	else if (!(ft_strcmp(cmd->command, "exit")))
+		ft_exit(cmd->args);
 	else
 		return (0);
-	// if (!(ft_strcmp(cmd->command, "unset")))
-	// 	ft_unset(head);
 	return (1);
 }
+
+void	ft_chech_path(t_simple_cmd *cmd, t_env **head)
+{
+	if (cmd->command[0] == '/' || cmd->command[0] == '.')
+		ft_exec(cmd, head);
+	else
+		ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
+}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-int		ft_execute(t_command_list *cmd, t_env **head)
+int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
 	char	*input;
 	//int		fd;
@@ -203,8 +215,9 @@ int		ft_execute(t_command_list *cmd, t_env **head)
 	//ft_echo(cmd_list->args);
 	*/
 	ft_putstr_fd(BLUE,1);
-	if (ft_is_builtins(cmd->childs->child, head))
+	if (ft_is_builtins(cmd->child, head))
 		return (0);
-	ft_exec(cmd->childs->child, head);
+	ft_chech_path(cmd->child, head);
+	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	return (0);
 }

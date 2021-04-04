@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/04 16:24:57 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/04 19:59:02 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 	t_env *temp;
 	char **path = NULL;
 	char *full_path;
-	struct stat buf;
+	struct stat *buf;
 	
 	if (cmd->command[0] == '/' || cmd->command[0] == '.')
 		ft_exec(cmd, head);
@@ -179,19 +179,20 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 		path = ft_split(temp->value, ':');
 		while (*path != NULL)
 		{
+			buf = malloc(sizeof(struct stat));
 			full_path = ft_strjoin(*path, ft_strjoin("/", cmd->command));
-			stat(full_path, &buf);
+			stat(full_path, buf);
 			//printf("%d|%d|%d\n", buf.st_mode, buf.st_mode & S_IXUSR, buf.st_mode & S_IFREG);
 			// ft_putnbr_fd(buf.st_mode ^ S_IXUSR,1);
 			// ft_putnbr_fd(buf.st_mode ^ S_IFREG,1);
-			if ((buf.st_mode & S_IXUSR) > 0 && (buf.st_mode & S_IFREG) > 0)
+			if ((buf->st_mode & S_IXUSR) > 0 && (buf->st_mode & S_IFREG) > 0)
 			{
 				cmd->command = full_path;
 				ft_exec(cmd, head);
 				ft_putendl_fd(full_path, 1);
 				return (0);
 			}
-			buf.st_mode = 0;
+			free(buf);
 			path++;
 		}
 		//zsh: command not found: ubadsia

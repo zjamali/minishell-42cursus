@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/03 15:56:18 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/04 16:24:57 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,10 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 		//child_process;
 		ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
-			ft_putstr_fd("Command not found or permission denied.\n", 2);
+			ft_putendl_fd(strerror(errno), 2);
+			
+			
+			//ft_putstr_fd("Command not found or permission denied.\n", 2);
 	}
 	else if (pid == -1)
 	{
@@ -98,7 +101,7 @@ void	do_backups(int flag)
 		if (flag == 3)
 		{
 			// reset the standars if the flags == 3
-			dup2(stdin, 0);
+			dup2(stdin, 1);
 			dup2(stdou, 0);
 			dup2(stderr, 0);
 		}
@@ -122,57 +125,95 @@ void init_env(t_env **head, char **env)
 	}
 }
 
-void	ft_check_env_var(t_env **head, t_args *arg)
-{
-	t_env *temp;
+// void	ft_check_env_var(t_env **head, t_args *arg)
+// {
+// 	t_env *temp;
 	
 
-	temp = *head;
-	while (arg != NULL)
-	{
-		if (arg->env_variable == 1)
-		{
-			temp = ft_search_in_list(head, arg->value + 1);
-			if (temp != NULL)
-				arg->value = temp->value;
-		}
-		arg = arg->next;
-	}
-}
+// 	temp = *head;
+// 	while (arg != NULL)
+// 	{
+// 		if (arg->env_variable == 1)
+// 		{
+// 			temp = ft_search_in_list(head, arg->value + 1);
+// 			if (temp != NULL)
+// 				arg->value = temp->value;
+// 		}
+// 		arg = arg->next;
+// 	}
+// }
 
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
-	ft_check_env_var(head, cmd->args);
+	//ft_check_env_var(head, cmd->args);
 	if (!(ft_strcmp(cmd->command, "echo")))
-		ft_echo(cmd->args);
+		return (ft_echo(cmd->args));
 	else if (!(ft_strcmp(cmd->command, "cd")))
-		ft_cd(cmd->args, head);
+		return (ft_cd(cmd->args, head));
 	else if (!(ft_strcmp(cmd->command, "pwd")))
-		ft_pwd(head);
+		return (ft_pwd(head));
 	else if (!(ft_strcmp(cmd->command, "env")))
-		ft_env(head);
+		return (ft_env(head));
 	else if (!(ft_strcmp(cmd->command, "export")))
-		ft_export(head, cmd->args);
+		return (ft_export(head, cmd->args));
 	else if (!(ft_strcmp(cmd->command, "unset")))
-		ft_unset(cmd->args, head);
+		return (ft_unset(cmd->args, head));
 	else if (!(ft_strcmp(cmd->command, "exit")))
-		ft_exit(cmd->args);
+		return (ft_exit(cmd->args));
 	else
-		return (0);
-	return (1);
+		return (77);
 }
 
-void	ft_chech_path(t_simple_cmd *cmd, t_env **head)
+int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 {
+	t_env *temp;
+	char **path = NULL;
+	char *full_path;
+	struct stat buf;
+	
 	if (cmd->command[0] == '/' || cmd->command[0] == '.')
 		ft_exec(cmd, head);
 	else
-		ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
+	{
+		temp = ft_search_in_list(head, "PATH");
+		path = ft_split(temp->value, ':');
+		while (*path != NULL)
+		{
+			full_path = ft_strjoin(*path, ft_strjoin("/", cmd->command));
+			stat(full_path, &buf);
+			//printf("%d|%d|%d\n", buf.st_mode, buf.st_mode & S_IXUSR, buf.st_mode & S_IFREG);
+			// ft_putnbr_fd(buf.st_mode ^ S_IXUSR,1);
+			// ft_putnbr_fd(buf.st_mode ^ S_IFREG,1);
+			if ((buf.st_mode & S_IXUSR) > 0 && (buf.st_mode & S_IFREG) > 0)
+			{
+				cmd->command = full_path;
+				ft_exec(cmd, head);
+				ft_putendl_fd(full_path, 1);
+				return (0);
+			}
+			buf.st_mode = 0;
+			path++;
+		}
+		//zsh: command not found: ubadsia
+		return(ft_put_err(cmd->command, ":command not found", 127));
+	}
+	return (0);
+		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
+}
+
+int ft_put_err(char *input, char *message, int ret)
+{
+	ft_putstr_fd("minishell: ", 2);
+	if (input != NULL)
+		ft_putstr_fd(input, 2);
+	ft_putendl_fd(message, 2);
+	return (ret);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
 	char	*input;
+	int		ret;
 	//int		fd;
 	//char	*line;
 
@@ -213,11 +254,13 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	show_prompt();
 	show_command(cmd_list);
 	//ft_echo(cmd_list->args);
+	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	*/
 	ft_putstr_fd(BLUE,1);
-	if (ft_is_builtins(cmd->child, head))
-		return (0);
-	ft_chech_path(cmd->child, head);
-	//ft_putnbr_fd(getpid(), 1); //show the main process id
-	return (0);
+	if (cmd->child->command == NULL)
+		return (ft_put_err("\0", ":command not found", 127));
+	if ((ret = ft_is_builtins(cmd->child, head)) != 77)
+		return (ret);
+	ret = ft_chech_path(cmd->child, head);
+	return (ret);
 }

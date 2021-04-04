@@ -6,27 +6,33 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/03 15:58:51 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/04 19:34:27 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/execution.h"
 
-void ft_loop(t_args *args)
+void	 ft_loop(t_args *args)
 {
 	while (args != NULL)
 	{
-		ft_putstr_fd(args->value, 1);
+		if (args->value != NULL)
+			ft_putstr_fd(args->value, 1);
+		else
+			ft_putchar_fd(' ', 1);
 		if (args->next != NULL)
 			ft_putchar_fd(' ', 1);
 		args = args->next;
 	}
 }
 
-void ft_echo(t_args *args)
+int	 ft_echo(t_args *args)
 {
-	if (args ==  NULL)
-		return ;
+	if (args->value ==  NULL || args == NULL)
+	{
+		ft_putchar_fd('\n', 1);
+		return (0);
+	}
 	if (!(ft_strcmp(args->value, "-n")))
 	{
 		while ((ft_strcmp(args->value, "-n") == 0))
@@ -38,18 +44,19 @@ void ft_echo(t_args *args)
 		ft_loop(args);
 		write(1, "\n", 1);
 	}
-	
+	return (0);
 }
 
-void ft_pwd(t_env **head)
+int	 ft_pwd(t_env **head)
 {
 	t_env *pwd;
 
 	pwd = ft_search_in_list(head, "PWD");
 	ft_putendl_fd(pwd->value, 1);
+	return (0);
 }
 
-void ft_env(t_env **head)
+int	 ft_env(t_env **head)
 {
 	t_env *temp;
 
@@ -61,14 +68,17 @@ void ft_env(t_env **head)
 		ft_putendl_fd(temp->value, 1);
 		temp = temp->next;
 	}
+	return (0);
 }
 
-void ft_export(t_env **head, t_args *args)
+int	 ft_export(t_env **head, t_args *args)
 {
-	char **var;
+	char **split;
 	t_env *sort_list;
 	t_env *newnode;
+	int join;
 	
+	join = NO;
 	if (args == NULL)
 	{
 		sort_list = ft_sort_list(head);
@@ -77,40 +87,54 @@ void ft_export(t_env **head, t_args *args)
 		{
 			ft_putstr_fd("declare -x ", 1);
 			ft_putstr_fd(newnode->name, 1);
-			ft_putstr_fd("=\"", 1);
-			ft_putstr_fd(newnode->value, 1);
-			ft_putendl_fd("\"",1);
+			if (newnode->value != NULL)
+			{
+				ft_putstr_fd("=\"", 1);
+				ft_putstr_fd(newnode->value, 1);
+				ft_putchar_fd('"',1);
+			}
+			ft_putchar_fd('\n', 1);
 			newnode = newnode->next;
 		}
-		return ;
+		return (0);
 	}
 	while (args != NULL)
 	{
-		var = ft_split(args->value, '=');
-		if ((newnode = ft_search_in_list(head, var[0])) != NULL)
+		split = my_split(args->value);//ft_split(args->value, '=');
+		ft_putstr_fd(split[1], 1);
+		if (split[0][ft_strlen(split[0]) - 1] == '+')
 		{
-			ft_replaceit(head, var[0], var[1]);
+			split[0][ft_strlen(split[0]) - 1] = '\0';
+			join = YES;
+		}
+		if ((newnode = ft_search_in_list(head, split[0])) != NULL)
+		{
+			if (join == YES)
+				split[1] = ft_strjoin(newnode->value, split[1]);
+			ft_replaceit(head, split[0] , split[1]);
 			args = args->next;
 		}
 		else
 		{
-			newnode = ft_create_node(var[0], var[1]);
+			newnode = ft_create_node(split[0], split[1]);
 			ft_add_to_list(head, newnode);
 			args = args->next;
 		}
 	}
+	return (0);
 }
 
-void ft_unset(t_args *args, t_env **head)
+int ft_unset(t_args *args, t_env **head)
 {
 	while (args != NULL)
 	{
 		ft_delete_from_list(head, args->value);
 		args = args->next;
 	}
+	return (0);
 }
 
-void ft_cd(t_args *args, t_env **head)
+int ft_cd(t_args *args, t_env **head)
 {
 	char *buff;
 	char *dir;
@@ -130,22 +154,16 @@ void ft_cd(t_args *args, t_env **head)
 	else
 		dir = args->value;
 	if (chdir(dir) == -1)
-	{
-		ft_putstr_fd("minishell: cd: ",2);
-		ft_putstr_fd(dir, 2);
-		ft_putendl_fd(": No such file or directory", 2);
-	}
+		return (ft_put_err("cd", ": No such file or directory", 1));
 	temp = ft_search_in_list(head, "PWD");
 	ft_replaceit(head, "OLDPWD", temp->value);
 	ft_replaceit(head, "PWD", getcwd(buff, 100));
+	return (0);
 }
 
-void ft_exit(t_args *args)
+int	 ft_exit(t_args *args)
 {
 	if (args->next != NULL)
-	{
-		ft_putendl_fd("minishell: exit: too many arguments",2);
-		return ;
-	}
+		return (ft_put_err("exit", ": too many arguments", 1));
 	exit(ft_atoi(args->value));
 }

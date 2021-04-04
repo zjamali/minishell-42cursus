@@ -6,10 +6,10 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/02 17:02:46 by mbari            ###   ########.fr       */
-/*   Updated: 2021/04/02 16:41:45 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/03 19:08:57 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../headers/minishell.h"
 #include "../headers/execution.h"
@@ -33,12 +33,13 @@ int main(int ac,char **av,char **env)
 	t_pipe_line *current_pipe_line;
 	t_env *head;
 	char *line;
-
+	int status;
 	tokens_list = NULL;
 	line = NULL;
 	(void)ac;
 	(void)av;
 	int i = 0;
+	
 	cmd = NULL;
 	init_env(&head, env);
 	while (i == 0)
@@ -57,7 +58,7 @@ int main(int ac,char **av,char **env)
 		{
 			ft_expanding(current_pipe_line,&head);
 			ft_print_pipeline_cmd(current_pipe_line);
-			ft_execute(current_pipe_line, &head);
+			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)

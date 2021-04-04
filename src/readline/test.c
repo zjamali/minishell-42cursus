@@ -9,7 +9,7 @@ int main()
 
 	tcgetattr(STDIN_FILENO, &termios);
 	c = 0;
-	termios.c_lflag &= ~(ECHO | ICANON);
+	termios.c_lflag = termios.c_lflag & (~(ECHO | ICANON));
 	tcsetattr(STDIN_FILENO,TCSANOW,&termios);
 	while(1)
 	{

@@ -15,6 +15,9 @@
 
 int main(int ac,char **av,char **env)
 {
+	(void)ac;
+	(void)av;
+	(void)env;
 	struct termios termios;
 	long c;
 	c = 0;
@@ -24,19 +27,22 @@ int main(int ac,char **av,char **env)
 	printf("%s\n",path);
 	//char terminal[] = ;	
 	int fd = open(path, O_RDWR | O_NOCTTY | O_NDELAY);
-	
+	printf("%d\n",fd);
 	if(isatty(fd))
 	{
-		printf("fd point to teminla\n");
+		printf("fd point to teminl\n");
 		tcgetattr(fd,&termios);
-		printf("%ld\n",termios.c_lflag);
-		termios.c_lflag = 536872135;//&= ~(ECHO | ICANON);
+		printf("termios before -> %ld\n",termios.c_lflag);
+		//termios.c_lflag = 536872135;
+		termios.c_lflag = termios.c_lflag & (~( ECHO | ICANON));
 		tcsetattr(fd,TCSANOW,&termios);
-		printf("%ld\n",termios.c_lflag);
+		printf("minishell$");
+		printf("after -> %ld\n",termios.c_lflag);
 		while (1)
 		{
-			printf("minishell>");
 			read(0,&c,6);
+			printf("%ld\n", c);
+			c = 0;
 		}
 		
 		//termios.c_lflag 

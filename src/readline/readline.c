@@ -44,7 +44,5 @@ int main(int ac,char **av,char **env)
 			printf("%ld\n", c);
 			c = 0;
 		}
-		
-		//termios.c_lflag 
 	}	
 }

@@ -77,6 +77,7 @@ int main(int ac,char **av,char **env)
 		
 		//char  * cm_cap  =  tgetstr ( "cm" ,  NULL );
 		/// delete = 127
+<<<<<<< HEAD
 		//while (1)
 		//{
 		//	read(0,&c,6);
@@ -106,5 +107,30 @@ int main(int ac,char **av,char **env)
 		//ft_putstr_fd(str,1);
 		//ft_putstr_fd("\n",1);
 		//termios.c_lflag 
+=======
+		while (1)
+		{
+			read(0,&c,6);
+			if (ft_isprint(c) || c == '\n')
+			{
+				tmp = str;
+				cc[0] = c;
+				str = ft_strjoin(str,cc);
+				//write(1,&c,6);
+				if (c == '\n')
+					break;
+			}
+			if (c == 127)
+			{
+				int len = ft_strlen(str);
+				if (len > 0)
+					str[len - 1] = '\0';
+			}
+			ft_putstr_fd(str,1);
+			ft_putstr_fd("\n",1);
+			//printf("%ld\n", c);
+			c = 0;
+		}
+>>>>>>> 6b0f432fb90544695f481900be718d44a631ee56
 	}	
 }

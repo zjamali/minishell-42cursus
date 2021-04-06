@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/30 15:53:26 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/06 18:57:49 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 # include <string.h>
 # include <fcntl.h>
 # include <stdio.h>
+#include <termios.h>
+#include <term.h>
+#include <curses.h>
+#include <termcap.h>
 # include "../src/libft/libft.h"
 #define GREEN "\e[1;32m"
 #define RESET "\e[0m"
@@ -26,7 +30,39 @@
 #define PURPLE "\e[1;35m"
 #define BLUE "\e[1;34m"
 
+/******* READLINE **********/
 
+# define KEY_ESCAPE 0x1B
+//# define KEY_SPACE 0x20
+//# define KEY_UP 4283163
+//# define KEY_DOWN 0x425B1B
+//# define KEY_RIGHT 0x435B1B
+//# define KEY_LEFT 0x445B1B
+//# define KEY_ENTER 0xA
+//# define KEY_BACKSPACE 0x7F
+# define KEY_DELETE 127
+
+typedef struct s_lines_list{
+	char *value;
+	struct s_lines_list *next;
+}t_lines_list;
+typedef struct s_cursor{
+	int line_postion;
+	int col_position;
+}t_cursor;
+typedef struct s_readline
+{
+	char	*term_type;
+	int		term_fd;
+	int		line_count;
+	int		colums_count;
+	long	c;
+	char	*path;
+	t_cursor cursor;
+	t_lines_list *line_list;
+}t_readline;
+
+/******* LESXER **********/
 typedef enum e_token_type{
 	NONE,
 	WORD,
@@ -48,14 +84,7 @@ typedef struct s_token
 }t_token;
 
 
-typedef struct s_env
-{
-	char *name;
-	char *value;
-	struct s_env *next;
-}				t_env;
-
-
+/******* PARSER **********/
 typedef enum e_redirection_type{
 	RE_GREAT,
 	RE_DOUBLE_GREAT,
@@ -101,16 +130,25 @@ typedef struct s_command_list
 	t_pipe_line *childs;
 }t_command_list;
 
-int get_next_line(char **line);
+/***** ENV LIST ******/
 
+typedef struct s_env
+{
+	char *name;
+	char *value;
+	struct s_env *next;
+}				t_env;
+
+
+int get_next_line(char **line);
 t_token	*ft_lexer(char *line);
 void ft_destoy_token_list(t_token *tokens_list);
 t_command_list *ft_parser(t_token *tokens_list);
 void ft_destroy_ast(t_command_list *cmd_list);
 int ft_check_syntax(t_token *tokens_list);
-
 void ft_expanding(t_pipe_line *pipe_line,t_env **env);
 void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
+
 #endif

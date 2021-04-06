@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
-# include <fcntl.h>
+#include <fcntl.h>
 
 int main(int ac,char **av,char **env)
 {

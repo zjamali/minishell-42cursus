@@ -29,9 +29,30 @@ int init_terminal(void)
 void ft_get_cursor_position(int *x,int *y)
 {
 	char *c;
+	int i = 0;
+	int first = 0;
 	c = malloc(20);
-	write(1,"\e[6n",10);
-	read(1,&c,10);
+	c[20] = '\0';
+	write(0,"\033[6n",4);
+	read(0,c,19);
+	while (c[i])
+	{
+		if(first == 0 && ft_isdigit(c[i]))
+		{
+			*x = ft_atoi(c + i);
+			while (c[i] != ';')
+				i++;
+			first = 1;
+		}
+		else if (first == 1 && ft_isdigit(c[i]))
+		{
+			*y = ft_atoi(c + i);
+			first = 2;
+			return;
+		}
+		i++;	
+	}
+	
 	//printf("\e[6n");
 	// fflush(stdout);
 	//ft_putstr_fd(c,1);
@@ -61,13 +82,12 @@ int main(int ac,char **av,char **env)
 	//char terminal[] = ;	
 	int fd = open(path, O_RDWR | O_NOCTTY | O_NDELAY);
 	//printf("%d\n",fd);
-	//ft_putstr_fd("minshell$>",1);
+	ft_putstr_fd("minshell$>",1);
 	init_terminal();
 	
 	if(isatty(fd))
 	{
 		//printf("fd point to teminl\n");
-		ft_get_cursor_position(&cursor[0],&cursor[1]);
 		tcgetattr(fd,&termios);
 		//printf("termios before -> %ld\n",termios.c_lflag);
 		//termios.c_lflag = 536872135;
@@ -75,39 +95,9 @@ int main(int ac,char **av,char **env)
 		//termios.c_lflag = termios.c_lflag - ECHO;
 		tcsetattr(fd,TCSANOW,&termios);
 		
-		//char  * cm_cap  =  tgetstr ( "cm" ,  NULL );
-		/// delete = 127
-<<<<<<< HEAD
-		//while (1)
-		//{
-		//	read(0,&c,6);
-		//	if (ft_isprint(c) || c == '\n')
-		//	{
-		//		tmp = str;
-		//		cc[0] = c;
-		//		str = ft_strjoin(str,cc);
-		//		//write(1,&c,6);
-		//		if (c == '\n')
-		//			break;
-		//	}
-		//	if (c == 127)
-		//	{
-		//		ft_putstr_fd(tgoto ( cm_cap , 10 ,  1 ),1);// 
-		//		int len = ft_strlen(str);
-		//		if (len > 0)
-		//			str[len - 1] = '\0';
-		//	}
-		//	ft_putstr_fd("",1);
-		//	printf("%s",str);
-		//	ft_putstr_fd("\n",1);
-		//	//printf("%ld\n", c);
-		//	c = 0;
-		//}
-		//ft_putstr_fd("line->",1);
-		//ft_putstr_fd(str,1);
-		//ft_putstr_fd("\n",1);
-		//termios.c_lflag 
-=======
+		ft_get_cursor_position(&cursor[0],&cursor[1]);
+		//printf("%d,%d",cursor[0],cursor[1]);
+		char  * cm_cap  =  tgetstr ( "cm" ,  NULL );
 		while (1)
 		{
 			read(0,&c,6);
@@ -120,17 +110,25 @@ int main(int ac,char **av,char **env)
 				if (c == '\n')
 					break;
 			}
-			if (c == 127)
+			if (c == 127) 		// delete = 127
 			{
+				ft_putstr_fd(tgoto ( cm_cap , cursor[1] ,  cursor[0] ),1);// 
 				int len = ft_strlen(str);
 				if (len > 0)
 					str[len - 1] = '\0';
 			}
+			ft_putstr_fd(tgoto ( cm_cap , cursor[1] -1 ,  cursor[0] -1 ),1);
+			ft_putstr_fd(tgetstr("cd", NULL),1);
 			ft_putstr_fd(str,1);
-			ft_putstr_fd("\n",1);
-			//printf("%ld\n", c);
-			c = 0;
+			//tputs()
+		//	printf("%s",str);
+		//	ft_putstr_fd("\n",1);
+		//	//printf("%ld\n", c);
+		//	c = 0;
 		}
->>>>>>> 6b0f432fb90544695f481900be718d44a631ee56
+		ft_putstr_fd("line->",1);
+		ft_putstr_fd(str,1);
+		//ft_putstr_fd("\n",1);
+		//termios.c_lflag 
 	}	
 }

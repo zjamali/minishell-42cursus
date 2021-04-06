@@ -107,14 +107,15 @@ char *get_line(t_cursor cursor,t_lines_list *lines_list)
 		{
 			ft_putstr_fd(tgoto ( cm_cap , cursor.col_position ,  cursor.line_postion),1);
 			ft_putstr_fd(tgetstr("cd", NULL),1);
-			str = ft_strdup("UP");
-			//str = get_last_line(lines_list);
+			//str = ft_strdup("UP");
+			str = get_last_line(lines_list);
 		}
 		else if (ft_isprint(c) || c == '\n')
 		{
 			tmp = str;
 			cc[0] = c;
-			str = ft_strjoin(str,cc);
+			if (c != '\n')
+				str = ft_strjoin(str,cc);
 			if (c == '\n')
 				break;
 		}
@@ -136,30 +137,30 @@ char *get_line(t_cursor cursor,t_lines_list *lines_list)
 	//	//printf("%ld\n", c);
 		c = 0;
 	}
-	ft_putstr_fd("\nline-> ",1);
-	ft_putstr_fd(str,1);
+	//ft_putstr_fd("\nline-> ",1);
+	//ft_putstr_fd(str,1);
 	//ft_putstr_fd("\n",1);
 	//termios.c_lflag 
 	return (str);
 }
 
-void   insert_lines(t_lines_list *list,char *line)
+t_lines_list   *insert_lines(t_lines_list *list,char *line)
 {
 	t_lines_list *tmp;
 	
 	if (!list)
 	{
-		list = malloc(sizeof(t_lines_list));
-		list->value = line;
-		list->next = 0;
+		tmp = malloc(sizeof(t_lines_list));
+		tmp->value = line;
+		tmp->next = 0;
 	}
 	else
 	{
 		tmp = malloc(sizeof(t_lines_list));
 		tmp->value = line;
 		tmp->next = list;
-		list = tmp;
 	}
+	return tmp;
 }
 
 int main()
@@ -167,18 +168,20 @@ int main()
 	t_lines_list *lines_list;
 	struct termios termios;
 	t_readline *readline;
-	char *charactere;
+	//char *charactere;
 	char *line;
-	line = 0;
+	line = NULL;
 	readline  = ft_init_readline(&termios);
 	//printf("line : %d ; col : %d\n",readline->cursor.line_postion,readline->cursor.col_position);
-	//line = init_line();
+	lines_list = NULL;
 	while(1)
 	{
 		show_prompt();
 		ft_get_cursor_position(&readline->cursor.line_postion,
 		&readline->cursor.col_position);
 		line = get_line(readline->cursor,lines_list);
-		insert_lines(lines_list,line);
+		if ( line[1] != '\0')
+			write(1, "\n",1);
+		lines_list = insert_lines(lines_list,line);
 	}
 }

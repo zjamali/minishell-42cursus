@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/07 18:04:39 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/07 18:13:22 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,7 @@ void ft_print_lines_list(t_lines_list *lines_list)
 		ft_putstr_fd("\n",1);
 		lines_list = lines_list->next;
 	}
+	return tmp;
 }
 
 int main()

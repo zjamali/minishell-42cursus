@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/06 19:55:40 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/07 18:04:39 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,7 @@ void show_prompt(void)
 char *get_last_line(t_lines_list *lines_list)
 {
 	if (lines_list)
-	{
-		ft_putstr_fd("zbi",1);
 		return lines_list->value;
-	}
 	return NULL;
 }
 
@@ -92,31 +89,55 @@ char *get_line(t_cursor cursor,t_lines_list *lines_list)
 	char *str;
 	char *cc;
 	char *tmp;
-
 	tmp = NULL;
 	long c;
 	c  = 0;
 	str = NULL;
 	cc = malloc(2);
-	cc[1] = '\0';
+	//cc[1] = '\0';
 	char  * cm_cap  =  tgetstr ( "cm" ,  NULL );
 	while (1)
 	{
 		read(0,&c,6);
-		if (c == 4283163)
+		if (c == 4283163) /// UP 
 		{
 			ft_putstr_fd(tgoto ( cm_cap , cursor.col_position ,  cursor.line_postion),1);
 			ft_putstr_fd(tgetstr("cd", NULL),1);
-			str = ft_strdup("UP");
-			//str = get_last_line(lines_list);
+			tmp = str;
+			//str = get_last_line(*current_line);
+			//if (!str)
+			//	str= ft_strdup("why");
+			//}
+			c = 0;
 		}
+		//else if (c == 4348699) /// DOWN 
+		//{
+		//	ft_putstr_fd(tgoto ( cm_cap , cursor.col_position ,  cursor.line_postion),1);
+		//	ft_putstr_fd(tgetstr("cd", NULL),1);
+		//	//str = ft_strdup("UP");
+		//	//str = get_last_line(lines_list);
+		//	//tmp = str;
+		//	if (currrent_line)
+		//	{
+		//		str = get_last_line(currrent_line,index);
+		//		currrent_line = currrent_line->prev;
+		//		index++;
+		//	}
+		//}
 		else if (ft_isprint(c) || c == '\n')
 		{
 			tmp = str;
 			cc[0] = c;
-			str = ft_strjoin(str,cc);
+			cc[1] = '\0';
+			if (cc[0] != '\n')
+				str = ft_strjoin(str,cc);
+			free(tmp);
+			tmp = NULL;
 			if (c == '\n')
+			{
+				c = 0;
 				break;
+			}
 		}
 		else if (c == 127) 		// delete = 127
 		{
@@ -126,39 +147,65 @@ char *get_line(t_cursor cursor,t_lines_list *lines_list)
 			if (len > 0)
 				str[len - 1] = '\0';
 		}
+		/// move cursor 
 		ft_putstr_fd(tgoto ( cm_cap , cursor.col_position -1 ,  cursor.line_postion -1 ),1);
+		/// clear the terminal
 		ft_putstr_fd(tgetstr("cd", NULL),1);
 		if (str)
+		{
+			//ft_putnbr_fd(index,1);
 			ft_putstr_fd(str,1);
+		}
 		//tputs()
 	//	printf("%s",str);
 	//	ft_putstr_fd("\n",1);
 	//	//printf("%ld\n", c);
 		c = 0;
+		//ft_putnbr_fd(index,1);
 	}
-	ft_putstr_fd("\nline-> ",1);
-	ft_putstr_fd(str,1);
+	//ft_putstr_fd("\nline-> ",1);
+	//ft_putstr_fd(str,1);
 	//ft_putstr_fd("\n",1);
 	//termios.c_lflag 
 	return (str);
 }
 
-void   insert_lines(t_lines_list *list,char *line)
+t_lines_list   *insert_lines(t_lines_list *list,char *line)
 {
 	t_lines_list *tmp;
 	
+	tmp = NULL;
 	if (!list)
 	{
 		list = malloc(sizeof(t_lines_list));
-		list->value = line;
-		list->next = 0;
+		list->value = ft_strdup(line);
+		list->index = 1;
+		list->next = NULL;
+		list->prev = NULL;
 	}
 	else
 	{
-		tmp = malloc(sizeof(t_lines_list));
-		tmp->value = line;
-		tmp->next = list;
-		list = tmp;
+		tmp = list;
+		while(tmp->next)
+			tmp = tmp->next;
+		tmp->next = malloc(sizeof(t_lines_list));
+		tmp->next->value = ft_strdup(line);
+		tmp->next->next = NULL;
+		tmp->next->index = tmp->index + 1;
+		tmp->next->prev = tmp;
+	}
+	return list;
+}
+void ft_print_lines_list(t_lines_list *lines_list)
+{
+	while (lines_list)
+	{
+		ft_putstr_fd("\nline-> ",1);
+		ft_putstr_fd(lines_list->value,1);
+		ft_putstr_fd("\t\t index : ",1);
+		ft_putnbr_fd(lines_list->index,1);
+		ft_putstr_fd("\n",1);
+		lines_list = lines_list->next;
 	}
 }
 
@@ -167,18 +214,25 @@ int main()
 	t_lines_list *lines_list;
 	struct termios termios;
 	t_readline *readline;
-	char *charactere;
+//	char *charactere;
 	char *line;
+	
+	lines_list = NULL;
 	line = 0;
 	readline  = ft_init_readline(&termios);
 	//printf("line : %d ; col : %d\n",readline->cursor.line_postion,readline->cursor.col_position);
 	//line = init_line();
+	//current_line = lines_list;
 	while(1)
 	{
 		show_prompt();
 		ft_get_cursor_position(&readline->cursor.line_postion,
 		&readline->cursor.col_position);
 		line = get_line(readline->cursor,lines_list);
-		insert_lines(lines_list,line);
+		if (line)
+			lines_list = insert_lines(lines_list,line);
+		ft_putstr_fd("\n",1);
+		ft_print_lines_list(lines_list);
+		//free(line);
 	}
 }

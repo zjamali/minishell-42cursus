@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/06 18:57:49 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/07 15:34:47 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,10 @@
 # define KEY_DELETE 127
 
 typedef struct s_lines_list{
+	int index;
 	char *value;
 	struct s_lines_list *next;
+	struct s_lines_list *prev;
 }t_lines_list;
 typedef struct s_cursor{
 	int line_postion;

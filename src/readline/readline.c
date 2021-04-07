@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/07 18:04:39 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/07 18:15:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ char *get_last_line(t_lines_list *lines_list)
 	return NULL;
 }
 
-char *get_line(t_cursor cursor,t_lines_list *lines_list)
+char *get_line(t_cursor cursor)
 {
 	char *str;
 	char *cc;
@@ -228,7 +228,7 @@ int main()
 		show_prompt();
 		ft_get_cursor_position(&readline->cursor.line_postion,
 		&readline->cursor.col_position);
-		line = get_line(readline->cursor,lines_list);
+		line = get_line(readline->cursor);
 		if (line)
 			lines_list = insert_lines(lines_list,line);
 		ft_putstr_fd("\n",1);

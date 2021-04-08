@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/08 18:32:13 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/08 19:27:52 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void show_prompt(void)
 	ft_putstr_fd("minishell$> ",1);
 }
 
-t_lines_list   *insert_lines(t_lines_list *list,char *line)
+t_lines_list   *insert_lines(t_lines_list *list,char *line,int history) /// 
 {
 	t_lines_list *tmp;
 	
@@ -88,17 +88,20 @@ t_lines_list   *insert_lines(t_lines_list *list,char *line)
 		list->value = ft_strdup(line);
 		list->next = NULL;
 		list->prev = NULL;
+		list->history = 0;
+		if (history)
+			list->history = 1;
 	}
 	else
 	{
 		tmp = malloc(sizeof(t_lines_list));
-		//while(tmp->next)
-		//	tmp = tmp->next;
-		
 		tmp->value = ft_strdup(line);
 		tmp->next = list;
 		tmp->prev = NULL;
 		list->prev = tmp;
+		tmp->history = 0;
+		if (history)
+			tmp->history = 1;
 		list = tmp;
 	}
 	return list;
@@ -113,6 +116,34 @@ void ft_print_lines_list(t_lines_list *lines_list)
 		lines_list = lines_list->next;
 	}
 }
+t_lines_list *ft_reset(t_lines_list **list)
+{
+	t_lines_list *tmp;
+
+	tmp = NULL;
+	if (*list == NULL)
+		return NULL;
+	else
+	{
+		tmp = *list;
+		while (tmp)
+		{
+			if(tmp->history == 1)
+			{
+				if (tmp->next)
+				{	
+					*list = tmp->next;
+					free(tmp);
+					tmp = NULL;
+				}
+			}
+			tmp = tmp->prev;
+		}
+		
+	}
+	return *list;
+}
+
 
 int main()
 {
@@ -150,10 +181,13 @@ int main()
 			read(0,&c,6);
 			if (c == 4283163) /// UP 
 			{
-				
-				//ft_putstr_fd(tgoto ( cm_cap , readline->cursor.line_postion, readline->cursor.col_position),1);
+				//if (a == 0) //// add history to list
+				//{
+				//	if (history)
+				//		current = insert_lines(current,history,1);
+				//	a = 1;
+				//}
 				ft_putstr_fd(tgetstr("cd", NULL),1);
-				tmp = line;
 				if (current)
 				{
 					if  (a == 0 && current->prev == NULL)
@@ -168,9 +202,6 @@ int main()
 					}
 				}
 				a = 1;
-				//if (!str)
-				//	str= ft_strdup("why");
-				//}
 				c = 0;
 			}
 			else if (c == 4348699) /// DOWN 
@@ -187,12 +218,6 @@ int main()
 							current = current->prev;
 							line = ft_strdup(current->value);
 						}
-						else
-						{
-							if (history)
-								line = history;
-						}
-						
 					}
 					a = 2;
 				}
@@ -213,6 +238,7 @@ int main()
 					c = 0;
 					break;
 				}
+				//current = ft_reset(&current);
 			}
 			else if (c == 127) 		// delete = 127
 			{
@@ -232,7 +258,7 @@ int main()
 		}
 		if (line)
 		{
-			lines_list = insert_lines(lines_list,line);
+			lines_list = insert_lines(lines_list,line,0);
 			//free(line);
 			current = lines_list;
 			line = NULL;

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/08 19:27:52 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/10 13:20:44 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ t_lines_list *ft_reset(t_lines_list **list)
 			}
 			tmp = tmp->prev;
 		}
-		
 	}
 	return *list;
 }
@@ -181,23 +180,32 @@ int main()
 			read(0,&c,6);
 			if (c == 4283163) /// UP 
 			{
-				//if (a == 0) //// add history to list
-				//{
-				//	if (history)
-				//		current = insert_lines(current,history,1);
-				//	a = 1;
-				//}
+				if (a == 0) //// add history to list
+				{
+					if (history)
+					{
+						if (current->history == 1)
+							current->value = history;
+						else
+							current = insert_lines(lines_list,history,1);
+					}
+					a = 1;
+				}
 				ft_putstr_fd(tgetstr("cd", NULL),1);
 				if (current)
 				{
 					if  (a == 0 && current->prev == NULL)
-						line = ft_strdup(current->value);
+					{
+						//line = ft_strdup(current->value);
+						line = current->value;
+					}
 					else
 					{
 						if (current->next)	
 						{	
 							current = current->next;
-							line = ft_strdup(current->value);
+							//line = ft_strdup(current->value);
+							line = current->value;
 						}
 					}
 				}
@@ -248,7 +256,6 @@ int main()
 					line[len - 1] = '\0';
 			}
 			/// move cursor 
-			//printf("line : %d ; col : %d\n",readline->cursor.line_postion,readline->cursor.col_position);
 			ft_putstr_fd(tgoto ( cm_cap , readline->cursor.col_position - 1,  readline->cursor.line_postion - 1),1);
 			/// clear the terminal
 			ft_putstr_fd(tgetstr("cd", NULL),1);

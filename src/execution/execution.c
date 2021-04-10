@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/10 16:54:39 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/10 17:07:55 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,19 +124,19 @@ void init_env(t_env **head, char **env)
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
 	//ft_check_env_var(head, cmd->args);
-	if (!(ft_strcmp(cmd->command, "echo")))
+	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))
 		return (ft_echo(cmd->args));
-	else if (!(ft_strcmp(cmd->command, "cd")))
+	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));
-	else if (!(ft_strcmp(cmd->command, "pwd")))
+	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
 		return (ft_pwd(head));
-	else if (!(ft_strcmp(cmd->command, "env")))
+	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
 		return (ft_env(head));
-	else if (!(ft_strcmp(cmd->command, "export")))
+	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))
 		return (ft_export(head, cmd->args));
-	else if (!(ft_strcmp(cmd->command, "unset")))
+	else if (!(ft_strcmp(cmd->command, "unset")) || !(ft_strcmp(cmd->command, "UNSET")))
 		return (ft_unset(cmd->args, head));
-	else if (!(ft_strcmp(cmd->command, "exit")))
+	else if (!(ft_strcmp(cmd->command, "exit")) || !(ft_strcmp(cmd->command, "EXIT")))
 		return (ft_exit(cmd->args));
 	else
 		return (77);

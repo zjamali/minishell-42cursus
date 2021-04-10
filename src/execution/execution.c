@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/04 19:59:02 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/10 16:54:39 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ char **ft_args_to_arr(t_simple_cmd *cmd)
 	arg[i++] = cmd->command;
 	while (temp != NULL)
 	{
-		ft_putendl_fd(temp->value, 1);
 		arg[i] = temp->value;
 		i++;
 		temp = temp->next;
@@ -58,9 +57,8 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 
 	if (!(pid = fork()))
 	{
-		ft_putendl_fd("--------------------", 1);
 		//child_process;
-		ft_putendl_fd(cmd->command, 1);
+		//ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
 			ft_putendl_fd(strerror(errno), 2);
 			
@@ -78,10 +76,11 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
 		ft_putstr_fd("Exit Status is : ", 1);
-		ft_putnbr_fd(status, 1);
+		ft_putnbr_fd(f_status, 1);
 		ft_putendl_fd("", 1);
 	}
 }
+
 void	do_backups(int flag)
 {
 	//this function for backup all 
@@ -92,19 +91,16 @@ void	do_backups(int flag)
 	if (flag)
 	{
 		//do a backup for all the standars if flag == 1
-		stdin = dup2(0, 166);
-		stdou = dup2(1, 167);
-		stdou = dup2(2, 168);
+		stdin = dup2(0, 1337);
+		stdou = dup2(1, 1338);
+		stdou = dup2(2, 1339);
 	}
-	else
+	else if (!flag)
 	{
-		if (flag == 3)
-		{
-			// reset the standars if the flags == 3
-			dup2(stdin, 1);
-			dup2(stdou, 0);
-			dup2(stderr, 0);
-		}
+		// reset the standars if the flags == 0
+		dup2(stdin, 0);
+		dup2(stdou, 1);
+		dup2(stderr, 2);
 	}
 }
 
@@ -124,24 +120,6 @@ void init_env(t_env **head, char **env)
 		i++;
 	}
 }
-
-// void	ft_check_env_var(t_env **head, t_args *arg)
-// {
-// 	t_env *temp;
-	
-
-// 	temp = *head;
-// 	while (arg != NULL)
-// 	{
-// 		if (arg->env_variable == 1)
-// 		{
-// 			temp = ft_search_in_list(head, arg->value + 1);
-// 			if (temp != NULL)
-// 				arg->value = temp->value;
-// 		}
-// 		arg = arg->next;
-// 	}
-// }
 
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
@@ -182,21 +160,17 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 			buf = malloc(sizeof(struct stat));
 			full_path = ft_strjoin(*path, ft_strjoin("/", cmd->command));
 			stat(full_path, buf);
-			//printf("%d|%d|%d\n", buf.st_mode, buf.st_mode & S_IXUSR, buf.st_mode & S_IFREG);
-			// ft_putnbr_fd(buf.st_mode ^ S_IXUSR,1);
-			// ft_putnbr_fd(buf.st_mode ^ S_IFREG,1);
 			if ((buf->st_mode & S_IXUSR) > 0 && (buf->st_mode & S_IFREG) > 0)
 			{
 				cmd->command = full_path;
 				ft_exec(cmd, head);
-				ft_putendl_fd(full_path, 1);
 				return (0);
 			}
 			free(buf);
 			path++;
 		}
 		//zsh: command not found: ubadsia
-		return(ft_put_err(cmd->command, ":command not found", 127));
+		return(ft_put_err(cmd->command, ": command not found", 127));
 	}
 	return (0);
 		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
@@ -210,7 +184,7 @@ int ft_put_err(char *input, char *message, int ret)
 	ft_putendl_fd(message, 2);
 	return (ret);
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
 int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
 	char	*input;
@@ -220,6 +194,8 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 
 	input = NULL;
 	/*
+	//ft_putnbr_fd(cmd->simple_cmd_count, 2);
+	//ft_putendl_fd(cmd->child->next->command, 2);
 	ft_init(cmd_list);
 	t_simple_cmd *cmd_list = (t_simple_cmd *)malloc(sizeof(t_simple_cmd));
 	//ft_delete_from_list(&head, "SHELL");
@@ -258,10 +234,22 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	*/
 	ft_putstr_fd(BLUE,1);
-	if (cmd->child->command == NULL)
-		return (ft_put_err("\0", ":command not found", 127));
-	if ((ret = ft_is_builtins(cmd->child, head)) != 77)
-		return (ret);
-	ret = ft_chech_path(cmd->child, head);
+	ft_putendl_fd("------------------------------------------------------------", 1);
+	if (cmd->child->redirections != NULL)
+		ft_redirection(cmd->child->redirections);
+	// if (cmd->simple_cmd_count != 1)
+	// 	do_backups(1);
+	while (cmd->simple_cmd_count != 0)
+	{
+		if (cmd->child->command == NULL)
+			return (ft_put_err("\0", ":command not found", 127));
+		if ((ret = ft_is_builtins(cmd->child, head)) != 77)
+			return (ret);
+		ret = ft_chech_path(cmd->child, head);
+		cmd->simple_cmd_count--;
+		cmd->child = cmd->child->next;
+	}
+	do_backups(0);
+	ft_putendl_fd("------------------------------------------------------------", 1);
 	return (ret);
 }

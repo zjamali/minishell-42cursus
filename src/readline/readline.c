@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/10 13:20:44 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/10 18:22:13 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void show_prompt(void)
 	ft_putstr_fd("minishell$> ",1);
 }
 
-t_lines_list   *insert_lines(t_lines_list *list,char *line,int history) /// 
+t_lines_list   *ft_insert_line(t_lines_list *list,char *line) /// 
 {
 	t_lines_list *tmp;
 	
@@ -88,9 +88,6 @@ t_lines_list   *insert_lines(t_lines_list *list,char *line,int history) ///
 		list->value = ft_strdup(line);
 		list->next = NULL;
 		list->prev = NULL;
-		list->history = 0;
-		if (history)
-			list->history = 1;
 	}
 	else
 	{
@@ -99,9 +96,6 @@ t_lines_list   *insert_lines(t_lines_list *list,char *line,int history) ///
 		tmp->next = list;
 		tmp->prev = NULL;
 		list->prev = tmp;
-		tmp->history = 0;
-		if (history)
-			tmp->history = 1;
 		list = tmp;
 	}
 	return list;
@@ -143,6 +137,94 @@ t_lines_list *ft_reset(t_lines_list **list)
 	return *list;
 }
 
+t_char_list *ft_add_to_char_list(t_readline *readline,char c,t_char_list *chars_list)
+{
+	t_char_list *tmp;
+	char *move_cursor;
+
+	move_cursor = tgetstr("cm",NULL);
+	ft_putstr_fd(tgoto(move_cursor,readline->cursor.col_position - 1,
+		readline->cursor.line_postion -1),1);
+	ft_putstr_fd(tgetstr("cd",NULL),1);
+
+	tmp = NULL;
+	if (chars_list == NULL)
+	{
+		ft_putchar_fd(c,1);
+		chars_list = malloc(sizeof(t_char_list));
+		chars_list->value = c;
+		chars_list->len = 1;
+		chars_list->next = NULL;
+	}
+	else
+	{
+		tmp = chars_list;
+		while (tmp->next)
+		{
+			ft_putchar_fd(tmp->value,1);
+			tmp = tmp->next;
+		}
+		tmp->next = malloc(sizeof(t_char_list));
+		tmp->next->next = NULL;
+		tmp->value = c;
+		tmp->len = chars_list->len;
+		chars_list->len = tmp->len + 1;
+		ft_putchar_fd(c,1);
+	}
+	return chars_list;
+}
+
+char *create_line(t_char_list *char_list)
+{
+	char *line;
+	int i;
+	int len;
+
+	
+	i  = 0;
+	len = char_list->len;
+	
+	line = malloc(sizeof(len + 1));
+	line[len] = '\0';
+	
+	while (i < len)
+	{
+		line[i] = char_list->value;
+		char_list = char_list->next; 
+		i++;
+	}
+	return line;
+}
+
+void get_charctere(t_readline *readline,long c,t_char_list **chars_list,t_lines_list **lines_list)
+{
+	char *line;
+
+	line = NULL;
+	if (ft_isprint(c))
+	{
+		*chars_list = ft_add_to_char_list(readline,c,*chars_list);
+	}
+	if (c == D_KEY_ENTER)
+	{
+		//ft_putchar_fd((*chars_list)->value,1);
+		line = create_line(*chars_list);
+		//ft_putstr_fd(line,1);
+		*lines_list =  ft_insert_line(*lines_list,line);
+		ft_putstr_fd("\n",1);
+		ft_print_lines_list(*lines_list);
+	}
+}
+
+t_char_list *init_character_list(void)
+{
+	t_char_list *tmp;
+	tmp = malloc(sizeof(t_char_list));
+	tmp->len = 0;
+	tmp->next = NULL;
+	tmp->value = 0;
+	return tmp;
+}
 
 int main()
 {
@@ -150,127 +232,25 @@ int main()
 	struct termios termios;
 	t_readline *readline;
 	t_lines_list *current;
-	char *line;
-	int a;
-	a = 0;
-	char *cc;
-	char *tmp;
-	tmp = NULL;
-	char *history;
-
-	history = NULL;
-	long c;
-	c  = 0;
-	cc = malloc(2);
-	cc[1] = '\0';
+	t_char_list *chars_list;
+	long character;
+	
+	character = 0;
 	lines_list = NULL;
-	line = NULL;
 	readline  = ft_init_readline(&termios);
-	char  * cm_cap  =  tgetstr ( "cm" ,  NULL );
-	//line = init_line();
-	//current_line = lines_list;
+	//char  * cm_cap  =  tgetstr ( "cm" ,  NULL );
 	current = lines_list;
 	while(1)
 	{
 		show_prompt();
 		ft_get_cursor_position(&readline->cursor.line_postion,
 		&readline->cursor.col_position);
+		chars_list = init_character_list();
 		while (1)
 		{
-			read(0,&c,6);
-			if (c == 4283163) /// UP 
-			{
-				if (a == 0) //// add history to list
-				{
-					if (history)
-					{
-						if (current->history == 1)
-							current->value = history;
-						else
-							current = insert_lines(lines_list,history,1);
-					}
-					a = 1;
-				}
-				ft_putstr_fd(tgetstr("cd", NULL),1);
-				if (current)
-				{
-					if  (a == 0 && current->prev == NULL)
-					{
-						//line = ft_strdup(current->value);
-						line = current->value;
-					}
-					else
-					{
-						if (current->next)	
-						{	
-							current = current->next;
-							//line = ft_strdup(current->value);
-							line = current->value;
-						}
-					}
-				}
-				a = 1;
-				c = 0;
-			}
-			else if (c == 4348699) /// DOWN 
-			{
-				ft_putstr_fd(tgetstr("cd", NULL),1);
-				if (current)
-				{
-					if  (a == 0 && current->next == NULL)
-						line = ft_strdup(current->value);
-					else
-					{
-						if (current->prev)
-						{
-							current = current->prev;
-							line = ft_strdup(current->value);
-						}
-					}
-					a = 2;
-				}
-			}
-			else if (ft_isprint(c) || c == '\n')
-			{
-				a = 0;
-				tmp = line;
-				cc[0] = c;
-				if (cc[0] != '\n')
-					line = ft_strjoin(line,cc);
-				history = line;
-				//free(tmp);
-				cc[0] = 0;
-				tmp = NULL;
-				if (c == '\n')
-				{
-					c = 0;
-					break;
-				}
-				//current = ft_reset(&current);
-			}
-			else if (c == 127) 		// delete = 127
-			{
-				ft_putstr_fd(tgoto ( cm_cap , readline->cursor.col_position,  readline->cursor.line_postion ),1);// 
-				int len = ft_strlen(line);
-				if (len > 0)
-					line[len - 1] = '\0';
-			}
-			/// move cursor 
-			ft_putstr_fd(tgoto ( cm_cap , readline->cursor.col_position - 1,  readline->cursor.line_postion - 1),1);
-			/// clear the terminal
-			ft_putstr_fd(tgetstr("cd", NULL),1);
-			if (line)
-				ft_putstr_fd(line,1);
-			c = 0;
+			read(0,&character,6);
+			get_charctere(readline,character,&chars_list,&lines_list);
+			character = 0;
 		}
-		if (line)
-		{
-			lines_list = insert_lines(lines_list,line,0);
-			//free(line);
-			current = lines_list;
-			line = NULL;
-		}
-		ft_putstr_fd("\n",1);
-		ft_print_lines_list(lines_list);
 	}
 }

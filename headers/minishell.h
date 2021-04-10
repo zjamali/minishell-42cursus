@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/08 19:04:05 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/10 17:56:31 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,21 @@
 
 /******* READLINE **********/
 
-# define KEY_ESCAPE 0x1B
-//# define KEY_SPACE 0x20
-//# define KEY_UP 4283163
-//# define KEY_DOWN 0x425B1B
-//# define KEY_RIGHT 0x435B1B
-//# define KEY_LEFT 0x445B1B
-//# define KEY_ENTER 0xA
-//# define KEY_BACKSPACE 0x7F
-# define KEY_DELETE 127
+# define D_KEY_ESCAPE 27
+# define D_KEY_SPACE 32
+# define D_KEY_UP 4283163
+# define D_KEY_DOWN 4348699
+# define D_KEY_RIGHT 4414235
+# define D_KEY_LEFT 4479771
+# define D_KEY_ENTER 10
+# define D_KEY_BACKSPACE 127
+
+typedef struct s_char_list{
+	char value;
+	int len;
+	struct s_char_list *next;
+}t_char_list;
+
 
 typedef struct s_lines_list{
 	char *value;

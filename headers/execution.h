@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/04 17:09:38 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/10 16:41:30 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,9 @@ int		ft_count_list(t_env **head);
 char	**ft_list_to_arr(t_env **head);
 t_env	*ft_sort_list(t_env **head);
 int		ft_put_err(char *input, char *message, int ret);
+void	do_backups(int flag);
+int		ft_less_than(t_redirection *redirect);
+int		ft_great_than(t_redirection *redirect);
+int 	ft_double_great(t_redirection *redirect);
+int		ft_redirection(t_redirection *redirect);
 #endif

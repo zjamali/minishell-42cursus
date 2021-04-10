@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/04 19:34:27 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/10 16:47:57 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	 ft_loop(t_args *args)
 
 int	 ft_echo(t_args *args)
 {
-	if (args->value ==  NULL || args == NULL)
+	if (args == NULL || args->value ==  NULL)
 	{
 		ft_putchar_fd('\n', 1);
 		return (0);
@@ -100,8 +100,7 @@ int	 ft_export(t_env **head, t_args *args)
 	}
 	while (args != NULL)
 	{
-		split = my_split(args->value);//ft_split(args->value, '=');
-		ft_putstr_fd(split[1], 1);
+		split = my_split(args->value);
 		if (split[0][ft_strlen(split[0]) - 1] == '+')
 		{
 			split[0][ft_strlen(split[0]) - 1] = '\0';
@@ -126,12 +125,18 @@ int	 ft_export(t_env **head, t_args *args)
 
 int ft_unset(t_args *args, t_env **head)
 {
+	int ret;
+	
+	ret = 0;
 	while (args != NULL)
 	{
-		ft_delete_from_list(head, args->value);
+		if (args->value == NULL)
+			ret = ft_put_err("`'", ": not a valid identifier", 1);
+		else
+			ft_delete_from_list(head, args->value);
 		args = args->next;
 	}
-	return (0);
+	return (ret);
 }
 
 int ft_cd(t_args *args, t_env **head)

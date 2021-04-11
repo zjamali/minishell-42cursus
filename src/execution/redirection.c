@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/10 16:39:20 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/10 16:39:49 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/11 17:40:08 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int ft_double_great(t_redirection *redirect)
 
 int	ft_redirection(t_redirection *redirect)
 {
-	do_backups(1);
 	while (redirect != NULL)
 	{
 		if (redirect->type == RE_GREAT)

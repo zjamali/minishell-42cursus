@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/10 17:07:55 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/11 17:59:05 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 		//child_process;
 		//ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
-			ft_putendl_fd(strerror(errno), 2);
+			ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), 1);
+			//ft_putendl_fd(strerror(errno), 2);
 			
 			
 			//ft_putstr_fd("Command not found or permission denied.\n", 2);
@@ -121,27 +122,6 @@ void init_env(t_env **head, char **env)
 	}
 }
 
-int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
-{
-	//ft_check_env_var(head, cmd->args);
-	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))
-		return (ft_echo(cmd->args));
-	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
-		return (ft_cd(cmd->args, head));
-	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
-		return (ft_pwd(head));
-	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
-		return (ft_env(head));
-	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))
-		return (ft_export(head, cmd->args));
-	else if (!(ft_strcmp(cmd->command, "unset")) || !(ft_strcmp(cmd->command, "UNSET")))
-		return (ft_unset(cmd->args, head));
-	else if (!(ft_strcmp(cmd->command, "exit")) || !(ft_strcmp(cmd->command, "EXIT")))
-		return (ft_exit(cmd->args));
-	else
-		return (77);
-}
-
 int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 {
 	t_env *temp;
@@ -176,6 +156,26 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
 }
 
+int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
+{
+	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))
+		return (ft_echo(cmd->args));
+	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
+		return (ft_cd(cmd->args, head));
+	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
+		return (ft_pwd(head));
+	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
+		return (ft_env(head));
+	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))
+		return (ft_export(head, cmd->args));
+	else if (!(ft_strcmp(cmd->command, "unset")) || !(ft_strcmp(cmd->command, "UNSET")))
+		return (ft_unset(cmd->args, head));
+	else if (!(ft_strcmp(cmd->command, "exit")) || !(ft_strcmp(cmd->command, "EXIT")))
+		return (ft_exit(cmd->args));
+	else
+		return (ft_chech_path(cmd, head));
+}
+
 int ft_put_err(char *input, char *message, int ret)
 {
 	ft_putstr_fd("minishell: ", 2);
@@ -185,10 +185,40 @@ int ft_put_err(char *input, char *message, int ret)
 	return (ret);
 }
 
+int ft_pipe(t_simple_cmd *cmd, int *flag)
+{
+	int fd[2];
+	
+	if (pipe(fd) < 0)
+		return(ft_put_err("pipe", ": couldn't create pipe", 1));
+	if (*flag == 0)
+	{
+		*flag = 1;
+		if (dup2(fd[1], STDOUT_FILENO) < 0)
+			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
+	}
+	else
+	{
+		if (dup2(fd[0], STDIN_FILENO) < 0)
+			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
+		if (dup2(fd[1], STDOUT_FILENO) < 0)
+			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
+		if (cmd->next == NULL)
+			if (dup2(1, fd[1]) < 0)
+			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
+	}
+	close(fd[0]);
+	close(fd[1]);
+	return (0);
+}
+
 int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
 	char	*input;
 	int		ret;
+	int flag = 0;
+	// int stdin = STDIN_FILENO;
+	// int stdout = STDOUT_FILENO;
 	//int		fd;
 	//char	*line;
 
@@ -238,15 +268,18 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	if (cmd->child->redirections != NULL)
 		ft_redirection(cmd->child->redirections);
 	// if (cmd->simple_cmd_count != 1)
-	// 	do_backups(1);
-	while (cmd->simple_cmd_count != 0)
+	do_backups(1);
+	while (cmd->child != NULL)
 	{
 		if (cmd->child->command == NULL)
-			return (ft_put_err("\0", ":command not found", 127));
-		if ((ret = ft_is_builtins(cmd->child, head)) != 77)
-			return (ret);
-		ret = ft_chech_path(cmd->child, head);
-		cmd->simple_cmd_count--;
+			return (ft_put_err("\0", ": command not found", 127));
+		if (cmd->simple_cmd_count != 0)
+		{
+			ft_putendl_fd("do something", 1);
+			ft_pipe(cmd->child, &flag);
+			// you have to change the stdin and stdout
+		}
+		ret = ft_is_builtins(cmd->child, head);
 		cmd->child = cmd->child->next;
 	}
 	do_backups(0);

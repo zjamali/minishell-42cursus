@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/11 17:59:05 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/12 17:33:32 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 	int		status;
 	int		f_status;
 
+
 	if (!(pid = fork()))
 	{
 		//child_process;
@@ -76,9 +77,11 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 		//parrent process;
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
-		ft_putstr_fd("Exit Status is : ", 1);
-		ft_putnbr_fd(f_status, 1);
-		ft_putendl_fd("", 1);
+		ft_putnbr_fd(f_status, 1338);
+		ft_putendl_fd(" 1010", 1338);
+		// ft_putstr_fd("Exit Status is : ", 2);
+		// ft_putnbr_fd(f_status, 2);
+		// ft_putendl_fd("", 2);
 	}
 }
 
@@ -173,7 +176,10 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	else if (!(ft_strcmp(cmd->command, "exit")) || !(ft_strcmp(cmd->command, "EXIT")))
 		return (ft_exit(cmd->args));
 	else
-		return (ft_chech_path(cmd, head));
+	{
+		ft_chech_path(cmd, head);
+		return (0);
+	}
 }
 
 int ft_put_err(char *input, char *message, int ret)
@@ -185,45 +191,52 @@ int ft_put_err(char *input, char *message, int ret)
 	return (ret);
 }
 
-int ft_pipe(t_simple_cmd *cmd, int *flag)
+int ft_pipe(t_mini *mini, t_simple_cmd *cmd)
 {
-	int fd[2];
 	
-	if (pipe(fd) < 0)
-		return(ft_put_err("pipe", ": couldn't create pipe", 1));
-	if (*flag == 0)
+	if (mini->flag == 0)
 	{
-		*flag = 1;
-		if (dup2(fd[1], STDOUT_FILENO) < 0)
-			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
+		mini->flag = 1;
+		if (pipe(mini->fd) < 0)
+			return(ft_put_err("pipe", ": couldn't create pipe", 1));
+		if (mini->red_fd[1] == 0 && dup2(mini->fd[1], STDOUT_FILENO) < 0)
+			return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+		close(mini->fd[1]);
 	}
 	else
 	{
-		if (dup2(fd[0], STDIN_FILENO) < 0)
-			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
-		if (dup2(fd[1], STDOUT_FILENO) < 0)
-			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
-		if (cmd->next == NULL)
-			if (dup2(1, fd[1]) < 0)
-			return(ft_put_err("dup2", ": couldn't clobe the fd", 1));
+		if (mini->red_fd[0] == 0 && dup2(mini->fd[0], STDIN_FILENO) < 0)
+			return(ft_put_err("dup2", ": couldn't clone the fd2", 1));
+		close(mini->fd[0]);
+		if (cmd->next != NULL)
+		{
+			if (pipe(mini->fd) < 0)
+				return(ft_put_err("pipe", ": couldn't create pipe", 1));
+			if (mini->red_fd[1] == 0 && dup2(mini->fd[1], STDOUT_FILENO) < 0)
+				return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+			close(mini->fd[1]);
+		}
+		// if (dup2(mini->fd[1], STDOUT_FILENO) < 0)
+		// 	return(ft_put_err("dup2", ": couldn't clone the fd3", 1));
+		// if (cmd->next == NULL)
+		// 	if (dup2(1, mini->fd[1]) < 0)
+		// 	return(ft_put_err("dup2", ": couldn't clone the fd4", 1));
 	}
-	close(fd[0]);
-	close(fd[1]);
 	return (0);
 }
 
 int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
-	char	*input;
-	int		ret;
-	int flag = 0;
+	// char	*input;
+	// int		ret;
+	t_mini mini;
+
+	/*
+	input = NULL;
 	// int stdin = STDIN_FILENO;
 	// int stdout = STDOUT_FILENO;
 	//int		fd;
 	//char	*line;
-
-	input = NULL;
-	/*
 	//ft_putnbr_fd(cmd->simple_cmd_count, 2);
 	//ft_putendl_fd(cmd->child->next->command, 2);
 	ft_init(cmd_list);
@@ -265,24 +278,27 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	*/
 	ft_putstr_fd(BLUE,1);
 	ft_putendl_fd("------------------------------------------------------------", 1);
-	if (cmd->child->redirections != NULL)
-		ft_redirection(cmd->child->redirections);
 	// if (cmd->simple_cmd_count != 1)
 	do_backups(1);
+	mini.flag = 0;
 	while (cmd->child != NULL)
 	{
+		mini.red_fd[0] = 0;
+		mini.red_fd[1] = 0;
+		if (cmd->child->redirections != NULL)
+			ft_redirection(&mini, cmd->child->redirections);
 		if (cmd->child->command == NULL)
 			return (ft_put_err("\0", ": command not found", 127));
-		if (cmd->simple_cmd_count != 0)
+		if (cmd->simple_cmd_count > 1)
 		{
 			ft_putendl_fd("do something", 1);
-			ft_pipe(cmd->child, &flag);
+			ft_pipe(&mini, cmd->child);
 			// you have to change the stdin and stdout
 		}
-		ret = ft_is_builtins(cmd->child, head);
+		mini.ret = ft_is_builtins(cmd->child, head);
 		cmd->child = cmd->child->next;
+		do_backups(0);
 	}
-	do_backups(0);
 	ft_putendl_fd("------------------------------------------------------------", 1);
-	return (ret);
+	return (mini.ret);
 }

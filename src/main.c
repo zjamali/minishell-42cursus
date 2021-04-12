@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/03 19:08:57 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/12 17:54:31 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,3 +71,9 @@ int main(int ac,char **av,char **env)
 // \e\c\h\o
 // export s= 2116 sdf sdfdsf !=  sdf sdfdsf
 // "\dkjjkd\"dghj" 
+
+
+// export a=a b= c
+
+// if new fih = edit
+// else no edit

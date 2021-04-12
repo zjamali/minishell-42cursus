@@ -6,13 +6,22 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/10 16:41:30 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/12 17:28:31 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTION_H
 #define EXECUTION_H
 #include "minishell.h"
+
+
+typedef struct s_mini
+{
+	int 	fd[2];
+	int		red_fd[2];
+	int 	flag;
+	int 	ret;
+}				t_mini;
 
 t_env	*ft_create_node(char *name, char *value);
 void    ft_add_to_list(t_env **head, t_env *newnode);
@@ -35,8 +44,8 @@ char	**ft_list_to_arr(t_env **head);
 t_env	*ft_sort_list(t_env **head);
 int		ft_put_err(char *input, char *message, int ret);
 void	do_backups(int flag);
-int		ft_less_than(t_redirection *redirect);
-int		ft_great_than(t_redirection *redirect);
-int 	ft_double_great(t_redirection *redirect);
-int		ft_redirection(t_redirection *redirect);
+int		ft_less_than(int *fd, t_redirection *redirect);
+int		ft_great_than(int *fd, t_redirection *redirect);
+int 	ft_double_great(int *fd, t_redirection *redirect);
+int		ft_redirection(t_mini *mini, t_redirection *redirect);
 #endif

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/10 16:47:57 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/12 17:38:18 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	 ft_pwd(t_env **head)
 int	 ft_env(t_env **head)
 {
 	t_env *temp;
-
+ /// -nnnn
 	temp = *head;
 	while (temp != NULL)
 	{

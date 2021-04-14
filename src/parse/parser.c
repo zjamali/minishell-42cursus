@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/02 15:27:17 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/14 16:13:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -381,15 +381,14 @@ int ft_check_syntax(t_token *tokens_list)
 		}
 		else if (tmp->type == WORD && tmp->next->type == NEWLINE)
 		{
-			if (ft_check_closing_quotes(tmp->value))
+			if (ft_check_backslash(tmp->value))
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
 				result = 1;
 				break;
 			}
-
-			if (ft_check_backslash(tmp->value))
+			if (ft_check_closing_quotes(tmp->value))
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);

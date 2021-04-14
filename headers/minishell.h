@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/10 17:56:31 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/11 17:13:17 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,11 @@ typedef struct s_char_list{
 	struct s_char_list *next;
 }t_char_list;
 
-
 typedef struct s_lines_list{
 	char *value;
 	int history;
+	int index;
+	t_char_list *char_list;
 	struct s_lines_list *next;
 	struct s_lines_list *prev;
 }t_lines_list;

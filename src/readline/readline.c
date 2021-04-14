@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/10 18:22:13 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/11 18:32:14 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,9 @@ t_readline *ft_init_readline(struct termios *termios)
 
 void show_prompt(void)
 {
-	ft_putstr_fd("minishell$> ",1);
+	write(1,GREEN,ft_strlen(GREEN));
+	ft_putstr_fd("minishell$ ",1);
+	write(1,RESET,ft_strlen(RESET));
 }
 
 t_lines_list   *ft_insert_line(t_lines_list *list,char *line) /// 
@@ -87,6 +89,7 @@ t_lines_list   *ft_insert_line(t_lines_list *list,char *line) ///
 		list = malloc(sizeof(t_lines_list));
 		list->value = ft_strdup(line);
 		list->next = NULL;
+		list->index = 0;
 		list->prev = NULL;
 	}
 	else
@@ -94,6 +97,7 @@ t_lines_list   *ft_insert_line(t_lines_list *list,char *line) ///
 		tmp = malloc(sizeof(t_lines_list));
 		tmp->value = ft_strdup(line);
 		tmp->next = list;
+		tmp->index = list->index + 1;
 		tmp->prev = NULL;
 		list->prev = tmp;
 		list = tmp;
@@ -110,110 +114,113 @@ void ft_print_lines_list(t_lines_list *lines_list)
 		lines_list = lines_list->next;
 	}
 }
-t_lines_list *ft_reset(t_lines_list **list)
+void ft_move_cursor_and_clear(t_cursor cursor)
 {
-	t_lines_list *tmp;
-
-	tmp = NULL;
-	if (*list == NULL)
-		return NULL;
-	else
-	{
-		tmp = *list;
-		while (tmp)
-		{
-			if(tmp->history == 1)
-			{
-				if (tmp->next)
-				{	
-					*list = tmp->next;
-					free(tmp);
-					tmp = NULL;
-				}
-			}
-			tmp = tmp->prev;
-		}
-	}
-	return *list;
+	char *move_cursor;
+	
+	move_cursor = tgetstr("cm",NULL);
+	ft_putstr_fd(tgoto(move_cursor,cursor.col_position - 1,
+		cursor.line_postion -1),1);
+	ft_putstr_fd(tgetstr("cd",NULL),1);
+	
 }
-
-t_char_list *ft_add_to_char_list(t_readline *readline,char c,t_char_list *chars_list)
+void ft_print_char_list(t_char_list *chars_list)
 {
 	t_char_list *tmp;
-	char *move_cursor;
+	
+	tmp = chars_list;
 
-	move_cursor = tgetstr("cm",NULL);
-	ft_putstr_fd(tgoto(move_cursor,readline->cursor.col_position - 1,
-		readline->cursor.line_postion -1),1);
-	ft_putstr_fd(tgetstr("cd",NULL),1);
+	while(tmp->next)
+	{
+		ft_putchar_fd(tmp->value,1);
+		tmp = tmp->next;
+	}
+	if (tmp)
+		ft_putchar_fd(tmp->value,1);
+}
+
+void ft_add_to_char_list(t_readline *readline,char c,t_char_list **chars_list)
+{
+	t_char_list *tmp;
 
 	tmp = NULL;
-	if (chars_list == NULL)
+	ft_move_cursor_and_clear(readline->cursor);
+	if (*chars_list == NULL)
 	{
 		ft_putchar_fd(c,1);
-		chars_list = malloc(sizeof(t_char_list));
-		chars_list->value = c;
-		chars_list->len = 1;
-		chars_list->next = NULL;
+		*chars_list = malloc(sizeof(t_char_list));
+		(*chars_list)->value = c;
+		(*chars_list)->len = 1;
+		(*chars_list)->next = NULL;
 	}
 	else
 	{
-		tmp = chars_list;
-		while (tmp->next)
-		{
-			ft_putchar_fd(tmp->value,1);
-			tmp = tmp->next;
-		}
+		ft_print_char_list(*chars_list);
 		tmp->next = malloc(sizeof(t_char_list));
 		tmp->next->next = NULL;
 		tmp->value = c;
-		tmp->len = chars_list->len;
-		chars_list->len = tmp->len + 1;
-		ft_putchar_fd(c,1);
+		tmp->len = (*chars_list)->len;
+		(*chars_list)->len = tmp->len + 1;
+		ft_putchar_fd(tmp->value,1);
 	}
-	return chars_list;
 }
-
-char *create_line(t_char_list *char_list)
+void ft_clear_char_list(t_char_list *char_list)
+{
+	t_char_list *tmp;
+	while (char_list)
+	{
+		tmp = char_list;
+		char_list = char_list->next;
+		free(tmp);
+	}
+}
+char *create_line_from_chars_list(t_char_list **char_list)
 {
 	char *line;
 	int i;
 	int len;
+	t_char_list *tmp;
 
 	
 	i  = 0;
-	len = char_list->len;
-	
-	line = malloc(sizeof(len + 1));
-	line[len] = '\0';
-	
-	while (i < len)
+	len = (*char_list)->len;
+	tmp = *char_list;
+	if (!(line = malloc(len + 1)))
+		ft_putstr_fd("line allocation problem",1);
+	ft_bzero(line,len + 1);
+	while (tmp)
 	{
-		line[i] = char_list->value;
-		char_list = char_list->next; 
+		line[i] = tmp->value;
+		tmp = tmp->next;
 		i++;
 	}
+	line[len] = '\0';
 	return line;
 }
 
-void get_charctere(t_readline *readline,long c,t_char_list **chars_list,t_lines_list **lines_list)
+int  get_charctere(t_readline *readline, long c, 
+							t_lines_list **lines_list,t_char_list **char_list)
 {
 	char *line;
-
+	int newline_break;
 	line = NULL;
+	newline_break = 1;
+
 	if (ft_isprint(c))
 	{
-		*chars_list = ft_add_to_char_list(readline,c,*chars_list);
+		ft_add_to_char_list(readline, c,char_list);
+		//ft_putstr_fd(,1);
 	}
-	if (c == D_KEY_ENTER)
+	else if (c == D_KEY_ENTER)
 	{
-		//ft_putchar_fd((*chars_list)->value,1);
-		line = create_line(*chars_list);
-		//ft_putstr_fd(line,1);
+		if ((*lines_list)->char_list)
+			line = create_line_from_chars_list(char_list);
+		//ft_clear_char_list(*chars_list);
+		//*chars_list = NULL;
 		*lines_list =  ft_insert_line(*lines_list,line);
-		ft_putstr_fd("\n",1);
-		ft_print_lines_list(*lines_list);
+		newline_break = 0;
 	}
+	return newline_break;
 }
 
 t_char_list *init_character_list(void)
@@ -225,6 +232,46 @@ t_char_list *init_character_list(void)
 	tmp->value = 0;
 	return tmp;
 }
+void ft_up_in_lines(t_lines_list  **current)
+{
+	if (!*current)
+		return;
+	else
+	{
+		if (!(*current)->prev)
+			ft_putstr_fd((*current)->value,1);
+		
+	}
+	
+}
+
+t_lines_list *ft_init_line_list(void)
+{
+	t_lines_list *lines_list;
+
+	lines_list = malloc(sizeof(t_lines_list));
+	if (!lines_list)
+	{
+		ft_putstr_fd("line list allocation problem",1);
+		return (NULL);
+	}
+	//lines_list->char_list = malloc(sizeof(t_char_list));
+	//if (!lines_list->char_list)
+	//{
+	//	ft_putstr_fd("chars list allocation probleme",1);
+	//	return (NULL);
+	//}
+	lines_list->char_list = NULL;
+	lines_list->index = 0;
+	lines_list->next = NULL;
+	lines_list->prev = NULL;
+	lines_list->value = NULL;
+	lines_list->history = 0;
+	//lines_list->char_list->value = 0;
+	//lines_list->char_list->next = NULL;
+	//lines_list->char_list->len = 0;
+	return lines_list;
+}
 
 int main()
 {
@@ -234,23 +281,32 @@ int main()
 	t_lines_list *current;
 	t_char_list *chars_list;
 	long character;
-	
+	int newline_break;
+
 	character = 0;
 	lines_list = NULL;
 	readline  = ft_init_readline(&termios);
-	//char  * cm_cap  =  tgetstr ( "cm" ,  NULL );
+	
+	lines_list = ft_init_line_list();
 	current = lines_list;
+	chars_list = NULL;
 	while(1)
 	{
+		newline_break = 1;
 		show_prompt();
 		ft_get_cursor_position(&readline->cursor.line_postion,
 		&readline->cursor.col_position);
-		chars_list = init_character_list();
-		while (1)
+		while (newline_break)
 		{
 			read(0,&character,6);
-			get_charctere(readline,character,&chars_list,&lines_list);
+			if (character == D_KEY_UP)
+				ft_up_in_lines(&current);
+			else
+				newline_break = get_charctere(readline,character,&current,&(current->char_list));
 			character = 0;
+			if (newline_break == 0)
+				ft_putstr_fd("\n",1);
 		}
+		//ft_print_lines_list(lines_list);
 	}
 }

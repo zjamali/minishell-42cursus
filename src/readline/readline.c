@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/11 18:32:14 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/15 16:48:45 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,12 +156,18 @@ void ft_add_to_char_list(t_readline *readline,char c,t_char_list **chars_list)
 	else
 	{
 		ft_print_char_list(*chars_list);
+		tmp = *chars_list;
+		while(tmp->next)
+		{
+			tmp = tmp->next;
+		}
 		tmp->next = malloc(sizeof(t_char_list));
 		tmp->next->next = NULL;
-		tmp->value = c;
-		tmp->len = (*chars_list)->len;
-		(*chars_list)->len = tmp->len + 1;
-		ft_putchar_fd(tmp->value,1);
+		tmp->next->value = c;
+		tmp->next->len = tmp->len + 1;
+		(*chars_list)->len = tmp->next->len;
+		//ft_putchar_fd(tmp->value,1);
+		*chars_list = tmp;
 	}
 }
 void ft_clear_char_list(t_char_list *char_list)
@@ -209,14 +215,11 @@ int  get_charctere(t_readline *readline, long c,
 	if (ft_isprint(c))
 	{
 		ft_add_to_char_list(readline, c,char_list);
-		//ft_putstr_fd(,1);
 	}
 	else if (c == D_KEY_ENTER)
 	{
 		if ((*lines_list)->char_list)
 			line = create_line_from_chars_list(char_list);
-		//ft_clear_char_list(*chars_list);
-		//*chars_list = NULL;
 		*lines_list =  ft_insert_line(*lines_list,line);
 		newline_break = 0;
 	}
@@ -232,6 +235,7 @@ t_char_list *init_character_list(void)
 	tmp->value = 0;
 	return tmp;
 }
+
 void ft_up_in_lines(t_lines_list  **current)
 {
 	if (!*current)
@@ -255,21 +259,12 @@ t_lines_list *ft_init_line_list(void)
 		ft_putstr_fd("line list allocation problem",1);
 		return (NULL);
 	}
-	//lines_list->char_list = malloc(sizeof(t_char_list));
-	//if (!lines_list->char_list)
-	//{
-	//	ft_putstr_fd("chars list allocation probleme",1);
-	//	return (NULL);
-	//}
 	lines_list->char_list = NULL;
 	lines_list->index = 0;
 	lines_list->next = NULL;
 	lines_list->prev = NULL;
 	lines_list->value = NULL;
 	lines_list->history = 0;
-	//lines_list->char_list->value = 0;
-	//lines_list->char_list->next = NULL;
-	//lines_list->char_list->len = 0;
 	return lines_list;
 }
 
@@ -292,13 +287,22 @@ int main()
 	chars_list = NULL;
 	while(1)
 	{
+		//current = ft_create_node(&current);
+		//create node
+		//insertattail
+		//node->prev = null node-<next=NULL 
+		//**tmp tm = tmp->prev
+		int fd;
 		newline_break = 1;
 		show_prompt();
 		ft_get_cursor_position(&readline->cursor.line_postion,
 		&readline->cursor.col_position);
 		while (newline_break)
 		{
+			fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
 			read(0,&character,6);
+			dprintf(fd,"%ld\n",character);
+			close(fd);
 			if (character == D_KEY_UP)
 				ft_up_in_lines(&current);
 			else

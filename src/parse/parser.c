@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/15 14:57:01 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/15 15:06:29 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,6 @@ int ft_check_closing_quotes(char *word)
 			}
 			else
 			{
-				ft_putnbr_fd(back_slash,1);
 				if (back_slash % 2 == 0)
 				{
 					quote += 1 ;

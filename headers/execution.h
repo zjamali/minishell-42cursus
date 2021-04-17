@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/12 17:28:31 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/16 16:24:10 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 typedef struct s_mini
 {
-	int 	fd[2];
+	int 	*fd;
 	int		red_fd[2];
 	int 	flag;
 	int 	ret;

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/12 17:38:18 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/15 15:39:14 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,18 @@ void	 ft_loop(t_args *args)
 	}
 }
 
+int ft_isitn(char *arg)
+{
+	int i;
+	
+	i = 0;
+	while (arg[i] == 'n' && arg[i])
+		i++;
+	if (arg[i] != '\0')
+		return (0);
+	return (1);
+}
+
 int	 ft_echo(t_args *args)
 {
 	if (args == NULL || args->value ==  NULL)
@@ -33,11 +45,14 @@ int	 ft_echo(t_args *args)
 		ft_putchar_fd('\n', 1);
 		return (0);
 	}
-	if (!(ft_strcmp(args->value, "-n")))
+	if (args->value[0] == '-')
 	{
-		while ((ft_strcmp(args->value, "-n") == 0))
+		while (ft_isitn(args->value + 1))
 			args = args->next;
 		ft_loop(args);
+		// while ((ft_strcmp(args->value, "-n") == 0))
+		// 	args = args->next;
+		// ft_loop(args);
 	}
 	else
 	{

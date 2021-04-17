@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/12 17:33:32 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/17 16:52:42 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	else
 	{
 		ft_chech_path(cmd, head);
-		return (0);
+		return (1);
 	}
 }
 
@@ -191,39 +191,88 @@ int ft_put_err(char *input, char *message, int ret)
 	return (ret);
 }
 
-int ft_pipe(t_mini *mini, t_simple_cmd *cmd)
-{
+// int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
+// {
+// 	/*
+// 	if (mini->flag == 0)
+// 	{
+// 		mini->flag = 1;
+// 		if (pipe(mini->fd) < 0)
+// 			return(ft_put_err("pipe", ": couldn't create pipe", 1));
+// 		if (mini->red_fd[1] == 0 && dup2(mini->fd[1], STDOUT_FILENO) < 0)
+// 			return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+// 		close(mini->fd[1]);
+// 	}
+// 	else
+// 	{
+// 		if (mini->red_fd[0] == 0 && dup2(mini->fd[0], STDIN_FILENO) < 0)
+// 			return(ft_put_err("dup2", ": couldn't clone the fd2", 1));
+// 		close(mini->fd[0]);
+// 		if (cmd->next != NULL)
+// 		{
+// 			if (pipe(mini->fd) < 0)
+// 				return(ft_put_err("pipe", ": couldn't create pipe", 1));
+// 			if (mini->red_fd[1] == 0 && dup2(mini->fd[1], STDOUT_FILENO) < 0)
+// 				return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+// 			close(mini->fd[1]);
+// 		}
+// 		// if (dup2(mini->fd[1], STDOUT_FILENO) < 0)
+// 		// 	return(ft_put_err("dup2", ": couldn't clone the fd3", 1));
+// 		// if (cmd->next == NULL)
+// 		// 	if (dup2(1, mini->fd[1]) < 0)
+// 		// 	return(ft_put_err("dup2", ": couldn't clone the fd4", 1));
+// 	}
+// 	return (0);
+// 	*/
+// 	int i;
+// 	int command;
+// 	int pid;
+// 	int status;
 	
-	if (mini->flag == 0)
-	{
-		mini->flag = 1;
-		if (pipe(mini->fd) < 0)
-			return(ft_put_err("pipe", ": couldn't create pipe", 1));
-		if (mini->red_fd[1] == 0 && dup2(mini->fd[1], STDOUT_FILENO) < 0)
-			return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
-		close(mini->fd[1]);
-	}
-	else
-	{
-		if (mini->red_fd[0] == 0 && dup2(mini->fd[0], STDIN_FILENO) < 0)
-			return(ft_put_err("dup2", ": couldn't clone the fd2", 1));
-		close(mini->fd[0]);
-		if (cmd->next != NULL)
-		{
-			if (pipe(mini->fd) < 0)
-				return(ft_put_err("pipe", ": couldn't create pipe", 1));
-			if (mini->red_fd[1] == 0 && dup2(mini->fd[1], STDOUT_FILENO) < 0)
-				return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
-			close(mini->fd[1]);
-		}
-		// if (dup2(mini->fd[1], STDOUT_FILENO) < 0)
-		// 	return(ft_put_err("dup2", ": couldn't clone the fd3", 1));
-		// if (cmd->next == NULL)
-		// 	if (dup2(1, mini->fd[1]) < 0)
-		// 	return(ft_put_err("dup2", ": couldn't clone the fd4", 1));
-	}
-	return (0);
-}
+// 	i = 0;
+// 	mini->fd = (int *)malloc(sizeof(int) * (cmd->simple_cmd_count * 2));
+// 	if (!mini->fd)
+// 		return (ft_put_err("malloc", ": malloc faild", 1));
+// 	while (i < cmd->simple_cmd_count)
+// 	{
+// 		if(pipe(mini->fd + i * 2))
+// 			return(ft_put_err("pipe", ": : couldn't create pipe", errno));
+// 		i++;
+// 	}
+// 	command = 0;
+// 	i = 0;
+// 	while (cmd->child)
+// 	{
+// 		pid = fork();
+// 		if (pid == -1)
+// 			return (ft_put_err("fork", ": coudn't fork properly\n", errno));
+// 		else if (pid == 0)
+// 		{
+// 			//if not the first command
+// 			if (mini->flag == 1 && cmd->child->next != NULL)
+// 				if (dup2(mini->fd[(command - 1) * 2], 0) < 0)
+// 					return(ft_put_err("dup2", ": couldn't clone the fd", 1));
+// 			// if not the last command
+// 			if (cmd->child->next == NULL)
+// 				if (dup2(mini->fd[command * 2 + 1], 1) < 0)
+// 					return(ft_put_err("dup2", ": couldn't clone the fd", 1));
+// 			while (i < (cmd->simple_cmd_count * 2))
+// 				close(mini->fd[i++]);
+// 			mini->ret = ft_is_builtins(cmd->child, head);
+// 		}
+// 		else
+// 		{
+// 			i = 0;
+// 			while (i < (cmd->simple_cmd_count * 2))
+// 				close(mini->fd[i++]);
+// 			i = -1;
+// 			while (i++ < cmd->simple_cmd_count)
+// 				wait(&status);
+// 		}
+// 		command++;
+// 	}
+// 	return (0);
+// }
 
 int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
@@ -281,24 +330,91 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	// if (cmd->simple_cmd_count != 1)
 	do_backups(1);
 	mini.flag = 0;
-	while (cmd->child != NULL)
+	// while (cmd->child != NULL)
+	// {
+	// 	mini.red_fd[0] = 0;
+	// 	mini.red_fd[1] = 0;
+	// 	if (cmd->child->redirections != NULL)
+	// 		ft_redirection(&mini, cmd->child->redirections);
+	// 	if (cmd->child->command == NULL)
+	// 		return (ft_put_err("\0", ": command not found", 127));
+	// 	if (cmd->simple_cmd_count > 1)
+	// 	{
+	// 		ft_putendl_fd("do something", 1);
+	// 		ft_pipe(&mini, cmd);
+	// 		// you have to change the stdin and stdout
+	// 	}
+	// 	mini.ret = ft_is_builtins(cmd->child, head);
+	// 	cmd->child = cmd->child->next;
+	// 	do_backups(0);
+	// }
+	
+	//this is test
+	int i;
+	int command;
+	cmd->simple_cmd_count--;
+	int pid[cmd->simple_cmd_count + 1];
+	int status;
+	//int fd[2*cmd->simple_cmd_count];
+	
+	i = 0;
+	mini.fd = (int *)malloc(sizeof(int) * (cmd->simple_cmd_count * 2));
+	if (!mini.fd)
+		return (ft_put_err("malloc", ": malloc faild", 1));
+	while (i < cmd->simple_cmd_count)
 	{
-		mini.red_fd[0] = 0;
-		mini.red_fd[1] = 0;
-		if (cmd->child->redirections != NULL)
-			ft_redirection(&mini, cmd->child->redirections);
-		if (cmd->child->command == NULL)
-			return (ft_put_err("\0", ": command not found", 127));
-		if (cmd->simple_cmd_count > 1)
-		{
-			ft_putendl_fd("do something", 1);
-			ft_pipe(&mini, cmd->child);
-			// you have to change the stdin and stdout
-		}
-		mini.ret = ft_is_builtins(cmd->child, head);
-		cmd->child = cmd->child->next;
-		do_backups(0);
+		if(pipe(mini.fd + i * 2) < 0)
+			return(ft_put_err("pipe", ": couldn't create pipe", errno));
+		i++;
 	}
+	command = 0;
+	i = 0;
+	int k = 0;
+	(void)head;
+	while (cmd->child)
+	{
+		pid[k] = fork();
+		if (pid[k] == -1)
+			return (ft_put_err("fork", ": coudn't fork properly\n", errno));
+		else if (pid[k] == 0)
+		{
+			// if not the last command
+			if (cmd->child->next)
+				if (dup2(mini.fd[command + 1], STDOUT_FILENO) < 0)
+					return(ft_put_err("dup2", ": couldn't clone the fd", 1));
+			// if not the first command
+			if (command != 0)
+				if (dup2(mini.fd[command - 2], STDIN_FILENO) < 0)
+					return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+			while (i < (cmd->simple_cmd_count * 2))
+				close(mini.fd[i++]);
+			mini.ret = ft_is_builtins(cmd->child, head);
+			printf("(%d)\n", mini.ret);
+			exit (mini.ret);
+		}
+		// else
+		// {
+		// 	ft_putendl_fd("test", 1337);
+		// 	waitpid(pid, &status, 0);
+		// }
+		cmd->child = cmd->child->next;
+		command+=2;
+		k++;
+	}
+	i = 0;
+	while (i < (cmd->simple_cmd_count * 2))
+		close(mini.fd[i++]);
+	i = 0;
+	while (i < cmd->simple_cmd_count + 1)
+	{
+		//wait(NULL);
+		waitpid(pid[i], &status, 0);
+		mini.ret = WEXITSTATUS(status);
+		printf("%d{%d}\n",i, mini.ret);
+		i++;
+	}
+	//the test ends here
+	do_backups(0);
 	ft_putendl_fd("------------------------------------------------------------", 1);
 	return (mini.ret);
 }

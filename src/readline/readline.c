@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/19 15:30:01 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/19 17:41:06 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,8 @@ t_lines_list   *ft_insert_node_to_line_list(t_lines_list *list,t_lines_list *cur
 	{
 		current->prev = NULL;
 		current->next = NULL;
-		if (current->char_list)
-			current->value = create_line_from_chars_list(current->char_list);
+		//if (current->char_list)
+		//	current->value = create_line_from_chars_list(current->char_list);
 		current->history = history;
 		current->index = 1;
 		list = current;
@@ -122,8 +122,8 @@ t_lines_list   *ft_insert_node_to_line_list(t_lines_list *list,t_lines_list *cur
 	{
 		if (current)
 		{
-			if (current->char_list)
-				current->value = create_line_from_chars_list(current->char_list);
+			//if (current->char_list)
+			//	current->value = create_line_from_chars_list(current->char_list);
 			current->next = list;
 			current->index = list->index + 1;
 			current->prev = NULL;
@@ -213,7 +213,7 @@ int  get_charctere(t_readline *readline, long c,
 	int newline_break;
 	line = NULL;
 	newline_break = 1;
-
+	
 	if (ft_isprint(c))
 	{
 		ft_add_to_char_list(readline, c,&current->char_list);
@@ -251,12 +251,21 @@ void ft_up_in_lines(t_readline *readline,t_lines_list  **current)
 		if ((*current)->next)
 		{
 			(*current) = (*current)->next;
-			if ((*current)->value)
-				ft_putstr_fd((*current)->value, 1);
+			if ((*current)->edit_char_list == NULL)
+			{
+				if ((*current)->char_list)
+					ft_print_char_list((*current)->char_list);
+				else
+				{
+					(*current) = (*current)->next;
+					ft_print_char_list((*current)->char_list);
+				}
+			}
 		}
 		else
 		{
-			ft_putstr_fd((*current)->value, 1);
+			if ((*current)->edit_char_list == NULL)
+				ft_print_char_list((*current)->char_list);
 		}
 	
 	}
@@ -271,12 +280,13 @@ void ft_down_in_lines(t_readline *readline,t_lines_list  **current)
 		if ((*current)->prev)
 		{
 			(*current) = (*current)->prev;
-			if ((*current)->value)
-				ft_putstr_fd((*current)->value, 1);
+			if ((*current)->char_list)
+				ft_print_char_list((*current)->char_list);
 		}
 		else
 		{
-			ft_putstr_fd((*current)->value, 1);
+			if ((*current)->char_list)
+				ft_print_char_list((*current)->char_list);
 		}
 	
 	}
@@ -308,6 +318,7 @@ t_lines_list *ft_create_node(void)
 
 		ret = malloc(sizeof(t_lines_list));
 		ret->char_list = NULL;
+		ret->edit_char_list = NULL;
 		ret->next = NULL;
 		ret->prev = NULL;
 		ret->value = NULL;
@@ -342,24 +353,33 @@ int main()
 			close(fd);
 			if (character == D_KEY_UP)
 			{
-				if (current)
+				if (current && current->next == NULL && current->next == NULL)
 				{
 					lines_list = ft_insert_node_to_line_list(lines_list,current,1);
 					current = NULL;
 				}
 				ft_up_in_lines(readline,&lines_list);
 			}
-			if (character == D_KEY_DOWN)
+			else if (character == D_KEY_DOWN)
 			{
-				if (current)
-				{
-					lines_list = ft_insert_node_to_line_list(lines_list,current,1);
-					current = NULL;
-				}
+				//ft_print_lines_list(current);
 				ft_down_in_lines(readline,&lines_list);
 			}
 			else
-				newline_break = get_charctere(readline,character,current,&lines_list);
+			{
+				if (current)
+					newline_break = get_charctere(readline,character,current,&lines_list);
+				else
+				{
+					if (!current)
+						current = ft_create_node(); 
+					///current = lines_list;
+					//if (current->edit_char_list == NULL)
+					//	current->edit_char_list = current->char_list;
+					newline_break = get_charctere(readline,character,current,&lines_list);
+				}
+				
+			}
 			character = 0;
 			if (newline_break == 0)
 				ft_putstr_fd("\n",1);

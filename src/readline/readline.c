@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/15 16:48:45 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/19 15:30:01 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,32 +78,67 @@ void show_prompt(void)
 	ft_putstr_fd("minishell$ ",1);
 	write(1,RESET,ft_strlen(RESET));
 }
+char *create_line_from_chars_list(t_char_list *char_list)
+{
+	char *line;
+	int i;
+	int len;
+	t_char_list *tmp;
 
-t_lines_list   *ft_insert_line(t_lines_list *list,char *line) /// 
+	
+	i  = 0;
+	len = char_list->len;
+	tmp = char_list;
+	if (!(line = malloc(len + 1)))
+		ft_putstr_fd("line allocation problem",1);
+	ft_bzero(line,len + 1);
+	while (tmp)
+	{
+		line[i] = tmp->value;
+		tmp = tmp->next;
+		i++;
+	}
+	line[len] = '\0';
+	return line;
+}
+
+t_lines_list   *ft_insert_node_to_line_list(t_lines_list *list,t_lines_list *current,int history) /// 
 {
 	t_lines_list *tmp;
 	
 	tmp = NULL;
 	if (!list)
 	{
-		list = malloc(sizeof(t_lines_list));
-		list->value = ft_strdup(line);
-		list->next = NULL;
-		list->index = 0;
-		list->prev = NULL;
+		current->prev = NULL;
+		current->next = NULL;
+		if (current->char_list)
+			current->value = create_line_from_chars_list(current->char_list);
+		current->history = history;
+		current->index = 1;
+		list = current;
+		return list;
 	}
 	else
 	{
-		tmp = malloc(sizeof(t_lines_list));
-		tmp->value = ft_strdup(line);
-		tmp->next = list;
-		tmp->index = list->index + 1;
-		tmp->prev = NULL;
-		list->prev = tmp;
-		list = tmp;
+		if (current)
+		{
+			if (current->char_list)
+				current->value = create_line_from_chars_list(current->char_list);
+			current->next = list;
+			current->index = list->index + 1;
+			current->prev = NULL;
+			list->prev = current;
+			list = current;
+			return list;
+		}
+		else
+		{
+			return list;
+		}
+		
 	}
-	return list;
 }
+
 void ft_print_lines_list(t_lines_list *lines_list)
 {
 	while (lines_list)
@@ -155,57 +190,24 @@ void ft_add_to_char_list(t_readline *readline,char c,t_char_list **chars_list)
 	}
 	else
 	{
-		ft_print_char_list(*chars_list);
 		tmp = *chars_list;
 		while(tmp->next)
 		{
+			ft_putchar_fd(tmp->value,1);
 			tmp = tmp->next;
 		}
+		ft_putchar_fd(tmp->value,1);
 		tmp->next = malloc(sizeof(t_char_list));
 		tmp->next->next = NULL;
 		tmp->next->value = c;
 		tmp->next->len = tmp->len + 1;
 		(*chars_list)->len = tmp->next->len;
-		//ft_putchar_fd(tmp->value,1);
-		*chars_list = tmp;
+		ft_putchar_fd(c,1);
 	}
-}
-void ft_clear_char_list(t_char_list *char_list)
-{
-	t_char_list *tmp;
-	while (char_list)
-	{
-		tmp = char_list;
-		char_list = char_list->next;
-		free(tmp);
-	}
-}
-char *create_line_from_chars_list(t_char_list **char_list)
-{
-	char *line;
-	int i;
-	int len;
-	t_char_list *tmp;
-
-	
-	i  = 0;
-	len = (*char_list)->len;
-	tmp = *char_list;
-	if (!(line = malloc(len + 1)))
-		ft_putstr_fd("line allocation problem",1);
-	ft_bzero(line,len + 1);
-	while (tmp)
-	{
-		line[i] = tmp->value;
-		tmp = tmp->next;
-		i++;
-	}
-	line[len] = '\0';
-	return line;
 }
 
 int  get_charctere(t_readline *readline, long c, 
-							t_lines_list **lines_list,t_char_list **char_list)
+							t_lines_list *current,t_lines_list **lines_list)
 {
 	char *line;
 	int newline_break;
@@ -214,13 +216,12 @@ int  get_charctere(t_readline *readline, long c,
 
 	if (ft_isprint(c))
 	{
-		ft_add_to_char_list(readline, c,char_list);
+		ft_add_to_char_list(readline, c,&current->char_list);
 	}
 	else if (c == D_KEY_ENTER)
 	{
-		if ((*lines_list)->char_list)
-			line = create_line_from_chars_list(char_list);
-		*lines_list =  ft_insert_line(*lines_list,line);
+		if (current->char_list)
+			*lines_list =  ft_insert_node_to_line_list(*lines_list,current,0);
 		newline_break = 0;
 	}
 	return newline_break;
@@ -236,15 +237,48 @@ t_char_list *init_character_list(void)
 	return tmp;
 }
 
-void ft_up_in_lines(t_lines_list  **current)
+
+
+void ft_up_in_lines(t_readline *readline,t_lines_list  **current)
+{
+	
+	
+	if (!*current)
+		return;
+	else
+	{
+		ft_move_cursor_and_clear(readline->cursor);
+		if ((*current)->next)
+		{
+			(*current) = (*current)->next;
+			if ((*current)->value)
+				ft_putstr_fd((*current)->value, 1);
+		}
+		else
+		{
+			ft_putstr_fd((*current)->value, 1);
+		}
+	
+	}
+}
+void ft_down_in_lines(t_readline *readline,t_lines_list  **current)
 {
 	if (!*current)
 		return;
 	else
 	{
-		if (!(*current)->prev)
-			ft_putstr_fd((*current)->value,1);
-		
+		ft_move_cursor_and_clear(readline->cursor);
+		if ((*current)->prev)
+		{
+			(*current) = (*current)->prev;
+			if ((*current)->value)
+				ft_putstr_fd((*current)->value, 1);
+		}
+		else
+		{
+			ft_putstr_fd((*current)->value, 1);
+		}
+	
 	}
 	
 }
@@ -268,30 +302,33 @@ t_lines_list *ft_init_line_list(void)
 	return lines_list;
 }
 
+t_lines_list *ft_create_node(void)
+{	
+	t_lines_list *ret;
+
+		ret = malloc(sizeof(t_lines_list));
+		ret->char_list = NULL;
+		ret->next = NULL;
+		ret->prev = NULL;
+		ret->value = NULL;
+		return ret;
+}
+
 int main()
 {
 	t_lines_list *lines_list;
 	struct termios termios;
 	t_readline *readline;
 	t_lines_list *current;
-	t_char_list *chars_list;
 	long character;
 	int newline_break;
 
 	character = 0;
-	lines_list = NULL;
 	readline  = ft_init_readline(&termios);
-	
-	lines_list = ft_init_line_list();
-	current = lines_list;
-	chars_list = NULL;
+	lines_list = NULL;
 	while(1)
 	{
-		//current = ft_create_node(&current);
-		//create node
-		//insertattail
-		//node->prev = null node-<next=NULL 
-		//**tmp tm = tmp->prev
+		current = ft_create_node();
 		int fd;
 		newline_break = 1;
 		show_prompt();
@@ -304,13 +341,29 @@ int main()
 			dprintf(fd,"%ld\n",character);
 			close(fd);
 			if (character == D_KEY_UP)
-				ft_up_in_lines(&current);
+			{
+				if (current)
+				{
+					lines_list = ft_insert_node_to_line_list(lines_list,current,1);
+					current = NULL;
+				}
+				ft_up_in_lines(readline,&lines_list);
+			}
+			if (character == D_KEY_DOWN)
+			{
+				if (current)
+				{
+					lines_list = ft_insert_node_to_line_list(lines_list,current,1);
+					current = NULL;
+				}
+				ft_down_in_lines(readline,&lines_list);
+			}
 			else
-				newline_break = get_charctere(readline,character,&current,&(current->char_list));
+				newline_break = get_charctere(readline,character,current,&lines_list);
 			character = 0;
 			if (newline_break == 0)
 				ft_putstr_fd("\n",1);
+			
 		}
-		//ft_print_lines_list(lines_list);
 	}
 }

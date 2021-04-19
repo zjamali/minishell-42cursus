@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/19 17:41:06 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/19 17:53:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,6 +251,7 @@ void ft_up_in_lines(t_readline *readline,t_lines_list  **current)
 		if ((*current)->next)
 		{
 			(*current) = (*current)->next;
+			(*current)->up_or_down = true;
 			if ((*current)->edit_char_list == NULL)
 			{
 				if ((*current)->char_list)
@@ -258,6 +259,7 @@ void ft_up_in_lines(t_readline *readline,t_lines_list  **current)
 				else
 				{
 					(*current) = (*current)->next;
+					(*current)->up_or_down = true;
 					ft_print_char_list((*current)->char_list);
 				}
 			}
@@ -265,7 +267,10 @@ void ft_up_in_lines(t_readline *readline,t_lines_list  **current)
 		else
 		{
 			if ((*current)->edit_char_list == NULL)
+			{
+				(*current)->up_or_down = true;
 				ft_print_char_list((*current)->char_list);
+			}
 		}
 	
 	}
@@ -319,6 +324,7 @@ t_lines_list *ft_create_node(void)
 		ret = malloc(sizeof(t_lines_list));
 		ret->char_list = NULL;
 		ret->edit_char_list = NULL;
+		ret->up_or_down = false;
 		ret->next = NULL;
 		ret->prev = NULL;
 		ret->value = NULL;
@@ -367,12 +373,19 @@ int main()
 			}
 			else
 			{
+				
 				if (current)
+				{
 					newline_break = get_charctere(readline,character,current,&lines_list);
+				}
 				else
 				{
+					fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
+					dprintf(fd,"%s\n","JADID");
+					close(fd);
 					if (!current)
-						current = ft_create_node(); 
+						current = ft_create_node();
+					
 					///current = lines_list;
 					//if (current->edit_char_list == NULL)
 					//	current->edit_char_list = current->char_list;

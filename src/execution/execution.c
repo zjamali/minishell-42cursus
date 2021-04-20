@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/19 17:23:18 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/20 16:35:38 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,7 +304,10 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	mini.red_fd[0] = 0;
 	mini.red_fd[1] = 0;
 	if (cmd->child->redirections != NULL)
-		ft_redirection(&mini, cmd->child->redirections);
+	{
+		if (ft_redirection(&mini, cmd->child->redirections))
+			return (1);
+	}
 	if (cmd->child->command == NULL)
 		return (ft_put_err("\0", ": command not found", 127));
 	if (cmd->simple_cmd_count > 1)

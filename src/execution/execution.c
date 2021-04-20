@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/10 17:07:55 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/20 16:35:38 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,20 @@ char **ft_args_to_arr(t_simple_cmd *cmd)
 	return (arg);
 }
 
-void	ft_exec(t_simple_cmd *cmd, t_env **head)
+int		ft_exec(t_simple_cmd *cmd, t_env **head)
 {
 	int		pid;
 	int		status;
 	int		f_status;
+
 
 	if (!(pid = fork()))
 	{
 		//child_process;
 		//ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
-			ft_putendl_fd(strerror(errno), 2);
+			ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), 1);
+			//ft_putendl_fd(strerror(errno), 2);
 			
 			
 			//ft_putstr_fd("Command not found or permission denied.\n", 2);
@@ -75,10 +77,9 @@ void	ft_exec(t_simple_cmd *cmd, t_env **head)
 		//parrent process;
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
-		ft_putstr_fd("Exit Status is : ", 1);
-		ft_putnbr_fd(f_status, 1);
-		ft_putendl_fd("", 1);
+		return (f_status);
 	}
+	return (1);
 }
 
 void	do_backups(int flag)
@@ -121,9 +122,41 @@ void init_env(t_env **head, char **env)
 	}
 }
 
+int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
+{
+	t_env *temp;
+	char **path = NULL;
+	char *full_path;
+	struct stat *buf;
+	
+	if (cmd->command[0] == '/' || cmd->command[0] == '.')
+		return (ft_exec(cmd, head));
+	else
+	{
+		temp = ft_search_in_list(head, "PATH");
+		path = ft_split(temp->value, ':');
+		while (*path != NULL)
+		{
+			buf = malloc(sizeof(struct stat));
+			full_path = ft_strjoin(*path, ft_strjoin("/", cmd->command));
+			stat(full_path, buf);
+			if ((buf->st_mode & S_IXUSR) > 0 && (buf->st_mode & S_IFREG) > 0)
+			{
+				cmd->command = full_path;
+				return (ft_exec(cmd, head));
+			}
+			free(buf);
+			path++;
+		}
+		//zsh: command not found: ubadsia
+		return(ft_put_err(cmd->command, ": command not found", 127));
+	}
+	return (0);
+		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
+}
+
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
-	//ft_check_env_var(head, cmd->args);
 	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))
 		return (ft_echo(cmd->args));
 	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
@@ -139,41 +172,7 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	else if (!(ft_strcmp(cmd->command, "exit")) || !(ft_strcmp(cmd->command, "EXIT")))
 		return (ft_exit(cmd->args));
 	else
-		return (77);
-}
-
-int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
-{
-	t_env *temp;
-	char **path = NULL;
-	char *full_path;
-	struct stat *buf;
-	
-	if (cmd->command[0] == '/' || cmd->command[0] == '.')
-		ft_exec(cmd, head);
-	else
-	{
-		temp = ft_search_in_list(head, "PATH");
-		path = ft_split(temp->value, ':');
-		while (*path != NULL)
-		{
-			buf = malloc(sizeof(struct stat));
-			full_path = ft_strjoin(*path, ft_strjoin("/", cmd->command));
-			stat(full_path, buf);
-			if ((buf->st_mode & S_IXUSR) > 0 && (buf->st_mode & S_IFREG) > 0)
-			{
-				cmd->command = full_path;
-				ft_exec(cmd, head);
-				return (0);
-			}
-			free(buf);
-			path++;
-		}
-		//zsh: command not found: ubadsia
-		return(ft_put_err(cmd->command, ": command not found", 127));
-	}
-	return (0);
-		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
+		return (ft_chech_path(cmd, head));
 }
 
 int ft_put_err(char *input, char *message, int ret)
@@ -185,15 +184,79 @@ int ft_put_err(char *input, char *message, int ret)
 	return (ret);
 }
 
+int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
+{
+	int i;
+	int command;
+	cmd->simple_cmd_count--;
+	//int pid[cmd->simple_cmd_count + 1];
+	int status;
+	//int fd[2*cmd->simple_cmd_count];
+	
+	i = 0;
+	mini->fd = (int *)malloc(sizeof(int) * (cmd->simple_cmd_count * 2));
+	mini->pid = (int *)malloc(sizeof(int) * (cmd->simple_cmd_count + 1));
+	if (!mini->fd)
+		return (ft_put_err("malloc", ": malloc faild", 1));
+	while (i < cmd->simple_cmd_count)
+	{
+		if(pipe(mini->fd + i * 2) < 0)
+			return(ft_put_err("pipe", ": couldn't create pipe", errno));
+		i++;
+	}
+	command = 0;
+	i = 0;
+	int k = 0;
+	(void)head;
+	while (cmd->child)
+	{
+		mini->pid[k] = fork();
+		if (mini->pid[k] == -1)
+			return (ft_put_err("fork", ": coudn't fork properly\n", errno));
+		else if (mini->pid[k] == 0)
+		{
+			// if not the last command
+			if (cmd->child->next)
+				if (mini->red_fd[1] == 0 && dup2(mini->fd[command + 1], STDOUT_FILENO) < 0)
+					return(ft_put_err("dup2", ": couldn't clone the fd", 1));
+			// if not the first command
+			if (command != 0)
+				if (mini->red_fd[0] == 0 && dup2(mini->fd[command - 2], STDIN_FILENO) < 0)
+					return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+			while (i < (cmd->simple_cmd_count * 2))
+				close(mini->fd[i++]);
+			mini->ret = ft_is_builtins(cmd->child, head);
+			exit (mini->ret);
+		}
+		cmd->child = cmd->child->next;
+		command+=2;
+		k++;
+	}
+	i = 0;
+	while (i < (cmd->simple_cmd_count * 2))
+		close(mini->fd[i++]);
+	i = 0;
+	while (i < cmd->simple_cmd_count + 1)
+	{
+		waitpid(mini->pid[i], &status, 0);
+		mini->ret = WEXITSTATUS(status);
+		i++;
+	}
+	return (mini->ret);
+}
+
 int		ft_execute(t_pipe_line *cmd, t_env **head)
 {
-	char	*input;
-	int		ret;
+	// char	*input;
+	// int		ret;
+	t_mini mini;
+
+	/*
+	input = NULL;
+	// int stdin = STDIN_FILENO;
+	// int stdout = STDOUT_FILENO;
 	//int		fd;
 	//char	*line;
-
-	input = NULL;
-	/*
 	//ft_putnbr_fd(cmd->simple_cmd_count, 2);
 	//ft_putendl_fd(cmd->child->next->command, 2);
 	ft_init(cmd_list);
@@ -235,21 +298,23 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	*/
 	ft_putstr_fd(BLUE,1);
 	ft_putendl_fd("------------------------------------------------------------", 1);
-	if (cmd->child->redirections != NULL)
-		ft_redirection(cmd->child->redirections);
 	// if (cmd->simple_cmd_count != 1)
-	// 	do_backups(1);
-	while (cmd->simple_cmd_count != 0)
+	do_backups(1);
+	mini.flag = 0;
+	mini.red_fd[0] = 0;
+	mini.red_fd[1] = 0;
+	if (cmd->child->redirections != NULL)
 	{
-		if (cmd->child->command == NULL)
-			return (ft_put_err("\0", ":command not found", 127));
-		if ((ret = ft_is_builtins(cmd->child, head)) != 77)
-			return (ret);
-		ret = ft_chech_path(cmd->child, head);
-		cmd->simple_cmd_count--;
-		cmd->child = cmd->child->next;
+		if (ft_redirection(&mini, cmd->child->redirections))
+			return (1);
 	}
+	if (cmd->child->command == NULL)
+		return (ft_put_err("\0", ": command not found", 127));
+	if (cmd->simple_cmd_count > 1)
+		mini.ret = ft_pipe(&mini, cmd, head);
+	else
+		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
 	ft_putendl_fd("------------------------------------------------------------", 1);
-	return (ret);
+	return (mini.ret);
 }

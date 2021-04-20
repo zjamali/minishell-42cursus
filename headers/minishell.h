@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/19 17:44:16 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/20 08:24:07 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_lines_list{
 	int index;
 	bool up_or_down;
 	t_char_list *char_list;
-	t_char_list *edit_char_list;
+	t_char_list *origin_char_list;
 	struct s_lines_list *next;
 	struct s_lines_list *prev;
 }t_lines_list;

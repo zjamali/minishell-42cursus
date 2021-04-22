@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 15:14:24 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/30 17:02:59 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/04 16:49:21 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 size_t ft_strlen(char *str)
 {
 	int i = 0;
+	if (str == NULL)
+		return (0);
 	while(str[i])
 		i++;
 	return i;
@@ -26,6 +28,8 @@ char *ft_strdup(char *str)
 	char *strdup;
 	int i = 0;
 
+	if (str == NULL)
+		return (NULL);
 	if (!(strdup = (char*)malloc(ft_strlen(str) + 1)))
 		return NULL;
 	while(str[i])

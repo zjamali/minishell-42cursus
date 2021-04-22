@@ -1,6 +1,6 @@
 NAME= minishell
 
-SRC_EXECUTE= src/execution/builtins.c  src/execution/execution.c src/execution/list.c
+SRC_EXECUTE= src/execution/builtins.c  src/execution/execution.c src/execution/list.c src/execution/redirection.c
 
 SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/parser.c src/parse/expansion.c
 
@@ -17,6 +17,7 @@ all: libft $(NAME)
 
 libft:
 	@make -sC src/libft/
+
 $(NAME):
 	@echo "         Made by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
 	@echo "███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     "
@@ -26,4 +27,4 @@ $(NAME):
 	@echo "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗"
 	@echo "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝"
 	@echo "Compilation of minishell:  \033[1;32mOK\033[m"
-	@$(COM) $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT)
+	@$(COM) $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT) -g

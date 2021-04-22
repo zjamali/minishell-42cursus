@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/03/29 19:18:41 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/02 17:23:25 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,4 +127,71 @@ char **ft_list_to_arr(t_env **head)
 	}
 	env[i] = NULL;
 	return (env);
+}
+
+t_env *ft_copy_list(t_env **head)
+{
+	t_env *temp;
+	t_env *newnode;
+	t_env *copy;
+
+	temp = *head;
+	copy = NULL;
+	if (*head == NULL)
+		return (NULL);
+	while (temp != NULL)
+	{
+		newnode = ft_create_node(temp->name, temp->value);
+		ft_add_to_list(&copy, newnode);
+		temp = temp->next;
+	}
+	return (copy);
+}
+
+t_env	*ft_sort_list(t_env **head)
+{
+	t_env *temp;
+	t_env *sort_list;
+	char	*tmp;
+	int i;
+	
+	sort_list = ft_copy_list(head);
+	i = ft_count_list(&sort_list);
+	temp = sort_list;	
+	while (i > 0)
+	{
+		temp = sort_list;
+		while(temp->next != NULL)
+		{
+			if(strcmp(temp->name,temp->next->name) > 0)
+			{
+				/*
+					ft_strcpy(tmp,temp->name);
+					ft_strcpy(temp->name,temp->next->name);
+					ft_strcpy(temp->next->name,tmp);
+					temp->name = temp->next->name;
+					temp->next->name = tmp;
+					ft_strcpy(tmp,temp->value);
+					temp->value = temp->next->value;
+					temp->next->value = temp->value;
+					ft_strcpy(temp->value,temp->next->value);
+					ft_putendl_fd(tmp, 1);
+					ft_strcpy(temp->next->value,tmp);
+				*/
+				tmp = ft_strdup(temp->next->name);
+				//free(temp->next->name);
+				temp->next->name = ft_strdup(temp->name);
+				//free(temp->name);
+				temp->name = tmp;
+				tmp = ft_strdup(temp->next->value);
+				//free(temp->next->value);
+				temp->next->value = ft_strdup(temp->value);
+				//free(temp->value);
+				temp->value = tmp;
+			}
+			temp = temp->next;
+		}
+		i--;
+	}
+	return (sort_list);
 }

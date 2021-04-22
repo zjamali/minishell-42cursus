@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/20 10:25:19 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/21 17:24:12 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -394,7 +394,6 @@ void ft_down_in_lines(t_readline *readline,t_lines_list  **current)
 			if ((*current)->char_list)
 				ft_print_char_list((*current)->char_list);
 		}
-	
 	}
 	
 }

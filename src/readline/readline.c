@@ -101,7 +101,56 @@ char *create_line_from_chars_list(t_char_list *char_list)
 	line[len] = '\0';
 	return line;
 }
+int get_char_list_lenght(t_char_list *char_list)
+{
+	int i;
 
+	i = 0;
+	if (char_list == NULL)
+		return i;
+	else
+	{
+		while (char_list)
+		{
+			i++;
+			char_list = char_list->next;
+		}
+		return i;
+	}
+}
+
+t_char_list *ft_copy_char_list(t_char_list *char_list)
+{
+	int len;
+	t_char_list *tmp;
+	t_char_list *copy;
+	t_char_list *origin;
+
+	origin = char_list;
+	copy = NULL;
+	len = get_char_list_lenght(origin);
+	if (len == 0)
+		return NULL;
+	else
+	{
+		copy = malloc(sizeof(t_char_list));
+		tmp = copy;
+		while (len > 0)
+		{
+			tmp->len = origin->len;
+			tmp->value = origin->value;
+			tmp->next = NULL;
+			origin = origin->next;
+			len--;
+			if (len > 0)
+			{
+				tmp->next = malloc(sizeof(t_char_list));
+				tmp = tmp->next;
+			}
+		}
+		return copy;
+	}
+}
 t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *current, int history) ///
 {
 	t_lines_list *tmp;
@@ -114,6 +163,11 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 		//if (current->char_list)
 		//	current->value = create_line_from_chars_list(current->char_list);
 		current->history = history;
+		if (current->char_list)
+		{
+			current->up_or_down = true;
+			current->origin_char_list = ft_copy_char_list(current->char_list);
+		}
 		current->index = 1;
 		list = current;
 		return list;
@@ -133,6 +187,11 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 					close(fd);
 					list = list->prev;
 				}
+			}
+			if (current->char_list)
+			{
+				current->up_or_down = true;
+				current->origin_char_list = ft_copy_char_list(current->char_list);
 			}
 			current->history = history;
 			current->next = list;
@@ -229,56 +288,7 @@ t_lines_list *ft_create_node(void)
 	ret->value = NULL;
 	return ret;
 }
-int get_char_list_lenght(t_char_list *char_list)
-{
-	int i;
 
-	i = 0;
-	if (char_list == NULL)
-		return i;
-	else
-	{
-		while (char_list)
-		{
-			i++;
-			char_list = char_list->next;
-		}
-		return i;
-	}
-}
-
-t_char_list *ft_copy_char_list(t_char_list *char_list)
-{
-	int len;
-	t_char_list *tmp;
-	t_char_list *copy;
-	t_char_list *origin;
-
-	origin = char_list;
-	copy = NULL;
-	len = get_char_list_lenght(origin);
-	if (len == 0)
-		return NULL;
-	else
-	{
-		copy = malloc(sizeof(t_char_list));
-		tmp = copy;
-		while (len > 0)
-		{
-			tmp->len = origin->len;
-			tmp->value = origin->value;
-			tmp->next = NULL;
-			origin = origin->next;
-			len--;
-			if (len > 0)
-			{
-				tmp->next = malloc(sizeof(t_char_list));
-				tmp = tmp->next;
-			}
-		}
-		return copy;
-	}
-}
 
 t_lines_list *ft_delete_node_from_list(t_lines_list *current)
 {
@@ -364,7 +374,7 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 				if ((*current)->up_or_down == false)
 				{
 					(*current)->up_or_down = true;
-					(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+					//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 				}
 				ft_print_char_list((*current)->char_list);
 			}
@@ -376,7 +386,7 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 					if ((*current)->up_or_down == false)
 					{
 						(*current)->up_or_down = true;
-						(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+						//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 					}
 					if ((*current)->char_list)
 						ft_print_char_list((*current)->char_list);
@@ -388,11 +398,11 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 			if ((*current)->up_or_down == false)
 			{
 				(*current)->up_or_down = true;
-				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+				//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 			}
 			if ((*current)->char_list)
 			{
-				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+				//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 				ft_print_char_list((*current)->char_list);
 			}
 		}
@@ -413,7 +423,7 @@ void ft_down_in_lines(t_readline *readline, t_lines_list **current,int print)
 				if ((*current)->up_or_down == false)
 				{
 					(*current)->up_or_down = true;
-					(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+					//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 				}
 				ft_print_char_list((*current)->char_list);
 			}
@@ -429,11 +439,10 @@ void ft_down_in_lines(t_readline *readline, t_lines_list **current,int print)
 		}
 		else
 		{
-			
 			if ((*current)->up_or_down == false)
 			{
 				(*current)->up_or_down = true;
-				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+				//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 			}
 			if (print == 1)
 			{

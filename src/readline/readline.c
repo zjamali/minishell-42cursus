@@ -129,11 +129,12 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 				while (list->prev != NULL)
 				{
 					int fd = open("file_debuging", O_RDWR | O_APPEND | O_CREAT, 0666);
-					dprintf(fd, "%s\n", "JADID");
+					dprintf(fd, "%s\n", "JADID a zbi");
 					close(fd);
 					list = list->prev;
 				}
 			}
+			current->history = history;
 			current->next = list;
 			current->index = list->index + 1;
 			current->prev = NULL;
@@ -310,7 +311,6 @@ int get_charctere(t_readline *readline, long c,
 	new_line = NULL;
 	if (ft_isprint(c))
 	{
-
 		if (current && current->up_or_down == true)
 			ft_add_to_char_list(readline, c, &current->char_list);
 		else
@@ -398,9 +398,9 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 		}
 	}
 }
-void ft_down_in_lines(t_readline *readline, t_lines_list **current)
+void ft_down_in_lines(t_readline *readline, t_lines_list **current,int print)
 {
-	if (!*current)
+	if ((*current) == NULL)
 		return;
 	else
 	{
@@ -429,13 +429,18 @@ void ft_down_in_lines(t_readline *readline, t_lines_list **current)
 		}
 		else
 		{
+			
 			if ((*current)->up_or_down == false)
 			{
 				(*current)->up_or_down = true;
 				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 			}
+			if (print == 1)
+			{
 			if ((*current)->char_list)
 				ft_print_char_list((*current)->char_list);
+			}
+			
 		}
 	}
 }
@@ -522,11 +527,10 @@ int main()
 			close(fd);
 			if (character == D_KEY_UP)
 			{
-				if ((current->char_list != NULL || lines_list != NULL) )
+				if (current->char_list != NULL || lines_list != NULL )
 				{
 					if (current && current->next == NULL && current->prev == NULL)
 					{
-						current->history = 1;
 						lines_list = ft_insert_node_to_line_list(lines_list, current, 1);
 						current = NULL;
 					}
@@ -536,17 +540,18 @@ int main()
 			}
 			else if (character == D_KEY_DOWN)
 			{
-				if ((current->char_list != NULL || lines_list != NULL) )
+				if (current->char_list != NULL && lines_list != NULL )
 				{
-
 					//if (current && current->next == NULL && current->prev == NULL)
 					//{
 					//	lines_list = ft_insert_node_to_line_list(lines_list, current, 1);
 					//	current = NULL;
 					//}
-					ft_down_in_lines(readline, &lines_list);
+					ft_down_in_lines(readline, &lines_list,1);
 					current = lines_list;
 				}
+				else
+					ft_down_in_lines(readline, &lines_list,0);
 			}
 			else if (character == D_KEY_BACKSPACE)
 			{

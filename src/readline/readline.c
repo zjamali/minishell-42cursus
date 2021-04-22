@@ -128,8 +128,11 @@ t_lines_list   *ft_insert_node_to_line_list(t_lines_list *list,t_lines_list *cur
 			{
 				while (list->prev != NULL)
 				{
+					 int fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
+					dprintf(fd,"%s\n","JADID");
+					close(fd);
 					list = list->prev;
-				}	
+				}
 			}
 			current->next = list;
 			current->index = list->index + 1;
@@ -270,8 +273,8 @@ t_char_list *ft_copy_char_list(t_char_list *char_list)
 			len--;
 			if(len > 0)
 			{
+				tmp->next = malloc(sizeof(t_char_list));
 				tmp = tmp->next;
-				tmp = malloc(sizeof(t_char_list));
 			}
 		}
 		return copy;
@@ -281,28 +284,28 @@ t_char_list *ft_copy_char_list(t_char_list *char_list)
 int  get_charctere(t_readline *readline, long c, 
 							t_lines_list *current,t_lines_list **lines_list)
 {
+	t_lines_list *new_line;
 	char *line;
 	int newline_break;
 	line = NULL;
 	newline_break = 1;
-	
+	new_line = NULL;
 	if (ft_isprint(c))
 	{
 		
-		if ((*lines_list) && (*lines_list)->up_or_down == true)
-			ft_add_to_char_list(readline, c,&(*lines_list)->char_list);
+		if (current && current->up_or_down == true)
+			ft_add_to_char_list(readline, c,&current->char_list);
 		else
 			ft_add_to_char_list(readline, c,&current->char_list);
 	}
 	else if (c == D_KEY_ENTER)
 	{
-		if ((*lines_list) && (*lines_list)->up_or_down == true)
+		if (current && current->up_or_down == true)
 		{
-			current = ft_create_node();
-			current->char_list = ft_copy_char_list((*lines_list)->char_list);
-			(*lines_list)->char_list = ft_copy_char_list((*lines_list)->origin_char_list);
-			ft_insert_node_to_line_list(*lines_list,current,0);
-			current = NULL;
+			new_line = ft_create_node();
+			new_line->char_list = ft_copy_char_list(current->char_list);
+			current->char_list = ft_copy_char_list(current->origin_char_list);
+			ft_insert_node_to_line_list(*lines_list,new_line,0);
 		}
 		else
 		{
@@ -338,26 +341,38 @@ void ft_up_in_lines(t_readline *readline,t_lines_list  **current)
 		if ((*current)->next)
 		{
 			(*current) = (*current)->next;
-			(*current)->up_or_down = true;
 			if ((*current)->char_list)
 			{
-				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+				if ((*current)->up_or_down == false)
+				{
+					(*current)->up_or_down = true;
+					(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+				}
 				ft_print_char_list((*current)->char_list);
 			}
 			else /// skip emty char_list
 			{
+
 				if ((*current)->next)
 				{
+					
 					(*current) = (*current)->next;
-					(*current)->up_or_down = true;
-					(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+					if ((*current)->up_or_down == false)
+					{
+						(*current)->up_or_down = true;
+						(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+					}
 					ft_print_char_list((*current)->char_list);
 				}
 			}
 		}
 		else
 		{
-			(*current)->up_or_down = true;
+			if ((*current)->up_or_down == false)
+			{
+				(*current)->up_or_down = true;
+				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+			}
 			if ((*current)->char_list)
 			{
 				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
@@ -378,7 +393,14 @@ void ft_down_in_lines(t_readline *readline,t_lines_list  **current)
 		{
 			(*current) = (*current)->prev;
 			if ((*current)->char_list)
+			{
+				if ((*current)->up_or_down == false)
+				{
+					(*current)->up_or_down = true;
+					(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+				}
 				ft_print_char_list((*current)->char_list);
+			}
 			else
 			{
 				if ((*current)->prev)
@@ -391,6 +413,11 @@ void ft_down_in_lines(t_readline *readline,t_lines_list  **current)
 		}
 		else
 		{
+			if ((*current)->up_or_down == false)
+			{
+				(*current)->up_or_down = true;
+				(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
+			}
 			if ((*current)->char_list)
 				ft_print_char_list((*current)->char_list);
 		}
@@ -434,16 +461,25 @@ void ft_delete(t_lines_list **current,t_readline *readline)
 		return;
 	else
 	{
-		while (len - 1> i)
+		while (len - 1 > i)
 		{
 			i++;
 			tmp = tmp->next;
 		}
-		free(tmp->next);
-		tmp->next = NULL;
+
+		if (tmp->next)
+		{
+			free(tmp->next);
+			tmp->next = NULL;
+		}
+		else if (tmp->next == NULL)
+		{
+			tmp->value= 0;
+		}
 	}
 	ft_move_cursor_and_clear(readline->cursor);
-	ft_print_char_list((*current)->char_list);
+	if ((*current)->char_list)
+		ft_print_char_list((*current)->char_list);
 }
 
 int main()
@@ -474,21 +510,23 @@ int main()
 			close(fd);
 			if (character == D_KEY_UP)
 			{
-				if (current && current->next == NULL && current->next == NULL)
+				if (current && current->next == NULL && current->prev == NULL)
 				{
 					lines_list = ft_insert_node_to_line_list(lines_list,current,1);
 					current = NULL;
 				}
 				ft_up_in_lines(readline,&lines_list);
+				current = lines_list;
 			}
 			else if (character == D_KEY_DOWN)
 			{
-				if (current && current->next == NULL && current->next == NULL)
+				if (current && current->next == NULL && current->prev == NULL)
 				{
 					lines_list = ft_insert_node_to_line_list(lines_list,current,1);
 					current = NULL;
 				}
 				ft_down_in_lines(readline,&lines_list);
+				current = lines_list;
 			}
 			else if (character == D_KEY_BACKSPACE)
 			{
@@ -502,9 +540,9 @@ int main()
 				}
 				else
 				{
-					fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
-					dprintf(fd,"%s\n","JADID");
-					close(fd);
+					//fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
+					//dprintf(fd,"%s\n","JADID");
+					//close(fd);
 					if (!current)
 						current = ft_create_node();
 					

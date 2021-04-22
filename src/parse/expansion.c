@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/22 16:49:05 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/22 17:28:01 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,21 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 	{
 		if (word[j] == '\\')
 		{		
-			tmp = expand;
-			tmp1 = ft_substr(word,j+1,1);
-			expand = ft_strjoin(expand,tmp1);
-			j+=2;
-			free(tmp);
-			free(tmp1);
+			if (ft_strchr("$\"\\\n`",word[j + 1]) )
+			{
+				ft_putstr_fd("sahjkhsafjk",1);
+				tmp = expand;
+				tmp1 = ft_substr(word,j+1,1);
+				expand = ft_strjoin(expand,tmp1);
+				j+=2;
+				free(tmp);
+				free(tmp1);
+			}
+			else
+			{
+				expand = ft_substr(word,j,2);
+				j+=2;
+			}
 		}
 		else
 		{

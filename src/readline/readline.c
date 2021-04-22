@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/21 17:24:12 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/22 17:58:21 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,12 +330,14 @@ int get_charctere(t_readline *readline, long c,
 	{
 		if (current && current->up_or_down == true)
 		{
+			
 			new_line = ft_create_node();
 			new_line->char_list = ft_copy_char_list(current->char_list);
 			current->char_list = ft_copy_char_list(current->origin_char_list);
 			if (current->history == 1)
 				*lines_list = ft_delete_node_from_list(current);
 			ft_insert_node_to_line_list(*lines_list, new_line, 0);
+			//////////// move to the first line in list_line
 		}
 		else
 		{

@@ -8,3 +8,7 @@ https://ast-viewer.datacamp.com/editor?code=echo%20%22hello%22%20%20%22cjnjnc%22
 https://bottlecaps.de/rr/ui <br>
 https://codes-sources.commentcamarche.net/forum/affich-10047436-developper-un-shell-de-base <br>
 https://www.gnu.org/software/bash/manual/html_node/index.html#SEC_Contents <br>
+
+<br><br>
+https://dev.to/tanishqsingla/termios-564j <br>
+https://zestedesavoir.com/tutoriels/1733/termcap-et-terminfo/#1-le-terminal-1

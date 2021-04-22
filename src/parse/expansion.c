@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/03 18:47:58 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/22 17:28:01 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,20 @@ char *get_env_value(char *env_variable,t_env **env,int inside_dq)
 	j = 0;
 	if (inside_dq == 1)
 	{
-		while (env_variable[j] && env_variable[j] != ' ' && env_variable[j] != '"')
+		j++;
+		while (env_variable[j] && env_variable[j] != ' ' 
+					&& env_variable[j] != '"' && env_variable[j] != '$')
 			j++;
 		str = ft_substr(env_variable,1,j - 1);
 	}
-	
+	if (inside_dq == 0)
+	{
+		j++;
+		while (env_variable[j] && env_variable[j] != '$')
+			j++;
+		str = ft_substr(env_variable,1,j - 1);
+		ft_putstr_fd(str,1);
+	}
 	tmp = ft_search_in_list(env,str);
 	if(tmp)
 		return ft_strdup(tmp->value);
@@ -49,12 +58,21 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 	{
 		if (word[j] == '\\')
 		{		
-			tmp = expand;
-			tmp1 = ft_substr(word,j+1,1);
-			expand = ft_strjoin(expand,tmp1);
-			j+=2;
-			free(tmp);
-			free(tmp1);
+			if (ft_strchr("$\"\\\n`",word[j + 1]) )
+			{
+				ft_putstr_fd("sahjkhsafjk",1);
+				tmp = expand;
+				tmp1 = ft_substr(word,j+1,1);
+				expand = ft_strjoin(expand,tmp1);
+				j+=2;
+				free(tmp);
+				free(tmp1);
+			}
+			else
+			{
+				expand = ft_substr(word,j,2);
+				j+=2;
+			}
 		}
 		else
 		{
@@ -78,7 +96,9 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 						expand = ft_strjoin(expand,tmp);
 						free(tmp1);
 						free(tmp);
-						while (word[j] && word[j] != ' ' && word[j] != '"')
+						if (word[j] == '$')
+							j++;
+						while (word[j] && word[j] != ' ' && word[j] != '"' && word[j] != '$')
 							j++;
 					}
 					else if (word[j - 1] != '$')
@@ -215,7 +235,13 @@ void ft_remove_quote(char **string,t_env **env_list)
 					expanded = ft_strjoin(expanded,tmp);
 					free(tmp1);
 					free(tmp);
-					i+= ft_strlen(word + i);
+					
+					if (word[i] == '$')
+							i++;
+					while (word[i] && word[i] != '$')
+							i++;
+					//i+= ft_strlen(word + i);
+					
 				}
 				else if (word[i - 1] != '$')
 				{

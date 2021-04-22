@@ -338,6 +338,7 @@ int get_charctere(t_readline *readline, long c,
 				*lines_list = ft_delete_node_from_list(current);
 			ft_insert_node_to_line_list(*lines_list, new_line, 0);
 			//////////// move to the first line in list_line
+			*lines_list = new_line;
 		}
 		else
 		{

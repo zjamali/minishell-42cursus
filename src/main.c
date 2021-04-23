@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/15 16:35:52 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/23 17:56:45 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int main(int ac,char **av,char **env)
 	t_pipe_line *current_pipe_line;
 	t_env *head;
 	char *line;
-	int status;
+	//int status;
 	tokens_list = NULL;
 	line = NULL;
 	(void)ac;
@@ -44,7 +44,7 @@ int main(int ac,char **av,char **env)
 	init_env(&head, env);
 	while (i == 0)
 	{
-		//i++;
+		i++;
 		show_prompt();
 		read_command_list(&line);
 		if ( line[1] != '\0')

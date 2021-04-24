@@ -13,6 +13,65 @@
 #include "../../headers/minishell.h"
 #include "../../headers/execution.h"
 
+int check_exiting_of_qoutes(char *str)
+{
+	if (str)
+	{
+		if (str[0] == '\'')
+		{
+			return (1);
+		}
+		else if (str[0] == '\"')
+			return 2;
+		else 
+			return (0);
+	}
+	return (0);
+}
+
+
+int  ft_intlen(unsigned int n)
+{
+	int i;
+
+	i = 1;
+	while (n / 10 != 0)
+	{
+		n = n / 10;
+		i++;	
+	}
+	return (i);
+}
+
+char *ft_int_to_string(int n)
+{
+	int i;
+	int len;
+	char *str;
+
+	i = 0;
+	len = 0;
+	str = NULL;
+	if (n == 0)
+		return ft_strdup("0");
+	else
+	{
+		len  = ft_intlen(n);
+		str = malloc(sizeof(len + 1));
+		str[len] = '\0';
+		len--;
+		while (n / 10 != 0)
+		{
+			str[len] = (n %10) + '0' ;
+			n = n / 10;
+			len--;	
+		}
+		str[len] = (n %10) + '0';
+		return str;
+	}
+}
+
+
 char *get_env_value(char *env_variable,t_env **env,int inside_dq)
 {
 	t_env *tmp;
@@ -149,13 +208,12 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 			}
 		}
 	}
-	j++; // last "
+	j++;
 	*i = j;
-	//ft_putstr_fd(expand,1);
 	return expand;
 }
 
-void ft_remove_quote(char **string,t_env **env_list)
+void ft_expande_word(char **string,t_env **env_list,int status)
 {
 	char *word;
 	char *expanded;
@@ -217,7 +275,7 @@ void ft_remove_quote(char **string,t_env **env_list)
 		}
 		else if (word[i] == '$')
 		{
-			if (word[i + 1] == '$')
+			if (word[i + 1] == '$') //// sequence of dollars sign
 			{
 				tmp1 = expanded;
 				tmp = ft_substr(word,i,2);
@@ -230,7 +288,7 @@ void ft_remove_quote(char **string,t_env **env_list)
 			{
 				tmp1 = expanded;
 				tmp = get_env_value(word + i,env_list,0);
-				if (tmp)
+				if (tmp) /// env variavle exist 
 				{
 					expanded = ft_strjoin(expanded,tmp);
 					free(tmp1);
@@ -243,13 +301,33 @@ void ft_remove_quote(char **string,t_env **env_list)
 					//i+= ft_strlen(word + i);
 					
 				}
-				else if (word[i - 1] != '$')
+				else if (word[i - 1] != '$') /// not exit $$hdj vs $kfjh
 				{
-					if (word[i + 1] != '"' && word[i + 1] != '\'')
+					ft_putstr_fd("zbi",1);
+					if (word[i + 1] != '"')
 					{
-						if (word[i + 1])
+						//// Special Parameters of $
+						if (ft_isdigit(word[i + 1]) || ft_strchr("!#%@-*",word[i+1]))
+						{
+							tmp1 = expanded;
+							tmp = ft_substr(word,i,2);
+							expanded = ft_strjoin(expanded,tmp);
+							free(tmp1);
+							free(tmp);
+							i++;
+						}
+						else if (word[i + 1] == '?')
+						{
+							char *status_string = ft_int_to_string(status);
+							tmp1 = expanded;
+							expanded = ft_strjoin(expanded,status_string);
+							free(tmp1);
+							free(tmp);
+							i++;
+						}
+						else if (word[i + 1])
 							i+= ft_strlen(word + i);
-						else
+						else //// just a 1 dollar sign
 						{
 							tmp1 = expanded;
 							tmp = ft_substr(word,i,1);
@@ -260,29 +338,28 @@ void ft_remove_quote(char **string,t_env **env_list)
 					}
 					i++;
 				}
-				else
+				else /// env variavle not exist  no multiple sign dollars
 				{
-					if (word[i + 1] != '"' && word[i + 1] != '\'')
+					if (!word[i + 1]) //get last dollar after double dollars sign
 					{
-						if (!word[i + 1])
-						{
-							tmp = expanded;
-							tmp1 = ft_substr(word,i,1);
-							expanded = ft_strjoin(expanded,tmp1);
-							free(tmp);
-							free(tmp1);
-							i++;
-						}
-						else
-						{
-							i+= ft_strlen(word + i);
-						}
+						ft_putstr_fd(word + i,1);
+						tmp = expanded;
+						tmp1 = ft_substr(word,i,1);
+						expanded = ft_strjoin(expanded,tmp1);
+						free(tmp);
+						free(tmp1);
+						i++;
+					}
+					else 
+					{
+						/// skip characters after $ 
+						i+= ft_strlen(word + i);
 					}
 					i++;
 				}
 			}
 		}
-		else
+		else /// not dollars sign no quote just join characters 
 		{
 			tmp1 = expanded;
 			tmp = ft_substr(word,i,1);
@@ -296,7 +373,7 @@ void ft_remove_quote(char **string,t_env **env_list)
 	*string = expanded;
 }
 
-void ft_expande_simple_cmd(t_simple_cmd **cmd,t_env **env)
+void ft_expande_simple_cmd(t_simple_cmd **cmd,t_env **env,int status)
 {
 	t_args *args;
 	t_redirection *redis;
@@ -305,22 +382,27 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd,t_env **env)
 	tmp = NULL;
 	redis = NULL;
 	if ((*cmd)->command)
-		ft_remove_quote(&((*cmd)->command),env);
+	{
+		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
+		ft_expande_word(&((*cmd)->command),env,status);
+	}
 	args = (*cmd)->args;
 	while (args)
 	{
-		ft_remove_quote(&args->value,env);
+		args->inside_quotes = check_exiting_of_qoutes(args->value);
+		ft_expande_word(&args->value,env,status);
 		args = args->next;
 	}
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
-		ft_remove_quote(&redis->file_name,env);
+		redis->inside_quotes = check_exiting_of_qoutes(redis->file_name);
+		ft_expande_word(&redis->file_name,env,status);
 		redis = redis->next;
 	}
 }
 
-void ft_expanding(t_pipe_line *pipe_line,t_env **env)
+void ft_expanding(t_pipe_line *pipe_line,t_env **env,int status)
 {
 	t_simple_cmd *current_cmd;
 	t_simple_cmd *head_cmd;
@@ -333,7 +415,7 @@ void ft_expanding(t_pipe_line *pipe_line,t_env **env)
 	while (head_cmd)
 	{
 		current_cmd = head_cmd;
-		ft_expande_simple_cmd(&current_cmd,env);
+		ft_expande_simple_cmd(&current_cmd,env,status);
 		head_cmd = head_cmd->next;
 	}
 }

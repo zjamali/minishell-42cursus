@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/24 15:25:22 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 16:49:54 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,12 +218,17 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 		{
 			// if not the last command
 			if (cmd->child->next)
-				if (mini->red_fd[1] == 0 && dup2(mini->fd[command + 1], STDOUT_FILENO) < 0)
+				if (dup2(mini->fd[command + 1], STDOUT_FILENO) < 0)
 					return(ft_put_err("dup2", ": couldn't clone the fd", 1));
 			// if not the first command
 			if (command != 0)
-				if (mini->red_fd[0] == 0 && dup2(mini->fd[command - 2], STDIN_FILENO) < 0)
+				if (dup2(mini->fd[command - 2], STDIN_FILENO) < 0)
 					return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+			if (cmd->child->redirections != NULL)
+			{
+				if (ft_redirection(mini, cmd->child->redirections))
+					return (1);
+			}
 			while (i < (cmd->simple_cmd_count * 2))
 				close(mini->fd[i++]);
 			mini->ret = ft_is_builtins(cmd->child, head);
@@ -298,7 +303,7 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	*/
 	ft_putstr_fd(BLUE,1);
-	ft_putendl_fd("------------------------------------------------------------", 1);
+	ft_putendl_fd("------------------------------------------------------------", 2);
 	// if (cmd->simple_cmd_count != 1)
 	do_backups(1);
 	mini.flag = 0;
@@ -316,6 +321,6 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	else
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
-	ft_putendl_fd("------------------------------------------------------------", 1);
+	ft_putendl_fd("------------------------------------------------------------", 2);
 	return (mini.ret);
 }

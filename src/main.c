@@ -32,7 +32,9 @@ int main(int ac,char **av,char **env)
 	t_pipe_line *current_pipe_line;
 	t_env *head;
 	char *line;
+	int status;
 
+	status = 1;
 	tokens_list = NULL;
 	line = NULL;
 	(void)ac;
@@ -54,7 +56,7 @@ int main(int ac,char **av,char **env)
 			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
 		{
-			ft_expanding(current_pipe_line,&head);
+			ft_expanding(current_pipe_line,&head,status);
 			ft_print_pipeline_cmd(current_pipe_line);
 			//ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;

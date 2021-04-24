@@ -66,20 +66,20 @@ typedef struct s_redirection
 {
 	int index;
 	t_redirection_type type;
-	int filename_env; // 1 if file_name is a env varaible
+	int inside_quotes; // 1 if file_name is a env varaible
 	char *file_name;
 	struct s_redirection *next;
 }t_redirection;
 
 typedef struct s_args{
-	int env_variable; // 1 speacial meaning ; 0 
+	int inside_quotes; // check inside quotes
 	char *value; // argument 
 	struct s_args *next;
 }t_args;
 
 typedef struct s_simple_cmd
 {
-	int cmd_env; // check if command is env variable
+	int inside_quotes; // check inside quotes
 	char *command;
 	t_args *args;
 	t_redirection *redirections;
@@ -109,7 +109,7 @@ t_command_list *ft_parser(t_token *tokens_list);
 void ft_destroy_ast(t_command_list *cmd_list);
 int ft_check_syntax(t_token *tokens_list);
 
-void ft_expanding(t_pipe_line *pipe_line,t_env **env);
+void ft_expanding(t_pipe_line *pipe_line,t_env **env,int status);
 void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);

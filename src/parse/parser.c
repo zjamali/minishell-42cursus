@@ -108,14 +108,16 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 	tmp1 = cmd->args;
 	tmp = cmd->redirections;
 	ft_putstr_fd(YELLOW,1);
+	ft_putstr_fd("(",1);
 	ft_putstr_fd("cmd -> ",1);
 	ft_putstr_fd("{",1);
 	if (cmd->command)
 		write(1,cmd->command,ft_strlen(cmd->command));
 	ft_putstr_fd("}",1);
 	ft_putstr_fd("\t",1);
-	ft_putstr_fd("env_cmd -> ",1);
-	ft_putnbr_fd(cmd->cmd_env,1);
+	ft_putstr_fd("inside quotes  -> ",1);
+	ft_putnbr_fd(cmd->inside_quotes,1);
+	ft_putstr_fd(")",1);
 	ft_putstr_fd("\n",1); 
 	ft_putstr_fd("args -> ",1);
 	while (tmp1)
@@ -125,8 +127,8 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 		ft_putstr_fd(tmp1->value,1);
 		ft_putstr_fd("}",1);
 		ft_putstr_fd("\t",1);
-		ft_putstr_fd("env_arg -> ",1);
-		ft_putnbr_fd(tmp1->env_variable,1);
+		ft_putstr_fd("inside quotes -> ",1);
+		ft_putnbr_fd(tmp1->inside_quotes,1);
 		ft_putstr_fd("] ",1);
 		tmp1 = tmp1->next;
 	}
@@ -142,8 +144,8 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 		ft_putstr_fd(tmp->file_name,1);
 		ft_putstr_fd("}",1);
 		ft_putstr_fd("\t",1);
-		ft_putstr_fd("redis -> ",1);
-		ft_putnbr_fd(tmp->filename_env,1);
+		ft_putstr_fd("inside quotes -> ",1);
+		ft_putnbr_fd(tmp->inside_quotes,1);
 		ft_putstr_fd(") ",1);
 		tmp= tmp->next;
 	}
@@ -508,7 +510,7 @@ t_args *ft_create_arg(char *value)
 	arg = malloc(sizeof(t_args));
 	arg->value = ft_strdup(value);
 	arg->next = NULL;
-	arg->env_variable = 0;
+	arg->inside_quotes = 0;
 	return arg;
 }
 

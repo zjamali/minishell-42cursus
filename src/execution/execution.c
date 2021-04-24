@@ -121,7 +121,7 @@ void init_env(t_env **head, char **env)
 		i++;
 	}
 }
-
+/*
 void	ft_check_env_var(t_env **head, t_args *arg)
 {
 	t_env *temp;
@@ -139,10 +139,9 @@ void	ft_check_env_var(t_env **head, t_args *arg)
 		arg = arg->next;
 	}
 }
-
+*/
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
-	ft_check_env_var(head, cmd->args);
 	if (!(ft_strcmp(cmd->command, "echo")))
 		ft_echo(cmd->args);
 	else if (!(ft_strcmp(cmd->command, "pwd")))

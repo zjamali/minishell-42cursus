@@ -46,7 +46,7 @@ int main(int ac,char **av,char **env)
 	init_env(&head, env);
 	while (i == 0)
 	{
-		i++;
+		//i++;
 		show_prompt();
 		read_command_list(&line);
 		if ( line[1] != '\0')

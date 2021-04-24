@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/20 16:35:38 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/24 15:11:11 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,11 +110,12 @@ void init_env(t_env **head, char **env)
 	t_env *newnode;
 	char **var;
 	int i;
-
+	newnode = NULL;
 	i = 0;
 	while (env[i])
 	{
 		var = ft_split(env[i], '=');
+		
 		newnode = ft_create_node(var[0], var[1]);
 		ft_add_to_list(head, newnode);
 		free(var);

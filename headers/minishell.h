@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 14:41:57 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 14:59:13 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,12 @@
 # include <stdio.h>
 # include <sys/stat.h>
 # include <errno.h>
-# include "../src/libft/libft.h"
+#include <termios.h>
+#include <term.h>
+#include <curses.h>
+#include <termcap.h>
+#include "../src/libft/libft.h"
+
 #define GREEN "\e[1;32m"
 #define RESET "\e[0m"
 #define RED "\e[1;91m"
@@ -165,5 +170,6 @@ void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
 
+t_readline *ft_init_readline(struct termios *termios);
 int micro_read_line(char **line,t_readline *readline,t_lines_list *lines_list);
 #endif

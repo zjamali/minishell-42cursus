@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 12:41:46 by zjamali          ###   ########.fr       */
+/*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
+/*   Updated: 2021/04/24 15:03:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../headers/minishell.h"
 
@@ -63,6 +64,8 @@ t_readline *ft_init_readline(struct termios *termios)
 		return (NULL);
 	}
 	/// config terminal
+
+	tcgetattr(readline->term_fd, readline->old_termios); /// save termios first state
 	tcgetattr(readline->term_fd, termios);
 	termios->c_lflag &= ~(ECHO | ICANON);
 	tcsetattr(readline->term_fd, TCSANOW, termios);
@@ -74,12 +77,6 @@ t_readline *ft_init_readline(struct termios *termios)
 	return (readline);
 }
 
-void show_prompt(void)
-{
-	write(1, GREEN, ft_strlen(GREEN));
-	ft_putstr_fd("minishell$ ", 1);
-	write(1, RESET, ft_strlen(RESET));
-}
 char *create_line_from_chars_list(t_char_list *char_list)
 {
 	char *line;
@@ -271,7 +268,7 @@ void ft_add_to_char_list(t_readline *readline, char c, t_char_list **chars_list)
 	}
 }
 
-t_lines_list *ft_create_node(void)
+t_lines_list *ft_create_line_node(void)
 {
 	t_lines_list *ret;
 
@@ -312,7 +309,6 @@ int get_charctere(t_readline *readline, long c,
 	char *line;
 	int newline_break;
 	line = NULL;
-	int fd;
 	newline_break = 1;
 	new_line = NULL;
 	if (ft_isprint(c))
@@ -328,7 +324,7 @@ int get_charctere(t_readline *readline, long c,
 		{
 			if (current->char_list->value)
 			{
-				new_line = ft_create_node();
+				new_line = ft_create_line_node();
 				new_line->char_list = ft_copy_char_list(current->char_list);
 				current->char_list = ft_copy_char_list(current->origin_char_list);
 				if (current->history == 1)
@@ -351,12 +347,6 @@ int get_charctere(t_readline *readline, long c,
 				readline->line = create_line_from_chars_list(current->char_list);
 			}
 		}
-		
-		fd = open(".history", O_RDWR | O_APPEND | O_CREAT, 0666);
-		dprintf(fd, "%s\n", readline->line);
-		free(line);
-		line = NULL;
-		close(fd);
 		newline_break = 0;
 	}
 	return newline_break;
@@ -505,69 +495,64 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 		ft_print_char_list((*current)->char_list);
 }
 
-int main()
+int micro_read_line(char **line, t_readline *readline, t_lines_list *lines_list)
 {
-	t_lines_list *lines_list;
-	struct termios termios;
-	t_readline *readline;
-	t_lines_list *current;
 	long character;
+	t_lines_list *current;
 	int newline_break;
-	//char *line;
-	
+
 	character = 0;
-	readline = ft_init_readline(&termios);
-	lines_list = NULL;
-	while (1)
+	current = ft_create_line_node();
+	ft_get_cursor_position(&readline->cursor.line_postion,
+						   &readline->cursor.col_position);
+	newline_break = 1;
+	while (newline_break)
 	{
-		current = ft_create_node();
-		//int fd;
-		newline_break = 1;
-		show_prompt();
-		ft_get_cursor_position(&readline->cursor.line_postion,
-							   &readline->cursor.col_position);
-		while (newline_break)
+		read(0, &character, 6);
+		if (character == D_KEY_UP)
 		{
-			read(0, &character, 6);
-			if (character == D_KEY_UP)
+			if (current->char_list != NULL || lines_list != NULL)
 			{
-				if (current->char_list != NULL || lines_list != NULL)
+				if (current && current->next == NULL && current->prev == NULL)
 				{
-					if (current && current->next == NULL && current->prev == NULL)
-					{
-						lines_list = ft_insert_node_to_line_list(lines_list, current, 1);
-						current = NULL;
-					}
-					ft_up_in_lines(readline, &lines_list);
-					current = lines_list;
+					lines_list = ft_insert_node_to_line_list(lines_list, current, 1);
+					current = NULL;
 				}
+				ft_up_in_lines(readline, &lines_list);
+				current = lines_list;
 			}
-			else if (character == D_KEY_DOWN)
+		}
+		else if (character == D_KEY_DOWN)
+		{
+			if (current->char_list != NULL && lines_list != NULL)
 			{
-				if (current->char_list != NULL && lines_list != NULL)
-				{
-					ft_down_in_lines(readline, &lines_list, 1);
-					current = lines_list;
-				}
-				else
-					ft_down_in_lines(readline, &lines_list, 0);
+				ft_down_in_lines(readline, &lines_list, 1);
+				current = lines_list;
 			}
-			else if (character == D_KEY_BACKSPACE)
-				ft_delete(&current, readline);
+			else
+				ft_down_in_lines(readline, &lines_list, 0);
+		}
+		else if (character == D_KEY_BACKSPACE)
+			ft_delete(&current, readline);
+		else
+		{
+			if (current)
+				newline_break = get_charctere(readline, character, current, &lines_list);
 			else
 			{
-				if (current)
-					newline_break = get_charctere(readline, character, current, &lines_list);
-				else
-				{
-					if (!current)
-						current = ft_create_node();
-					newline_break = get_charctere(readline, character, current, &lines_list);
-				}
+				if (!current)
+					current = ft_create_line_node();
+				newline_break = get_charctere(readline, character, current, &lines_list);
 			}
-			character = 0;
-			if (newline_break == 0)
-				ft_putstr_fd("\n", 1);
 		}
+		character = 0;
+		if (newline_break == 0)
+			ft_putstr_fd("\n", 1);
 	}
+	character= 0;
+		*line = ft_strdup(readline->line);
+	//// reset term state
+	tcsetattr(readline->term_fd, TCSANOW, readline->old_termios);
+	/////
+	return ft_strlen(readline->line);
 }

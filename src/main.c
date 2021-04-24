@@ -66,7 +66,7 @@ int main(int ac,char **av,char **env)
 		{
 			ft_expanding(current_pipe_line,&head,status);
 			ft_print_pipeline_cmd(current_pipe_line);
-			//status = ft_execute(current_pipe_line, &head);
+			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)

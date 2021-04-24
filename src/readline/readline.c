@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 08:54:09 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 12:41:46 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ t_readline *ft_init_readline(struct termios *termios)
 	readline->line_count = tgetnum("li");
 	readline->cursor.col_position = 0;
 	readline->cursor.line_postion = 0;
+	readline->line = 0;
 	return (readline);
 }
 
@@ -181,12 +182,7 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 			if (list->prev != NULL)
 			{
 				while (list->prev != NULL)
-				{
-					int fd = open("file_debuging", O_RDWR | O_APPEND | O_CREAT, 0666);
-					dprintf(fd, "%s\n", "JADID a zbi");
-					close(fd);
 					list = list->prev;
-				}
 			}
 			if (current->char_list)
 			{
@@ -316,6 +312,7 @@ int get_charctere(t_readline *readline, long c,
 	char *line;
 	int newline_break;
 	line = NULL;
+	int fd;
 	newline_break = 1;
 	new_line = NULL;
 	if (ft_isprint(c))
@@ -338,15 +335,28 @@ int get_charctere(t_readline *readline, long c,
 					*lines_list = ft_delete_node_from_list(current);
 				ft_insert_node_to_line_list(*lines_list, new_line, 0);
 				//////////// move to the first line in list_line
+				readline->line = create_line_from_chars_list(new_line->char_list);
 			}
 			else
+			{
 				current->char_list = ft_copy_char_list(current->origin_char_list);
+				readline->line = create_line_from_chars_list(current->char_list);
+			}
 		}
 		else
 		{
 			if (current->char_list)
+			{
 				*lines_list = ft_insert_node_to_line_list(*lines_list, current, 0);
+				readline->line = create_line_from_chars_list(current->char_list);
+			}
 		}
+		
+		fd = open(".history", O_RDWR | O_APPEND | O_CREAT, 0666);
+		dprintf(fd, "%s\n", readline->line);
+		free(line);
+		line = NULL;
+		close(fd);
 		newline_break = 0;
 	}
 	return newline_break;
@@ -377,10 +387,7 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 			if ((*current)->char_list)
 			{
 				if ((*current)->up_or_down == false)
-				{
 					(*current)->up_or_down = true;
-					//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
-				}
 				ft_print_char_list((*current)->char_list);
 			}
 			else /// skip emty char_list
@@ -389,10 +396,7 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 				{
 					(*current) = (*current)->next;
 					if ((*current)->up_or_down == false)
-					{
 						(*current)->up_or_down = true;
-						//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
-					}
 					if ((*current)->char_list)
 						ft_print_char_list((*current)->char_list);
 				}
@@ -401,18 +405,13 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 		else
 		{
 			if ((*current)->up_or_down == false)
-			{
 				(*current)->up_or_down = true;
-				//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
-			}
 			if ((*current)->char_list)
-			{
-				//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 				ft_print_char_list((*current)->char_list);
-			}
 		}
 	}
 }
+
 void ft_down_in_lines(t_readline *readline, t_lines_list **current, int print)
 {
 	if ((*current) == NULL)
@@ -426,10 +425,7 @@ void ft_down_in_lines(t_readline *readline, t_lines_list **current, int print)
 			if ((*current)->char_list)
 			{
 				if ((*current)->up_or_down == false)
-				{
 					(*current)->up_or_down = true;
-					//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
-				}
 				ft_print_char_list((*current)->char_list);
 			}
 			else
@@ -447,7 +443,6 @@ void ft_down_in_lines(t_readline *readline, t_lines_list **current, int print)
 			if ((*current)->up_or_down == false)
 			{
 				(*current)->up_or_down = true;
-				//(*current)->origin_char_list = ft_copy_char_list((*current)->char_list);
 			}
 			if (print == 1)
 			{
@@ -503,9 +498,7 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 			tmp->next = NULL;
 		}
 		else if (tmp->next == NULL)
-		{
 			tmp->value = 0;
-		}
 	}
 	ft_move_cursor_and_clear(readline->cursor);
 	if ((*current)->char_list)
@@ -520,24 +513,22 @@ int main()
 	t_lines_list *current;
 	long character;
 	int newline_break;
-
+	//char *line;
+	
 	character = 0;
 	readline = ft_init_readline(&termios);
 	lines_list = NULL;
 	while (1)
 	{
 		current = ft_create_node();
-		int fd;
+		//int fd;
 		newline_break = 1;
 		show_prompt();
 		ft_get_cursor_position(&readline->cursor.line_postion,
 							   &readline->cursor.col_position);
 		while (newline_break)
 		{
-			fd = open("file_debuging", O_RDWR | O_APPEND | O_CREAT, 0666);
 			read(0, &character, 6);
-			dprintf(fd, "%ld\n", character);
-			close(fd);
 			if (character == D_KEY_UP)
 			{
 				if (current->char_list != NULL || lines_list != NULL)
@@ -555,11 +546,6 @@ int main()
 			{
 				if (current->char_list != NULL && lines_list != NULL)
 				{
-					//if (current && current->next == NULL && current->prev == NULL)
-					//{
-					//	lines_list = ft_insert_node_to_line_list(lines_list, current, 1);
-					//	current = NULL;
-					//}
 					ft_down_in_lines(readline, &lines_list, 1);
 					current = lines_list;
 				}
@@ -567,26 +553,15 @@ int main()
 					ft_down_in_lines(readline, &lines_list, 0);
 			}
 			else if (character == D_KEY_BACKSPACE)
-			{
 				ft_delete(&current, readline);
-			}
 			else
 			{
 				if (current)
-				{
 					newline_break = get_charctere(readline, character, current, &lines_list);
-				}
 				else
 				{
-					//fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
-					//dprintf(fd,"%s\n","JADID");
-					//close(fd);
 					if (!current)
 						current = ft_create_node();
-
-					///current = lines_list;
-					//if (current->edit_char_list == NULL)
-					//	current->edit_char_list = current->char_list;
 					newline_break = get_charctere(readline, character, current, &lines_list);
 				}
 			}

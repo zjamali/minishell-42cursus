@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/20 08:24:07 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 13:58:39 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ typedef struct s_readline
 	int		colums_count;
 	long	c;
 	char	*path;
+	char	*line;
+	struct termios *old_termios;
 	t_cursor cursor;
 	t_lines_list *line_list;
 }t_readline;
@@ -162,4 +164,5 @@ void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
 
+int micro_read_line(char **line,t_readline *readline,t_lines_list *lines_list);
 #endif

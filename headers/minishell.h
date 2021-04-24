@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/30 15:53:26 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/13 13:27:36 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <string.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include <sys/stat.h>
+# include <errno.h>
 # include "../src/libft/libft.h"
 #define GREEN "\e[1;32m"
 #define RESET "\e[0m"
@@ -25,6 +27,8 @@
 #define YELLOW "\e[1;33m"
 #define PURPLE "\e[1;35m"
 #define BLUE "\e[1;34m"
+#define YES 1
+#define NO 0
 
 
 typedef enum e_token_type{

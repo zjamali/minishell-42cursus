@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/22 17:28:01 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 14:31:35 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,20 +83,31 @@ char *get_env_value(char *env_variable,t_env **env,int inside_dq)
 	if (inside_dq == 1)
 	{
 		j++;
-		while (env_variable[j] && env_variable[j] != ' ' 
-					&& env_variable[j] != '"' && env_variable[j] != '$')
-			j++;
-		str = ft_substr(env_variable,1,j - 1);
+		if (env_variable[j] == '_')
+			str = ft_strdup("_");
+		else
+		{
+			while (ft_isalpha(env_variable[j]))
+				j++;
+			str = ft_substr(env_variable,1,j - 1);
+		}
+		//ft_putstr_fd(str,1);
 	}
 	if (inside_dq == 0)
 	{
 		j++;
-		while (env_variable[j] && env_variable[j] != '$')
-			j++;
-		str = ft_substr(env_variable,1,j - 1);
-		ft_putstr_fd(str,1);
+		if (env_variable[j] == '_')
+			str = ft_strdup("_");
+		else
+		{
+			while (ft_isalpha(env_variable[j]))
+				j++;
+			str = ft_substr(env_variable,1,j - 1);
+		}
 	}
 	tmp = ft_search_in_list(env,str);
+	if (str)
+		free(str);
 	if(tmp)
 		return ft_strdup(tmp->value);
 	else
@@ -119,7 +130,6 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 		{		
 			if (ft_strchr("$\"\\\n`",word[j + 1]) )
 			{
-				ft_putstr_fd("sahjkhsafjk",1);
 				tmp = expand;
 				tmp1 = ft_substr(word,j+1,1);
 				expand = ft_strjoin(expand,tmp1);
@@ -157,8 +167,14 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 						free(tmp);
 						if (word[j] == '$')
 							j++;
-						while (word[j] && word[j] != ' ' && word[j] != '"' && word[j] != '$')
+						if (word[j] == '_')
 							j++;
+						else
+						{
+							while (ft_isalpha(word[j]))
+								j++;
+							ft_putstr_fd(&word[j],1);
+						}
 					}
 					else if (word[j - 1] != '$')
 					{
@@ -296,8 +312,14 @@ void ft_expande_word(char **string,t_env **env_list,int status)
 					
 					if (word[i] == '$')
 							i++;
-					while (word[i] && word[i] != '$')
+					if (word[i] == '_')
+						i++;
+					else
+					{
+						while (ft_isalpha(word[i]))
 							i++;
+						ft_putstr_fd(&word[i],1);
+					}
 					//i+= ft_strlen(word + i);
 					
 				}

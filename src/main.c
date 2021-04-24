@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 14:36:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 15:11:20 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@ int main(int ac,char **av,char **env)
 	char *line;
 	int status;
 
+	t_lines_list *lines_list;
+	struct termios termios;
+	t_readline *readline;
+	lines_list = NULL;
+
 	status = 0;
 	tokens_list = NULL;
 	line = NULL;
@@ -42,13 +47,14 @@ int main(int ac,char **av,char **env)
 	(void)av;
 	int i = 0;
 	
+	readline = ft_init_readline(&termios);
 	cmd = NULL;
 	init_env(&head, env);
 	while (i == 0)
 	{
 		//i++;
 		show_prompt();
-		read_command_list(&line);
+		micro_read_line(&line, readline, lines_list);
 		if ( line[1] != '\0')
 			write(1, "\n",1);
 		tokens_list = ft_lexer(line);

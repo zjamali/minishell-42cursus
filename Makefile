@@ -2,7 +2,7 @@ NAME= minishell
 
 SRC_EXECUTE= src/execution/builtins.c  src/execution/execution.c src/execution/list.c src/execution/redirection.c
 
-SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/parser.c src/parse/expansion.c
+SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/parser.c src/parse/expansion.c src/readline/readline.c
 
 SRC_MAIN= src/main.c 
 
@@ -27,4 +27,4 @@ $(NAME):
 	@echo "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗"
 	@echo "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝"
 	@echo "Compilation of minishell:  \033[1;32mOK\033[m"
-	@$(COM) $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT) -g
+	@$(COM) $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT) -g -lncurses

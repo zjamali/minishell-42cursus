@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/13 13:27:36 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/24 14:59:13 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,12 @@
 # include <stdio.h>
 # include <sys/stat.h>
 # include <errno.h>
-# include "../src/libft/libft.h"
+#include <termios.h>
+#include <term.h>
+#include <curses.h>
+#include <termcap.h>
+#include "../src/libft/libft.h"
+
 #define GREEN "\e[1;32m"
 #define RESET "\e[0m"
 #define RED "\e[1;91m"
@@ -30,7 +35,52 @@
 #define YES 1
 #define NO 0
 
+/******* READLINE **********/
 
+# define D_KEY_ESCAPE 27
+# define D_KEY_SPACE 32
+# define D_KEY_UP 4283163
+# define D_KEY_DOWN 4348699
+# define D_KEY_RIGHT 4414235
+# define D_KEY_LEFT 4479771
+# define D_KEY_ENTER 10
+# define D_KEY_BACKSPACE 127
+
+typedef struct s_char_list{
+	char value;
+	int len;
+	struct s_char_list *next;
+}t_char_list;
+
+typedef struct s_lines_list{
+	char *value;
+	int history;
+	int index;
+	bool up_or_down;
+	t_char_list *char_list;
+	t_char_list *origin_char_list;
+	struct s_lines_list *next;
+	struct s_lines_list *prev;
+}t_lines_list;
+typedef struct s_cursor{
+	int line_postion;
+	int col_position;
+}t_cursor;
+typedef struct s_readline
+{
+	char	*term_type;
+	int		term_fd;
+	int		line_count;
+	int		colums_count;
+	long	c;
+	char	*path;
+	char	*line;
+	struct termios *old_termios;
+	t_cursor cursor;
+	t_lines_list *line_list;
+}t_readline;
+
+/******* LESXER **********/
 typedef enum e_token_type{
 	NONE,
 	WORD,
@@ -52,14 +102,7 @@ typedef struct s_token
 }t_token;
 
 
-typedef struct s_env
-{
-	char *name;
-	char *value;
-	struct s_env *next;
-}				t_env;
-
-
+/******* PARSER **********/
 typedef enum e_redirection_type{
 	RE_GREAT,
 	RE_DOUBLE_GREAT,
@@ -105,8 +148,17 @@ typedef struct s_command_list
 	t_pipe_line *childs;
 }t_command_list;
 
-int get_next_line(char **line);
+/***** ENV LIST ******/
 
+typedef struct s_env
+{
+	char *name;
+	char *value;
+	struct s_env *next;
+}				t_env;
+
+
+int get_next_line(char **line);
 t_token	*ft_lexer(char *line);
 void ft_destoy_token_list(t_token *tokens_list);
 t_command_list *ft_parser(t_token *tokens_list);
@@ -117,4 +169,7 @@ void ft_expanding(t_pipe_line *pipe_line,t_env **env,int status);
 void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
+
+t_readline *ft_init_readline(struct termios *termios);
+int micro_read_line(char **line,t_readline *readline,t_lines_list *lines_list);
 #endif

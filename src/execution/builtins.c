@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/15 15:39:14 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/24 16:33:35 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,8 @@ int ft_cd(t_args *args, t_env **head)
 
 int	 ft_exit(t_args *args)
 {
+	if (args == NULL)
+		exit(0);
 	if (args->next != NULL)
 		return (ft_put_err("exit", ": too many arguments", 1));
 	exit(ft_atoi(args->value));

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 16:12:19 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/24 16:22:32 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,20 @@ int main(int ac,char **av,char **env)
 	t_lines_list *lines_list;
 	struct termios termios;
 	t_readline *readline;
-	lines_list = NULL;
 
+	lines_list = NULL;
 	status = 0;
 	tokens_list = NULL;
 	line = NULL;
 	(void)ac;
 	(void)av;
+	(void)env;
 	int i = 0;
 	
 	readline = ft_init_readline(&termios);
 	head = NULL;
 	cmd = NULL;
+	readline = ft_init_readline(&termios);
 	init_env(&head, env);
 	while (i == 0)
 	{

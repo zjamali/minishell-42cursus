@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/03/29 15:01:09 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/15 15:19:23 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ char *get_quoting_word(char *line, int *i, int quoting)
 	return word;
 }
 
-void ft_get_word(t_token *tokens_list, char *line, int *tab)
+void ft_get_word(t_token *tokens_list, char *line, int *table)
 {
 	int quoting;
 	char *word;
@@ -205,7 +205,7 @@ void ft_get_word(t_token *tokens_list, char *line, int *tab)
 	j = 0;
 	quoting = -1;
 	word = NULL;
-	j = tab[1];
+	j = table[1];
 	while(line[j])
 	{
 		quoting = check_the_beginning_of_word(line[j]);
@@ -231,33 +231,33 @@ void ft_get_word(t_token *tokens_list, char *line, int *tab)
 				break;
 		}
 	}
-	add_token(tokens_list, WORD, word, tab[3]);
-	tab[1] = j;
-	tab[3]++;
+	add_token(tokens_list, WORD, word, table[3]);
+	table[1] = j;
+	table[3]++;
 }
 
 void	create_tokens_list(t_token *tokens_list, char* line)
 {
-	int tab[5]; // 0 = i  ; 1 = j ; k = 2; index = 3 ; quote = 4; 
+	int table[5]; // 0 = i  ; 1 = j ; k = 2; index = 3 ; quote = 4; 
 	
-	tab[3] = 1;
-	tab[4] = 0;
-	tab[0]  = 0;
-	while (line[tab[0]])
+	table[3] = 1;
+	table[4] = 0;
+	table[0]  = 0;
+	while (line[table[0]])
 	{
-		tab[1] = tab[0];
-		while (line[tab[1]] == ' ' || line[tab[1]] == '\t') /// escape spaces 
-			tab[1]++;
-		if (ft_strrchr( "|;><" , line[tab[1]]) != NULL)  //  GET space pipe semi redir 
-			get_space_pipe_semi_redir(tokens_list, line, &tab[1], &tab[3]);
-		if (ft_strrchr("\t <>;|", line[tab[1]]) == NULL || line[tab[1]] == 92) // GET WORD 
+		table[1] = table[0];
+		while (line[table[1]] == ' ' || line[table[1]] == '\t') /// escape spaces 
+			table[1]++;
+		if (ft_strrchr( "|;><" , line[table[1]]) != NULL)  //  GET space pipe semi redir 
+			get_space_pipe_semi_redir(tokens_list, line, &table[1], &table[3]);
+		if (ft_strrchr("\t <>;|", line[table[1]]) == NULL || line[table[1]] == 92) // GET WORD 
 		{
-			tab[2] = tab[1];
-			ft_get_word(tokens_list, line, tab);
+			table[2] = table[1];
+			ft_get_word(tokens_list, line, table);
 		}
-		tab[0] = tab[1];
+		table[0] = table[1];
 	}
-	add_token(tokens_list , NEWLINE, ft_strdup("newline"), tab[3]);
+	add_token(tokens_list , NEWLINE, ft_strdup("newline"), table[3]);
 }
 
 t_token	*ft_lexer(char *line)

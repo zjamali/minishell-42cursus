@@ -301,16 +301,10 @@ void ft_expande_word(char **string,t_env **env_list,int status)
 					//i+= ft_strlen(word + i);
 					
 				}
-<<<<<<< HEAD
 				else if (word[i - 1] != '$') /// not exit $$hdj vs $kfjh
 				{
 					ft_putstr_fd("zbi",1);
 					if (word[i + 1] != '"')
-=======
-				else if (word[i - 1] != '$')
-				{
-					if (word[i + 1] != '"' && word[i + 1] != '\'')
->>>>>>> 6ff23842002a2e6bbd57a9451f94e8f6d3aca1fe
 					{
 						//// Special Parameters of $
 						if (ft_isdigit(word[i + 1]) || ft_strchr("!#%@-*",word[i+1]))

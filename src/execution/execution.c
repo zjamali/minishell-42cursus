@@ -154,7 +154,7 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 	return (0);
 		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
 }
-*/
+
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
 	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))

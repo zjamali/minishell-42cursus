@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/02 16:46:56 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/22 17:58:21 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 08:05:53 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,7 +289,6 @@ t_lines_list *ft_create_node(void)
 	return ret;
 }
 
-
 t_lines_list *ft_delete_node_from_list(t_lines_list *current)
 {
 	t_char_list *tmp;
@@ -330,14 +329,18 @@ int get_charctere(t_readline *readline, long c,
 	{
 		if (current && current->up_or_down == true)
 		{
-			
-			new_line = ft_create_node();
-			new_line->char_list = ft_copy_char_list(current->char_list);
-			current->char_list = ft_copy_char_list(current->origin_char_list);
-			if (current->history == 1)
-				*lines_list = ft_delete_node_from_list(current);
-			ft_insert_node_to_line_list(*lines_list, new_line, 0);
-			//////////// move to the first line in list_line
+			if (current->char_list->value)
+			{
+				new_line = ft_create_node();
+				new_line->char_list = ft_copy_char_list(current->char_list);
+				current->char_list = ft_copy_char_list(current->origin_char_list);
+				if (current->history == 1)
+					*lines_list = ft_delete_node_from_list(current);
+				ft_insert_node_to_line_list(*lines_list, new_line, 0);
+				//////////// move to the first line in list_line
+			}
+			else
+				current->char_list = ft_copy_char_list(current->origin_char_list);
 		}
 		else
 		{
@@ -410,7 +413,7 @@ void ft_up_in_lines(t_readline *readline, t_lines_list **current)
 		}
 	}
 }
-void ft_down_in_lines(t_readline *readline, t_lines_list **current,int print)
+void ft_down_in_lines(t_readline *readline, t_lines_list **current, int print)
 {
 	if ((*current) == NULL)
 		return;
@@ -448,10 +451,9 @@ void ft_down_in_lines(t_readline *readline, t_lines_list **current,int print)
 			}
 			if (print == 1)
 			{
-			if ((*current)->char_list)
-				ft_print_char_list((*current)->char_list);
+				if ((*current)->char_list)
+					ft_print_char_list((*current)->char_list);
 			}
-			
 		}
 	}
 }
@@ -538,7 +540,7 @@ int main()
 			close(fd);
 			if (character == D_KEY_UP)
 			{
-				if (current->char_list != NULL || lines_list != NULL )
+				if (current->char_list != NULL || lines_list != NULL)
 				{
 					if (current && current->next == NULL && current->prev == NULL)
 					{
@@ -551,18 +553,18 @@ int main()
 			}
 			else if (character == D_KEY_DOWN)
 			{
-				if (current->char_list != NULL && lines_list != NULL )
+				if (current->char_list != NULL && lines_list != NULL)
 				{
 					//if (current && current->next == NULL && current->prev == NULL)
 					//{
 					//	lines_list = ft_insert_node_to_line_list(lines_list, current, 1);
 					//	current = NULL;
 					//}
-					ft_down_in_lines(readline, &lines_list,1);
+					ft_down_in_lines(readline, &lines_list, 1);
 					current = lines_list;
 				}
 				else
-					ft_down_in_lines(readline, &lines_list,0);
+					ft_down_in_lines(readline, &lines_list, 0);
 			}
 			else if (character == D_KEY_BACKSPACE)
 			{

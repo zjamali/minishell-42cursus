@@ -35,7 +35,7 @@ int main(int ac,char **av,char **env)
 	char *line;
 	int status;
 
-	status = 1;
+	status = 0;
 	tokens_list = NULL;
 	line = NULL;
 	(void)ac;

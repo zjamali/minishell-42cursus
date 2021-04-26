@@ -35,6 +35,7 @@ int main(int ac,char **av,char **env)
 	char *line;
 	int status;
 
+	current_pipe_line = NULL;
 	t_lines_list *lines_list;
 	struct termios termios;
 	t_readline *readline;
@@ -52,14 +53,19 @@ int main(int ac,char **av,char **env)
 	init_env(&head, env);
 	while (i == 0)
 	{
-		//i++;
 		show_prompt();
-		micro_read_line(&line, readline, lines_list);
-		if ( line[1] != '\0')
-			write(1, "\n",1);
-		tokens_list = ft_lexer(line);
-		free(line);
-		cmd = ft_parser(tokens_list);
+		micro_read_line(&line, readline, &lines_list);
+		if (line)
+		{
+			tokens_list = ft_lexer(line);
+			free(line);
+			line = NULL;
+		}
+		if (tokens_list)
+		{
+			cmd = ft_parser(tokens_list);
+			tokens_list = NULL;
+		}
 		if (cmd)
 			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
@@ -68,9 +74,14 @@ int main(int ac,char **av,char **env)
 			ft_print_pipeline_cmd(current_pipe_line);
 			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
+			//free(tmp);
+			//tmp = NULL;
 		}
 		if (cmd)
+		{
 			ft_destroy_ast(cmd);
+			ft_putstr_fd(RESET,ft_strlen(RESET));
+		}
 		cmd = NULL;
 		line = NULL;
 	}

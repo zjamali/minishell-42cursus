@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/24 15:09:49 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 15:24:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,16 @@ t_env     *ft_create_node(char *name, char *value)
 void    ft_add_to_list(t_env **head, t_env *newnode)
 {
     t_env *list;
+
     if (!head || !newnode)
         return ;
     if (*head)
     {
         list = *head;
-        while (list && list->next)
-            list = list->next;
+			
+       	while (list && list->next)
+        	list = list->next;
+
         list->next = newnode;
     }
     else

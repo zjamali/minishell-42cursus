@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 14:31:35 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/24 16:19:21 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,7 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 	return expand;
 }
 
-void ft_expande_word(char **string,t_env **env_list,int status)
+void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 {
 	char *word;
 	char *expanded;
@@ -381,7 +381,9 @@ void ft_expande_word(char **string,t_env **env_list,int status)
 					}
 					else 
 					{
-						/// skip characters after $ 
+						/// skip characters after $
+						//while(word[i] != '$')
+						//		i++;
 						i+= ft_strlen(word + i);
 					}
 					i++;
@@ -398,8 +400,20 @@ void ft_expande_word(char **string,t_env **env_list,int status)
 			i++;
 		}
 	}
+	
+	if (redirection == 1)
+	{
+		if (expanded != NULL && expanded[0] != '\0')
+			*string = expanded;
+		else
+		{
+			*string = ft_strdup(word);
+		}
+	}
+	else
+		*string = expanded;
+	
 	free(word);
-	*string = expanded;
 }
 
 void ft_expande_simple_cmd(t_simple_cmd **cmd,t_env **env,int status)
@@ -413,20 +427,20 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd,t_env **env,int status)
 	if ((*cmd)->command)
 	{
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
-		ft_expande_word(&((*cmd)->command),env,status);
+		ft_expande_word(&((*cmd)->command),env,status,0);
 	}
 	args = (*cmd)->args;
 	while (args)
 	{
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
-		ft_expande_word(&args->value,env,status);
+		ft_expande_word(&args->value,env,status,0);
 		args = args->next;
 	}
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
 		redis->inside_quotes = check_exiting_of_qoutes(redis->file_name);
-		ft_expande_word(&redis->file_name,env,status);
+		ft_expande_word(&redis->file_name,env,status,1);
 		redis = redis->next;
 	}
 }

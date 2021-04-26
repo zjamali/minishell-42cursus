@@ -661,7 +661,7 @@ t_command_list *ft_parser(t_token *tokens_list)
 	if (!ft_check_syntax(tokens_list))
 	{
 		command_list = ft_create_ast(tokens_list);
-		ft_destoy_token_list(tokens_list);
+		//ft_destoy_token_list(tokens_list);
 	}
 	return (command_list);
 }

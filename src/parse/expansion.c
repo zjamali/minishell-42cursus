@@ -304,6 +304,7 @@ void ft_expande_word(char **string,t_env **env_list,int status)
 			{
 				tmp1 = expanded;
 				tmp = get_env_value(word + i,env_list,0);
+
 				if (tmp) /// env variavle exist 
 				{
 					expanded = ft_strjoin(expanded,tmp);
@@ -325,7 +326,7 @@ void ft_expande_word(char **string,t_env **env_list,int status)
 				}
 				else if (word[i - 1] != '$') /// not exit $$hdj vs $kfjh
 				{
-					ft_putstr_fd("zbi",1);
+					
 					if (word[i + 1] != '"')
 					{
 						//// Special Parameters of $
@@ -348,7 +349,13 @@ void ft_expande_word(char **string,t_env **env_list,int status)
 							i++;
 						}
 						else if (word[i + 1])
-							i+= ft_strlen(word + i);
+						{
+							//ft_putstr_fd("ZBI",1);
+							i++;
+							while (ft_isalpha(word[i]))
+								i++;
+							//i+= ft_strlen(word + i);
+						}
 						else //// just a 1 dollar sign
 						{
 							tmp1 = expanded;

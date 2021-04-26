@@ -55,6 +55,7 @@ int main(int ac,char **av,char **env)
 	{
 		show_prompt();
 		micro_read_line(&line, readline, &lines_list);
+		//read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -79,7 +80,7 @@ int main(int ac,char **av,char **env)
 		}
 		if (cmd)
 		{
-			ft_destroy_ast(cmd);
+			//ft_destroy_ast(cmd);
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
 		cmd = NULL;

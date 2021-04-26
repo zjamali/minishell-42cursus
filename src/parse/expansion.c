@@ -319,14 +319,13 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 					{
 						while (ft_isalpha(word[i]))
 							i++;
-						ft_putstr_fd(&word[i],1);
+						//ft_putstr_fd(&word[i],1);
 					}
 					//i+= ft_strlen(word + i);
 					
 				}
 				else if (word[i - 1] != '$') /// not exit $$hdj vs $kfjh
-				{
-					
+				{	
 					if (word[i + 1] != '"')
 					{
 						//// Special Parameters of $
@@ -350,8 +349,8 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 						}
 						else if (word[i + 1])
 						{
-							//ft_putstr_fd("ZBI",1);
-							i++;
+							if (word[i] == '$')
+								i++;
 							while (ft_isalpha(word[i]))
 								i++;
 							//i+= ft_strlen(word + i);
@@ -363,6 +362,7 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 							expanded = ft_strjoin(expanded,tmp);
 							free(tmp1);
 							free(tmp);
+							//i++;
 						}
 					}
 					i++;
@@ -384,14 +384,18 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 						/// skip characters after $
 						//while(word[i] != '$')
 						//		i++;
-						i+= ft_strlen(word + i);
+						while(ft_isalpha(word[i]))
+								i++;
+						
+						//i+= ft_strlen(word + i);
 					}
-					i++;
+					//i++;
 				}
 			}
 		}
 		else /// not dollars sign no quote just join characters 
 		{
+			ft_putstr_fd(word + i,1);
 			tmp1 = expanded;
 			tmp = ft_substr(word,i,1);
 			expanded = ft_strjoin(expanded,tmp);

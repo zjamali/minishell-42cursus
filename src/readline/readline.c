@@ -341,7 +341,7 @@ int get_charctere(t_readline *readline, long c,
 		}
 		else
 		{
-			if (current->char_list)
+			if (current && current->char_list)
 			{
 				*lines_list = ft_insert_node_to_line_list(*lines_list, current, 0);
 				readline->line = create_line_from_chars_list(current->char_list);
@@ -495,7 +495,7 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 		ft_print_char_list((*current)->char_list);
 }
 
-int micro_read_line(char **line, t_readline *readline, t_lines_list *lines_list)
+int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list)
 {
 	long character;
 	t_lines_list *current;
@@ -511,38 +511,38 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list *lines_list)
 		read(0, &character, 6);
 		if (character == D_KEY_UP)
 		{
-			if (current->char_list != NULL || lines_list != NULL)
+			if (current->char_list != NULL || *lines_list != NULL)
 			{
 				if (current && current->next == NULL && current->prev == NULL)
 				{
-					lines_list = ft_insert_node_to_line_list(lines_list, current, 1);
+					*lines_list = ft_insert_node_to_line_list(*lines_list, current, 1);
 					current = NULL;
 				}
-				ft_up_in_lines(readline, &lines_list);
-				current = lines_list;
+				ft_up_in_lines(readline, lines_list);
+				current = *lines_list;
 			}
 		}
 		else if (character == D_KEY_DOWN)
 		{
-			if (current->char_list != NULL && lines_list != NULL)
+			if (current->char_list != NULL && *lines_list != NULL)
 			{
-				ft_down_in_lines(readline, &lines_list, 1);
-				current = lines_list;
+				ft_down_in_lines(readline, lines_list, 1);
+				current = *lines_list;
 			}
 			else
-				ft_down_in_lines(readline, &lines_list, 0);
+				ft_down_in_lines(readline, lines_list, 0);
 		}
 		else if (character == D_KEY_BACKSPACE)
 			ft_delete(&current, readline);
 		else
 		{
 			if (current)
-				newline_break = get_charctere(readline, character, current, &lines_list);
+				newline_break = get_charctere(readline, character, current, lines_list);
 			else
 			{
 				if (!current)
 					current = ft_create_line_node();
-				newline_break = get_charctere(readline, character, current, &lines_list);
+				newline_break = get_charctere(readline, character, current, lines_list);
 			}
 		}
 		character = 0;
@@ -550,9 +550,12 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list *lines_list)
 			ft_putstr_fd("\n", 1);
 	}
 	character= 0;
+	if (readline->line)
+	{
 		*line = ft_strdup(readline->line);
-	//// reset term state
+		free(readline->line);
+		readline->line = NULL;
+	}	
 	tcsetattr(readline->term_fd, TCSANOW, readline->old_termios);
-	/////
-	return ft_strlen(readline->line);
+	return 1;
 }

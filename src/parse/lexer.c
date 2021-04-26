@@ -267,6 +267,6 @@ t_token	*ft_lexer(char *line)
 	tokens_list = NULL;
 	tokens_list = first_token();
 	create_tokens_list(tokens_list, line);
-	print_tokens(tokens_list);
+	//print_tokens(tokens_list);
 	return (tokens_list);
 }

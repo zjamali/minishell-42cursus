@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 07:34:46 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 12:19:29 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@
 # define D_KEY_LEFT 4479771
 # define D_KEY_ENTER 10
 # define D_KEY_BACKSPACE 127
+# define D_KEY_CTRL_C 3
+# define D_KEY_CTRL_D 4
 
 typedef struct s_char_list{
 	char value;
@@ -62,6 +64,7 @@ typedef struct s_lines_list{
 	t_char_list *origin_char_list;
 	struct s_lines_list *next;
 	struct s_lines_list *prev;
+	
 }t_lines_list;
 typedef struct s_cursor{
 	int line_postion;
@@ -173,5 +176,5 @@ void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
 
 t_readline *ft_init_readline(struct termios *termios);
-int micro_read_line(char **line,t_readline *readline,t_lines_list **lines_list);
+int micro_read_line(char **line,t_readline *readline,t_lines_list **lines_list,int status);
 #endif

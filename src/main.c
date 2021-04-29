@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 07:40:28 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 12:18:35 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int main(int ac,char **av,char **env)
 
 	//// get terminal window size
 	
-	struct winsize window;
+	//struct winsize window;
 	
 	
 	
@@ -63,10 +63,10 @@ int main(int ac,char **av,char **env)
 	while (i == 0)
 	{
 		show_prompt();
-		micro_read_line(&line, readline, &lines_list);
-		ioctl(readline->term_fd,TIOCGSIZE,&window);
-		printf("lines %d\n",window.ws_row);
-		printf("columns %d\n",window.ws_col);
+		micro_read_line(&line, readline, &lines_list,status);
+		//ioctl(readline->term_fd,TIOCGSIZE,&window);
+		//printf("lines %d\n",window.ws_row);
+		//printf("columns %d\n",window.ws_col);
 		//
 		//read_command_list(&line);
 		if (line)

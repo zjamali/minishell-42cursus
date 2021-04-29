@@ -6,14 +6,28 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 07:34:37 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 12:48:03 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../../headers/minishell.h"
 
+void ft_delete_char_list(t_char_list *char_list)
+{
+	t_char_list *tmp;
+	t_char_list *tmp1;
 
+	tmp = char_list;
+	
+	while (tmp)
+	{
+		tmp1 = tmp;
+		tmp = tmp->next;
+		free(tmp1);
+		tmp1 = NULL;
+	}	
+}
 
 
 void ft_print_char_list(t_char_list *chars_list)
@@ -115,18 +129,13 @@ t_readline *ft_init_readline(struct termios *termios)
 	/// config terminal
 	tcgetattr(readline->term_fd, readline->old_termios); /// save termios first state
 	tcgetattr(readline->term_fd, termios);
-	termios->c_lflag &= ~(ECHO | ICANON);
+	termios->c_lflag &= ~(ECHO | ICANON | ISIG);
 	tcsetattr(readline->term_fd, TCSANOW, termios);
 	readline->colums_count = tgetnum("co");
 	readline->line_count = tgetnum("li");
 	readline->cursor.col_position = 0;
 	readline->cursor.line_postion = 0;
-	readline->line = 0;
-	
-	ioctl(readline->term_fd,TIOCGWINSZ,readline->window);
-	
-	
-	
+	readline->line = 0;	
 	return (readline);
 }
 
@@ -330,7 +339,8 @@ t_lines_list *ft_delete_node_from_list(t_lines_list *current)
 
 	tmp = current->char_list;
 
-	current->next->prev = current->prev;
+	if (current->next)
+		current->next->prev = current->prev;
 
 	while (tmp)
 	{
@@ -632,7 +642,7 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 		ft_print_char_list((*current)->char_list);
 }
 
-int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list)
+int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list,int status)
 {
 	long character;
 	t_lines_list *current;
@@ -675,6 +685,23 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		}
 		else if (character == D_KEY_BACKSPACE)
 			ft_delete(&current, readline);
+		else if (character == D_KEY_CTRL_C)
+		{
+			if (current && current->history == 1 && (current->char_list != NULL && current->char_list->value != 0))
+			{
+				ft_delete_char_list(current->char_list);
+				current->char_list = NULL;
+			}
+			newline_break = 0;
+		}
+		else if (character == D_KEY_CTRL_D)
+		{
+			if (current->char_list == NULL || current->char_list->value == 0)
+			{
+				ft_putstr_fd("exit",1);
+				exit(status);
+			}
+		}
 		else
 		{
 			if (current)

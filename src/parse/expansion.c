@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 10:54:38 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 11:57:54 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 									if (word[j + 1] == '0')
 									{
 										tmp1 = expand;
-										tmp = ft_strdup("bash");
+										tmp = ft_strdup("minishell");
 										expand = ft_strjoin(expand, tmp);
 										free(tmp1);
 										free(tmp);
@@ -397,7 +397,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 								if (word[i + 1] == '0')
 								{
 									tmp1 = expanded;
-									tmp = ft_strdup("bash");
+									tmp = ft_strdup("minishell");
 									expanded = ft_strjoin(expanded, tmp);
 									free(tmp1);
 									free(tmp);

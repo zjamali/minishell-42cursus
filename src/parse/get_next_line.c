@@ -106,8 +106,8 @@ int get_next_line(char **line)
 	
 	if (!line)
 		return -1;
-	buff = malloc(101);
-	while((r = read(0,buff,100)) > 0)
+	buff = malloc(1001);
+	while((r = read(0,buff,1000)) > 0)
 	{
 		buff[r] = '\0';
 		tmp = str;

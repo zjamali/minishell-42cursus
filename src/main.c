@@ -57,6 +57,7 @@ int main(int ac,char **av,char **env)
 	{
 		show_prompt();
 		micro_read_line(&line, readline, &lines_list);
+		//read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -76,8 +77,6 @@ int main(int ac,char **av,char **env)
 			ft_print_pipeline_cmd(current_pipe_line);
 			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
-			//free(tmp);
-			//tmp = NULL;
 		}
 		if (cmd)
 		{
@@ -85,7 +84,6 @@ int main(int ac,char **av,char **env)
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
 		cmd = NULL;
-		line = NULL;
 	}
 }
 //ls > s > s > d > f > g > h >> j>> j>>  jj < j < j < j

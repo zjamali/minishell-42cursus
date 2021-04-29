@@ -362,7 +362,8 @@ t_lines_list *ft_delete_history_node(t_lines_list **lines_list)
 			tmp->next->prev = tmp->prev;
 			tmp->prev->next = tmp->next;
 			tmp = empty_node->prev;
-			free(empty_node);
+			ft_delete_node_from_list(empty_node);
+			//free(empty_node);
 		}
 		else
 			tmp = tmp->next;
@@ -475,6 +476,7 @@ int get_charctere(t_readline *readline, long c,
 				}
 				else
 					*lines_list = ft_insert_node_to_line_list(*lines_list, current, 0);
+				
 				readline->line = create_line_from_chars_list(current->char_list);
 			}
 		}
@@ -689,22 +691,22 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		if (newline_break == 0)
 		{
 			ft_putstr_fd("\n", 1);
-			fds = open("zbi", O_RDWR| O_APPEND| O_CREAT,0666);
-			dprintf(fds,"hello\n");
-			close(fds);
-			if (*lines_list)
-				ft_print_lines_list_all(*lines_list);
+			//fds = open("zbi", O_RDWR| O_APPEND| O_CREAT,0666);
+			//dprintf(fds,"hello\n");
+			//close(fds);
+			//if (*lines_list)
+			//	ft_print_lines_list_all(*lines_list);
 			if (*lines_list)
 				*lines_list = ft_delete_history_node(lines_list);
-			if (*lines_list)
-			{
-				ft_putstr_fd("-----------",1);
-				ft_print_lines_list_all(*lines_list);
-			}
+			//if (*lines_list)
+			//{
+			//	ft_putstr_fd("-----------",1);
+			//	ft_print_lines_list_all(*lines_list);
+			//}
 			
 		}
 	}
-	ft_putstr_fd("",1);
+	//ft_putstr_fd("",1);
 	character= 0;
 	if (readline->line)
 	{

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 16:19:21 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 09:30:14 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,14 +329,56 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 					if (word[i + 1] != '"')
 					{
 						//// Special Parameters of $
-						if (ft_isdigit(word[i + 1]) || ft_strchr("!#%@-*",word[i+1]))
+						if (ft_isdigit(word[i + 1]) || ft_strchr("!#%@-*=",word[i + 1]))
 						{
-							tmp1 = expanded;
-							tmp = ft_substr(word,i,2);
-							expanded = ft_strjoin(expanded,tmp);
-							free(tmp1);
-							free(tmp);
-							i+=2;
+							if (ft_isdigit(word[i + 1]))
+							{
+								if (word[i + 1] == '0')
+								{
+									tmp1 = expanded;
+									tmp = ft_strdup("bash");
+									expanded = ft_strjoin(expanded,tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								i+=2;
+							}
+							else
+							{
+								if (word[i + 1] == '#')
+								{
+									tmp1 = expanded;
+									tmp = ft_strdup("0");
+									expanded = ft_strjoin(expanded,tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (word[i + 1] == '-')
+								{
+									tmp1 = expanded;
+									tmp = ft_strdup("himBH");
+									expanded = ft_strjoin(expanded,tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (word[i + 1] == '!')
+								{
+									tmp1 = expanded;
+									tmp = ft_strdup("$!");
+									expanded = ft_strjoin(expanded,tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (ft_strchr("%=",word[i + 1]))
+								{
+									tmp1 = expanded;
+									tmp = ft_substr(word,i,2);
+									expanded = ft_strjoin(expanded,tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								i+=2;	
+							}
 						}
 						else if (word[i + 1] == '?')
 						{
@@ -349,9 +391,7 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 						}
 						else if (word[i + 1])
 						{
-							if (word[i] == '$')
-								i++;
-							while (ft_isalpha(word[i]))
+							while (ft_isalpha(word[i]) || (word[i] == '$'))
 								i++;
 						}
 						else //// just a 1 dollar sign
@@ -379,21 +419,15 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 					}
 					else 
 					{
-						/// skip characters after $
-						//while(word[i] != '$')
-						//		i++;
 						while(ft_isalpha(word[i]))
 								i++;
-						
-						//i+= ft_strlen(word + i);
 					}
-					//i++;
 				}
 			}
 		}
 		else /// not dollars sign no quote just join characters 
 		{
-			//ft_putstr_fd(word + i,1);
+			ft_putchar_fd(*(word + i),1);
 			tmp1 = expanded;
 			tmp = ft_substr(word,i,1);
 			expanded = ft_strjoin(expanded,tmp);

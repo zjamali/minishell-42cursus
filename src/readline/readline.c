@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 15:03:25 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 07:34:37 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,11 @@ t_readline *ft_init_readline(struct termios *termios)
 	readline->cursor.col_position = 0;
 	readline->cursor.line_postion = 0;
 	readline->line = 0;
+	
+	ioctl(readline->term_fd,TIOCGWINSZ,readline->window);
+	
+	
+	
 	return (readline);
 }
 
@@ -614,7 +619,6 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 			i++;
 			tmp = tmp->next;
 		}
-
 		if (tmp->next)
 		{
 			free(tmp->next);

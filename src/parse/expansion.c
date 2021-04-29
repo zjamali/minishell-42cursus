@@ -57,7 +57,7 @@ char *ft_int_to_string(int n)
 	else
 	{
 		len  = ft_intlen(n);
-		str = malloc(sizeof(len + 1));
+		str = (char*)malloc(sizeof(len + 1));
 		str[len] = '\0';
 		len--;
 		while (n / 10 != 0)
@@ -173,7 +173,7 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 						{
 							while (ft_isalpha(word[j]))
 								j++;
-							ft_putstr_fd(&word[j],1);
+							//ft_putstr_fd(&word[j],1);
 						}
 					}
 					else if (word[j - 1] != '$')
@@ -188,7 +188,7 @@ char *ft_remove_double_quotes(char *word,int *i,t_env **env)
 							tmp1 = expand;
 							tmp = ft_substr(word,j,1);
 							expand = ft_strjoin(expand,tmp);
-							ft_putstr_fd(expand,1);
+							//ft_putstr_fd(expand,1);
 							free(tmp1);
 							free(tmp);
 							j++;
@@ -336,7 +336,7 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 							expanded = ft_strjoin(expanded,tmp);
 							free(tmp1);
 							free(tmp);
-							i++;
+							i+=2;
 						}
 						else if (word[i + 1] == '?')
 						{
@@ -345,7 +345,7 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 							expanded = ft_strjoin(expanded,status_string);
 							free(tmp1);
 							free(tmp);
-							i++;
+							i+=2;
 						}
 						else if (word[i + 1])
 						{
@@ -353,7 +353,6 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 								i++;
 							while (ft_isalpha(word[i]))
 								i++;
-							//i+= ft_strlen(word + i);
 						}
 						else //// just a 1 dollar sign
 						{
@@ -362,16 +361,15 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 							expanded = ft_strjoin(expanded,tmp);
 							free(tmp1);
 							free(tmp);
-							//i++;
+							i++;
 						}
 					}
-					i++;
 				}
 				else /// env variavle not exist  no multiple sign dollars
 				{
 					if (!word[i + 1]) //get last dollar after double dollars sign
 					{
-						ft_putstr_fd(word + i,1);
+						//ft_putstr_fd(word + i,1);
 						tmp = expanded;
 						tmp1 = ft_substr(word,i,1);
 						expanded = ft_strjoin(expanded,tmp1);
@@ -395,7 +393,7 @@ void ft_expande_word(char **string,t_env **env_list,int status,int redirection)
 		}
 		else /// not dollars sign no quote just join characters 
 		{
-			ft_putstr_fd(word + i,1);
+			//ft_putstr_fd(word + i,1);
 			tmp1 = expanded;
 			tmp = ft_substr(word,i,1);
 			expanded = ft_strjoin(expanded,tmp);

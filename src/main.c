@@ -77,16 +77,13 @@ int main(int ac,char **av,char **env)
 			ft_print_pipeline_cmd(current_pipe_line);
 			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
-			//free(tmp);
-			//tmp = NULL;
 		}
 		if (cmd)
 		{
-			//ft_destroy_ast(cmd);
+			ft_destroy_ast(cmd);
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
 		cmd = NULL;
-		line = NULL;
 	}
 }
 //ls > s > s > d > f > g > h >> j>> j>>  jj < j < j < j

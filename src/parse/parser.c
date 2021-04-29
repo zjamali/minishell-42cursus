@@ -218,7 +218,7 @@ void ft_destoy_token_list(t_token *tokens_list)
 		free(tokens_list);
 		tokens_list = NULL;
 		write(1,CYAN,ft_strlen(CYAN));
-		ft_putstr_fd("token_list freed\n",1);
+		//ft_putstr_fd("token_list freed\n",1);
 	}
 }
 
@@ -455,7 +455,7 @@ t_command_list *init_cmd_list(void)
 {
 	t_command_list *cmd_list;
 
-	if (!(cmd_list = malloc(sizeof(t_command_list))))
+	if (!(cmd_list = (t_command_list*)malloc(sizeof(t_command_list))))
 		return NULL;
 	cmd_list->childs = NULL;
 	cmd_list->pipe_line_count = 0;
@@ -465,7 +465,7 @@ t_command_list *init_cmd_list(void)
 t_redirection *ft_create_redirection(t_token **tokens,int index)
 {
 	t_redirection *redirection ;
-	if (!(redirection = malloc(sizeof(t_redirection))))
+	if (!(redirection = (t_redirection*)malloc(sizeof(t_redirection))))
 		return NULL;
 	redirection->index = index;
 	redirection->next = NULL;
@@ -515,7 +515,7 @@ t_args *ft_create_arg(char *value)
 {
 	t_args *arg;
 	
-	arg = malloc(sizeof(t_args));
+	arg = (t_args*)malloc(sizeof(t_args));
 	arg->value = ft_strdup(value);
 	arg->next = NULL;
 	arg->inside_quotes = 0;
@@ -535,7 +535,7 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 	i = 0;
 	r = 0;
 	tmp = NULL;
-	if (!(cmd = malloc(sizeof(t_simple_cmd))))
+	if (!(cmd = (t_simple_cmd*)malloc(sizeof(t_simple_cmd))))
 		return NULL;
 	cmd->args = NULL;
 	cmd->command = NULL;
@@ -590,7 +590,7 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 	t_simple_cmd *head;
 	t_simple_cmd *current_cmd;
 
-	if (!(pipe_line = malloc(sizeof(t_pipe_line))))
+	if (!(pipe_line = (t_pipe_line*)malloc(sizeof(t_pipe_line))))
 		return NULL;
 	pipe_line->next = NULL;
 	pipe_line->child = NULL;
@@ -661,7 +661,7 @@ t_command_list *ft_parser(t_token *tokens_list)
 	if (!ft_check_syntax(tokens_list))
 	{
 		command_list = ft_create_ast(tokens_list);
-		//ft_destoy_token_list(tokens_list);
+		ft_destoy_token_list(tokens_list);
 	}
 	return (command_list);
 }

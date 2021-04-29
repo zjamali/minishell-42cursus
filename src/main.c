@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 15:28:05 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 07:40:28 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,13 @@ int main(int ac,char **av,char **env)
 	struct termios termios;
 	t_readline *readline;
 
+	//// get terminal window size
+	
+	struct winsize window;
+	
+	
+	
+
 	lines_list = NULL;
 	status = 0;
 	tokens_list = NULL;
@@ -57,6 +64,10 @@ int main(int ac,char **av,char **env)
 	{
 		show_prompt();
 		micro_read_line(&line, readline, &lines_list);
+		ioctl(readline->term_fd,TIOCGSIZE,&window);
+		printf("lines %d\n",window.ws_row);
+		printf("columns %d\n",window.ws_col);
+		//
 		//read_command_list(&line);
 		if (line)
 		{

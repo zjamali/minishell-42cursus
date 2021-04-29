@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 15:49:12 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/29 07:34:46 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <term.h>
 #include <curses.h>
 #include <termcap.h>
+#include <sys/ioctl.h>
 #include "../src/libft/libft.h"
 
 #define GREEN "\e[1;32m"
@@ -77,6 +78,7 @@ typedef struct s_readline
 	char	*line;
 	struct termios *old_termios;
 	t_cursor cursor;
+	struct winsize *window;
 	t_lines_list *line_list;
 }t_readline;
 

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/24 16:22:32 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/30 14:07:53 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,13 @@ int main(int ac,char **av,char **env)
 	struct termios termios;
 	t_readline *readline;
 
+	//// get terminal window size
+	
+	//struct winsize window;
+	
+	
+	
+
 	lines_list = NULL;
 	status = 0;
 	tokens_list = NULL;
@@ -57,7 +64,12 @@ int main(int ac,char **av,char **env)
 	while (i == 0)
 	{
 		show_prompt();
-		micro_read_line(&line, readline, &lines_list);
+		micro_read_line(&line, readline, &lines_list,status);
+		//ioctl(readline->term_fd,TIOCGSIZE,&window);
+		//printf("lines %d\n",window.ws_row);
+		//printf("columns %d\n",window.ws_col);
+		//
+		//read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -74,11 +86,9 @@ int main(int ac,char **av,char **env)
 		while (current_pipe_line)
 		{
 			ft_expanding(current_pipe_line,&head,status);
-			ft_print_pipeline_cmd(current_pipe_line);
+			//ft_print_pipeline_cmd(current_pipe_line);
 			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
-			//free(tmp);
-			//tmp = NULL;
 		}
 		if (cmd)
 		{
@@ -86,16 +96,5 @@ int main(int ac,char **av,char **env)
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
 		cmd = NULL;
-		line = NULL;
 	}
 }
-//ls > s > s > d > f > g > h >> j>> j>>  jj < j < j < j
-// \e\c\h\o
-// export s= 2116 sdf sdfdsf !=  sdf sdfdsf
-// "\dkjjkd\"dghj" 
-
-
-// export a=a b= c
-
-// if new fih = edit
-// else no edit

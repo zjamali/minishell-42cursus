@@ -32,7 +32,7 @@ void	print_tokens(t_token *tokens_list)
 t_token	*first_token(void)
 {
 	t_token *new_token;
-	new_token = malloc(sizeof(t_token));
+	new_token = (t_token*)malloc(sizeof(t_token));
 	new_token->value = ft_strdup("NONE");
 	new_token->next = NULL;
 	new_token->type = NONE;
@@ -47,7 +47,7 @@ void	add_token(t_token *token_list, t_token_type type,
 
 	while (tmp->next != NULL) /// get last node of list_tokens
 		tmp = tmp->next;
-	tmp->next = malloc(sizeof(t_token));
+	tmp->next = (t_token*)malloc(sizeof(t_token));
 	tmp->next->index = index;
 	tmp->next->type = type;
 	tmp->next->fields = NULL;

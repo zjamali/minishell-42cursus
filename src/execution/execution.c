@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/24 16:49:54 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/30 14:07:44 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,7 +303,7 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	*/
 	ft_putstr_fd(BLUE,1);
-	ft_putendl_fd("------------------------------------------------------------", 2);
+	//ft_putendl_fd("------------------------------------------------------------", 1);
 	// if (cmd->simple_cmd_count != 1)
 	do_backups(1);
 	mini.flag = 0;
@@ -321,6 +321,6 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	else
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
-	ft_putendl_fd("------------------------------------------------------------", 2);
+	//ft_putendl_fd("------------------------------------------------------------", 2);
 	return (mini.ret);
 }

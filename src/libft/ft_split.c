@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/23 22:12:29 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/04 19:13:52 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/30 15:53:53 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,14 +86,10 @@ static char		*allocandfill(char **tab, char *src, char c)
 
 char			**ft_split(char const *s, char c)
 {
-	int			i;
 	int			j;
-	int			k;
 	char		**tab;
 	char		*str;
 
-	k = 0;
-	i = 0;
 	j = 0;
 	if (!s)
 		return (NULL);
@@ -122,7 +118,6 @@ char **my_split(char *str)
 		i++;
 	}
 	ft_putchar_fd(str[i], 1);
-	//i++;
 	if (str[i] == '=' && str[i + 1] == '\0')
 		s[1][0] = '\0';
 	else if (str[i] == '\0')

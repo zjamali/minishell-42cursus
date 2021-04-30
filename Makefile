@@ -11,7 +11,7 @@ LIBFT= src/libft/libft.a
 # *****     flags     ***** #
 
 COM= gcc
-CFLAGE= -Wall -Wextra -Werror
+CFLAGE= #-Wall -Wextra -Werror
 
 all: libft $(NAME)
 

@@ -58,17 +58,17 @@ int main(int ac,char **av,char **env)
 	
 	head = NULL;
 	cmd = NULL;
-	readline = ft_init_readline(&termios);
+	//readline = ft_init_readline(&termios);
 	init_env(&head, env);
 	while (i == 0)
 	{
 		show_prompt();
-		micro_read_line(&line, readline, &lines_list,status);
+		//micro_read_line(&line, readline, &lines_list,status);
 		//ioctl(readline->term_fd,TIOCGSIZE,&window);
 		//printf("lines %d\n",window.ws_row);
 		//printf("columns %d\n",window.ws_col);
 		//
-		//read_command_list(&line);
+		read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);

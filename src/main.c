@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/30 08:43:34 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/30 17:09:19 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int main(int ac,char **av,char **env)
 	(void)env;
 	int i = 0;
 	
+	readline = ft_init_readline(&termios);
 	head = NULL;
 	cmd = NULL;
 	//readline = ft_init_readline(&termios);
@@ -85,7 +86,7 @@ int main(int ac,char **av,char **env)
 		while (current_pipe_line)
 		{
 			ft_expanding(current_pipe_line,&head,status);
-			//ft_print_pipeline_cmd(current_pipe_line);
+			ft_print_pipeline_cmd(current_pipe_line);
 			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
 		}

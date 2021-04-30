@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/15 15:39:14 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/30 17:30:03 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,11 @@ int	 ft_export(t_env **head, t_args *args)
 	char **split;
 	t_env *sort_list;
 	t_env *newnode;
+	int ret;
 	int join;
 	
 	join = NO;
+	ret = 0;
 	if (args == NULL)
 	{
 		sort_list = ft_sort_list(head);
@@ -115,6 +117,16 @@ int	 ft_export(t_env **head, t_args *args)
 	}
 	while (args != NULL)
 	{
+		if (args->value == NULL)
+		{
+			ret = ft_put_err("export:", " `': not a valid identifier", 1);
+			args = args->next;
+		}
+		if (!ft_isalpha(args->value[0]))
+		{
+			ret = ft_put_err("export:", ft_strjoin(" `", ft_strjoin(args->value, "': not a valid identifier")), 1);
+			args = args->next;
+		}
 		split = my_split(args->value);
 		if (split[0][ft_strlen(split[0]) - 1] == '+')
 		{
@@ -135,7 +147,7 @@ int	 ft_export(t_env **head, t_args *args)
 			args = args->next;
 		}
 	}
-	return (0);
+	return (ret);
 }
 
 int ft_unset(t_args *args, t_env **head)
@@ -183,6 +195,8 @@ int ft_cd(t_args *args, t_env **head)
 
 int	 ft_exit(t_args *args)
 {
+	if (args == NULL)
+		exit(0);
 	if (args->next != NULL)
 		return (ft_put_err("exit", ": too many arguments", 1));
 	exit(ft_atoi(args->value));

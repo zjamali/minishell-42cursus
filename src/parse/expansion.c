@@ -488,7 +488,6 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 		}
 		else /// not dollars sign no quote just join characters
 		{
-			ft_putchar_fd(*(word + i), 1);
 			tmp1 = expanded;
 			tmp = ft_substr(word, i, 1);
 			expanded = ft_strjoin(expanded, tmp);

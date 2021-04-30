@@ -219,14 +219,9 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 	tmp = NULL;
 	tmp_list = NULL;
 
-	int fd;
 	
 	if (!list)
 	{
-		fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
-					//read(0,&character,6);
-		dprintf(fd,"meow\n");
-		close(fd);
 		//current->prev = NULL;
 		//current->next = NULL;
 		current->history = history;
@@ -250,9 +245,6 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 			{
 				while (list->prev != NULL)
 				{
-					fd = open("file_debuging", O_RDWR| O_APPEND| O_CREAT,0666);
-					dprintf(fd,"%p| %p\n",&list->prev,&list->prev->prev);
-					close(fd);
 					list = list->prev;
 				}
 			}
@@ -647,7 +639,6 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 	long character;
 	t_lines_list *current;
 	int newline_break;
-	int fds;
 
 	character = 0;
 	current = ft_create_line_node();
@@ -656,11 +647,8 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 	newline_break = 1;
 	while (newline_break)
 	{
-		fds = open("zbi", O_RDWR| O_APPEND| O_CREAT,0666);
 		//read(0,&character,6);
 		read(0, &character, 6);
-		dprintf(fds,"%ld\n",character);
-		close(fds);
 		if (character == D_KEY_UP)
 		{
 			if (current->char_list != NULL || *lines_list != NULL)

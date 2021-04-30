@@ -80,7 +80,7 @@ void ft_destroy_ast(t_command_list *cmd_list)
 	t_pipe_line *parent_pipe;
 
 	ft_putstr_fd(RED,1);
-	ft_putstr_fd("destroy ast\n",1);
+	//ft_putstr_fd("destroy ast\n",1);
 	parent_pipe = cmd_list->childs;
 	while(parent_pipe)
 	{

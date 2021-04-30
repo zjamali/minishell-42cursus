@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 12:48:03 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/30 07:16:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void ft_print_char_list(t_char_list *chars_list)
 	if (tmp)
 		ft_putchar_fd(tmp->value, 1);
 }
+/*
 void ft_print_lines_list(t_lines_list *lines_list)
 {
 	while (lines_list)
@@ -75,6 +76,7 @@ void ft_print_lines_list_all(t_lines_list *lines_list)
 	if (tmp)
 		ft_print_lines_list(tmp);
 }
+*/
 
 void ft_get_cursor_position(int *x, int *y)
 {
@@ -161,6 +163,7 @@ char *create_line_from_chars_list(t_char_list *char_list)
 	line[len] = '\0';
 	return line;
 }
+
 int get_char_list_lenght(t_char_list *char_list)
 {
 	int i;
@@ -222,8 +225,6 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 	
 	if (!list)
 	{
-		//current->prev = NULL;
-		//current->next = NULL;
 		current->history = history;
 		if (current->char_list)
 		{
@@ -370,7 +371,6 @@ t_lines_list *ft_delete_history_node(t_lines_list **lines_list)
 			tmp->prev->next = tmp->next;
 			tmp = empty_node->prev;
 			ft_delete_node_from_list(empty_node);
-			//free(empty_node);
 		}
 		else
 			tmp = tmp->next;
@@ -378,58 +378,6 @@ t_lines_list *ft_delete_history_node(t_lines_list **lines_list)
 	return head;
 }
 	
-t_lines_list *ft_delete_empty_nodes(t_lines_list **lines_list)
-{
-	t_lines_list *tmp;
-	t_lines_list *empty_node;
-	t_lines_list *head;
-
-	tmp = *lines_list;
-	empty_node = NULL;
-	if (tmp->prev)
-	{
-		while (tmp->prev)
-		{
-			tmp = tmp->prev;
-		}
-	}
-	head = tmp;
-	while (tmp)
-	{
-		if (tmp->history == 1 && tmp->next != NULL && tmp->prev != NULL  && (tmp->char_list == NULL || tmp->char_list->value == 0))
-		{
-			empty_node = tmp;
-			tmp->next->prev = tmp->prev;
-			tmp->prev->next = tmp->next;
-			tmp = empty_node->prev;
-			//if (empty_node)
-			//{
-			//	ft_putstr_fd("zbi1",1);
-			//	free(empty_node);
-			//}
-			//empty_node = NULL;
-			//return head;
-		}
-		//else if (tmp->history == 0 && tmp->next != NULL && tmp->prev != NULL && (tmp->char_list == NULL || tmp->char_list->value == 0))
-		//{
-		//	empty_node = tmp;
-		//	tmp->next->prev = tmp->prev;
-		//	tmp->prev->next = tmp->next;
-		//	tmp = empty_node->prev;
-		//	//if (empty_node)
-		//	//{
-		//	//	ft_putstr_fd("zbi0",1);
-		//	//	free(empty_node);
-		//	//}
-		//	//empty_node = NULL;
-		//	//return head;
-		//}
-		else
-			tmp = tmp->next;
-	}
-	return head;
-}
-
 int get_charctere(t_readline *readline, long c,
 				  t_lines_list *current, t_lines_list **lines_list)
 {
@@ -457,10 +405,7 @@ int get_charctere(t_readline *readline, long c,
 				current->char_list = ft_copy_char_list(current->origin_char_list);
 				if (current->history == 1)
 					*lines_list = ft_delete_node_from_list(current);
-				//if (current->history == 1)
-				//	ft_delete_node_from_list(current);
 				*lines_list = ft_insert_node_to_line_list(*lines_list, new_line, 0);
-				//////////// move to the first line in list_line
 				readline->line = create_line_from_chars_list(new_line->char_list);
 			}
 			else
@@ -608,8 +553,8 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 	t_char_list *tmp;
 	int i;
 
-	i = 1;
 
+	i = 1;
 	len = get_char_list_lenght((*current)->char_list);
 	tmp = (*current)->char_list;
 	if (len == 0)
@@ -647,7 +592,6 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 	newline_break = 1;
 	while (newline_break)
 	{
-		//read(0,&character,6);
 		read(0, &character, 6);
 		if (character == D_KEY_UP)
 		{
@@ -710,22 +654,10 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		if (newline_break == 0)
 		{
 			ft_putstr_fd("\n", 1);
-			//fds = open("zbi", O_RDWR| O_APPEND| O_CREAT,0666);
-			//dprintf(fds,"hello\n");
-			//close(fds);
-			//if (*lines_list)
-			//	ft_print_lines_list_all(*lines_list);
 			if (*lines_list)
 				*lines_list = ft_delete_history_node(lines_list);
-			//if (*lines_list)
-			//{
-			//	ft_putstr_fd("-----------",1);
-			//	ft_print_lines_list_all(*lines_list);
-			//}
-			
 		}
 	}
-	//ft_putstr_fd("",1);
 	character= 0;
 	if (readline->line)
 	{

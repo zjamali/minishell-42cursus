@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_intsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 16:39:05 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/02 17:02:01 by mbari            ###   ########.fr       */
+/*   Updated: 2021/04/30 08:09:52 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int		ft_intsize(int n)
+int	ft_intsize(int n)
 {
 	int		i;
 

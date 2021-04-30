@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 12:18:35 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/04/30 08:43:34 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,13 +97,3 @@ int main(int ac,char **av,char **env)
 		cmd = NULL;
 	}
 }
-//ls > s > s > d > f > g > h >> j>> j>>  jj < j < j < j
-// \e\c\h\o
-// export s= 2116 sdf sdfdsf !=  sdf sdfdsf
-// "\dkjjkd\"dghj" 
-
-
-// export a=a b= c
-
-// if new fih = edit
-// else no edit

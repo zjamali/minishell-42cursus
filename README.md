@@ -12,3 +12,4 @@ https://www.gnu.org/software/bash/manual/html_node/index.html#SEC_Contents <br>
 <br><br>
 https://dev.to/tanishqsingla/termios-564j <br>
 https://zestedesavoir.com/tutoriels/1733/termcap-et-terminfo/#1-le-terminal-1
+https://viewsourcecode.org/snaptoken/kilo/03.rawInputAndOutput.html

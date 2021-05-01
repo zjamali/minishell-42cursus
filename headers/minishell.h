@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 12:19:29 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 11:10:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ typedef struct s_char_list{
 }t_char_list;
 
 typedef struct s_lines_list{
-	char *value;
+	//char *value;
+	char value;
 	int history;
 	int index;
 	bool up_or_down;
@@ -82,7 +83,7 @@ typedef struct s_readline
 	struct termios *old_termios;
 	t_cursor cursor;
 	struct winsize *window;
-	t_lines_list *line_list;
+	//t_lines_list *line_list;
 }t_readline;
 
 /******* LESXER **********/
@@ -176,5 +177,7 @@ void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
 
 t_readline *ft_init_readline(struct termios *termios);
-int micro_read_line(char **line,t_readline *readline,t_lines_list **lines_list,int status);
+int micro_read_line(char **line,t_readline *readline,t_lines_list **lines_list,int *status);
+void ft_delete_char_list(t_char_list *char_list);
+t_lines_list *ft_destory_line(t_lines_list *node);
 #endif

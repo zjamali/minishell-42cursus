@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/15 15:06:29 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 11:40:34 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ void ft_destoy_token_list(t_token *tokens_list)
 		free(tokens_list);
 		tokens_list = NULL;
 		write(1,CYAN,ft_strlen(CYAN));
-		//ft_putstr_fd("token_list freed\n",1);
+		ft_putstr_fd("token_list freed\n",1);
 	}
 }
 
@@ -670,7 +670,7 @@ t_command_list *ft_parser(t_token *tokens_list,int *status)
 	if (!ft_check_syntax(tokens_list,status))
 	{
 		command_list = ft_create_ast(tokens_list);
-		ft_destoy_token_list(tokens_list);
+		//ft_destoy_token_list(tokens_list);
 	}
 	return (command_list);
 }

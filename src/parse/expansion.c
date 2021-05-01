@@ -466,6 +466,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 							i++;
 						}
 					}
+					i++;
 				}
 				else /// env variavle not exist  no multiple sign dollars
 				{

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 15:42:38 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 15:46:54 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -600,7 +600,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 	while (newline_break)
 	{
 		read(0, &character, 6);
-		if (character == D_KEY_UP)
+		if (*lines_list && character == D_KEY_UP)
 		{
 			if (current->char_list != NULL || *lines_list != NULL)
 			{
@@ -612,7 +612,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 				current = *lines_list;
 			}
 		}
-		else if (character == D_KEY_DOWN)
+		else if (*lines_list && character == D_KEY_DOWN)
 		{
 			if (current->char_list != NULL && *lines_list != NULL)
 			{

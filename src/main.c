@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 11:55:53 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 13:36:48 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,9 +137,9 @@ int main(int ac,char **av,char **env)
 		while (current_pipe_line)
 		{
 			ft_expanding(current_pipe_line,&head,status);
-			//ft_print_pipeline_cmd(current_pipe_line);
+			ft_print_pipeline_cmd(current_pipe_line);
 			//ft_putstr_fd("-----------------------\n",1);
-			status = ft_execute(current_pipe_line, &head);
+			//status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)

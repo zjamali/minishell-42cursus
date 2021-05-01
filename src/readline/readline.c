@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 11:58:27 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 15:42:38 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -642,7 +642,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 				exit(*status);
 			}
 		}
-		else
+		else if (ft_isprint(character) || character == D_KEY_ENTER)
 		{
 			if (current)
 			{
@@ -675,10 +675,10 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 	}
 	else
 	{
-		//if (current)
-		//	current = ft_destory_line(current);
-	}
+		if (current && !(*lines_list))
+			current = ft_destory_line(current);
 	
+	}
 	tcsetattr(readline->term_fd, TCSANOW, readline->old_termios);
 	return 1;
 }

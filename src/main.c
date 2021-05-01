@@ -64,11 +64,6 @@ int main(int ac,char **av,char **env)
 	{
 		show_prompt();
 		micro_read_line(&line, readline, &lines_list,status);
-		//ioctl(readline->term_fd,TIOCGSIZE,&window);
-		//printf("lines %d\n",window.ws_row);
-		//printf("columns %d\n",window.ws_col);
-		//
-		//read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -77,7 +72,7 @@ int main(int ac,char **av,char **env)
 		}
 		if (tokens_list)
 		{
-			cmd = ft_parser(tokens_list);
+			cmd = ft_parser(tokens_list,&status);
 			tokens_list = NULL;
 		}
 		if (cmd)

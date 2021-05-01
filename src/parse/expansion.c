@@ -176,10 +176,10 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 					}
 					else if (word[j - 1] != '$')
 					{
-						if (word[j + 1] != '"')
-						{
+						//if (word[j + 1] != '"')
+						//{
 							//// Special Parameters of $
-							if (ft_isdigit(word[j + 1]) || ft_strchr("!#%@-*=", word[j + 1]))
+							if (ft_isdigit(word[j + 1]) || ft_strchr("!:#%@-*=", word[j + 1]))
 							{
 								if (ft_isdigit(word[j + 1]))
 								{
@@ -219,7 +219,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 										free(tmp1);
 										free(tmp);
 									}
-									else if (ft_strchr("%=", word[j + 1]))
+									else if (ft_strchr(":%=", word[j + 1]))
 									{
 										tmp1 = expand;
 										tmp = ft_substr(word, j, 2);
@@ -239,7 +239,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 								free(tmp);
 								j += 2;
 							}
-							else if (word[j + 1])
+							else if (word[j + 1] && word[j + 1] != '\"' && word[j + 1] != ' ')
 							{
 								while (ft_isalpha(word[j]) || (word[j] == '$'))
 									j++;
@@ -253,13 +253,13 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 								free(tmp);
 								j++;
 							}
-						}
+						//}
 					}
 					else
 					{
 						if (!word[j + 1]) //get last dollar after double dollars sign
 						{
-							//ft_putstr_fd(word + i,1);
+							
 							tmp = expand;
 							tmp1 = ft_substr(word, j, 1);
 							expand = ft_strjoin(expand, tmp1);
@@ -390,7 +390,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 					if (word[i + 1] != '"')
 					{
 						//// Special Parameters of $
-						if (ft_isdigit(word[i + 1]) || ft_strchr("!#%@-*=", word[i + 1]))
+						if (ft_isdigit(word[i + 1]) || ft_strchr("!:#%@-*=", word[i + 1]))
 						{
 							if (ft_isdigit(word[i + 1]))
 							{
@@ -430,7 +430,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 									free(tmp1);
 									free(tmp);
 								}
-								else if (ft_strchr("%=", word[i + 1]))
+								else if (ft_strchr(":%=", word[i + 1]))
 								{
 									tmp1 = expanded;
 									tmp = ft_substr(word, i, 2);
@@ -457,6 +457,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 						}
 						else //// just a 1 dollar sign
 						{
+							
 							tmp1 = expanded;
 							tmp = ft_substr(word, i, 1);
 							expanded = ft_strjoin(expanded, tmp);

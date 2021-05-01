@@ -284,7 +284,7 @@ void ft_add_to_char_list(t_readline *readline, char c, t_char_list **chars_list)
 
 	tmp = NULL;
 	ft_move_cursor_and_clear(readline->cursor);
-	if (*chars_list == NULL)
+	if ( *chars_list == NULL || (*chars_list)->value == 0)
 	{
 		ft_putchar_fd(c, 1);
 		*chars_list = (t_char_list*)malloc(sizeof(t_char_list));
@@ -389,9 +389,9 @@ int get_charctere(t_readline *readline, long c,
 	new_line = NULL;
 	if (ft_isprint(c))
 	{
-		if (current && current->up_or_down == true)
-			ft_add_to_char_list(readline, c, &current->char_list);
-		else
+		//if (current && current->up_or_down == true)
+		//	ft_add_to_char_list(readline, c, &current->char_list);
+		//else
 			ft_add_to_char_list(readline, c, &current->char_list);
 	}
 	else if (c == D_KEY_ENTER)
@@ -425,11 +425,13 @@ int get_charctere(t_readline *readline, long c,
 				{
 					current->history = 0;
 					*lines_list = current;
+					readline->line = create_line_from_chars_list(current->char_list);
 				}
 				else
+				{
 					*lines_list = ft_insert_node_to_line_list(*lines_list, current, 0);
-				
-				readline->line = create_line_from_chars_list(current->char_list);
+					readline->line = create_line_from_chars_list(current->char_list);
+				}
 			}
 		}
 		newline_break = 0;

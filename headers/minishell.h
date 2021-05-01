@@ -166,9 +166,9 @@ typedef struct s_env
 int get_next_line(char **line);
 t_token	*ft_lexer(char *line);
 void ft_destoy_token_list(t_token *tokens_list);
-t_command_list *ft_parser(t_token *tokens_list);
+t_command_list *ft_parser(t_token *tokens_list,int *status);
 void ft_destroy_ast(t_command_list *cmd_list);
-int ft_check_syntax(t_token *tokens_list);
+int ft_check_syntax(t_token *tokens_list,int *status);
 
 void ft_expanding(t_pipe_line *pipe_line,t_env **env,int status);
 void ft_print_pipeline_cmd(t_pipe_line *pipe_line);

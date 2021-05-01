@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/29 11:57:54 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 13:32:19 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -560,6 +560,3 @@ void ft_expanding(t_pipe_line *pipe_line, t_env **env, int status)
 		head_cmd = head_cmd->next;
 	}
 }
-
-//// ?^H""
-///// >""

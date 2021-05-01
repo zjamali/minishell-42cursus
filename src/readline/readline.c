@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/30 07:16:25 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 11:37:35 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void ft_get_cursor_position(int *x, int *y)
 	int i = 0;
 	int first = 0;
 	c = (char*)malloc(20);
+	ft_bzero(c,20);
 	c[20] = '\0';
 	write(0, "\033[6n", 4);
 	read(0, c, 19);
@@ -100,10 +101,12 @@ void ft_get_cursor_position(int *x, int *y)
 		{
 			*y = ft_atoi(c + i);
 			first = 2;
-			return;
+			//return;
 		}
 		i++;
 	}
+	free(c);
+	c = NULL;
 }
 
 t_readline *ft_init_readline(struct termios *termios)
@@ -137,7 +140,7 @@ t_readline *ft_init_readline(struct termios *termios)
 	readline->line_count = tgetnum("li");
 	readline->cursor.col_position = 0;
 	readline->cursor.line_postion = 0;
-	readline->line = 0;	
+	readline->line = NULL;	
 	return (readline);
 }
 
@@ -321,7 +324,8 @@ t_lines_list *ft_create_line_node(void)
 	ret->up_or_down = false;
 	ret->next = NULL;
 	ret->prev = NULL;
-	ret->value = NULL;
+	//ret->value = NULL;
+	ret->value = 0;
 	return ret;
 }
 
@@ -392,7 +396,7 @@ int get_charctere(t_readline *readline, long c,
 		//if (current && current->up_or_down == true)
 		//	ft_add_to_char_list(readline, c, &current->char_list);
 		//else
-			ft_add_to_char_list(readline, c, &current->char_list);
+		ft_add_to_char_list(readline, c, &current->char_list);
 	}
 	else if (c == D_KEY_ENTER)
 	{
@@ -544,7 +548,8 @@ t_lines_list *ft_init_line_list(void)
 	lines_list->index = 0;
 	lines_list->next = NULL;
 	lines_list->prev = NULL;
-	lines_list->value = NULL;
+	//lines_list->value = NULL;
+	lines_list->value = 0;
 	lines_list->history = 0;
 	return lines_list;
 }
@@ -581,7 +586,7 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 		ft_print_char_list((*current)->char_list);
 }
 
-int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list,int status)
+int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list,int *status)
 {
 	long character;
 	t_lines_list *current;
@@ -627,13 +632,14 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 				current->char_list = NULL;
 			}
 			newline_break = 0;
+			*status = 1;
 		}
 		else if (character == D_KEY_CTRL_D)
 		{
 			if (current->char_list == NULL || current->char_list->value == 0)
 			{
 				ft_putstr_fd("exit",1);
-				exit(status);
+				exit(*status);
 			}
 		}
 		else
@@ -666,7 +672,13 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		*line = ft_strdup(readline->line);
 		free(readline->line);
 		readline->line = NULL;
-	}	
+	}
+	else
+	{
+		if (current)
+			current = ft_destory_line(current);
+	}
+	
 	tcsetattr(readline->term_fd, TCSANOW, readline->old_termios);
 	return 1;
 }

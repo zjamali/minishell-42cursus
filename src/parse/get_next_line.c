@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 15:14:24 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/04 16:49:21 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/01 09:06:09 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ int get_next_line(char **line)
 			break;
 	}
 	free(buff);
+	buff = NULL;
 	if (r < 0)
 		return -1;
 	else if (!r && (str == NULL || *str == '\0'))

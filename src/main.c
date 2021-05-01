@@ -37,8 +37,8 @@ int main(int ac,char **av,char **env)
 
 	current_pipe_line = NULL;
 	t_lines_list *lines_list;
-	struct termios termios;
-	t_readline *readline;
+	//struct termios termios;
+	//t_readline *readline;
 
 	//// get terminal window size
 	
@@ -58,12 +58,13 @@ int main(int ac,char **av,char **env)
 	
 	head = NULL;
 	cmd = NULL;
-	readline = ft_init_readline(&termios);
+	//readline = ft_init_readline(&termios);
 	init_env(&head, env);
 	while (i == 0)
 	{
 		show_prompt();
-		micro_read_line(&line, readline, &lines_list,status);
+		//micro_read_line(&line, readline, &lines_list,status);
+		read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);

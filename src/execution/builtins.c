@@ -191,15 +191,15 @@ int ft_cd(t_args *args, t_env **head)
 	t_env *temp;
 	
 	buff = NULL;
-	if (args->next != NULL)
-		return (ft_put_err("cd:", " too many arguments", 1));
-	else if (args == NULL)
+	if (args == NULL)
 	{
 		temp = ft_search_in_list(head, "HOME");
 		if (temp == NULL)
 			return (ft_put_err("cd:", " HOME not set", 1));
 		dir = temp->value;
 	}
+	else if (args->next != NULL)
+		return (ft_put_err("cd:", " too many arguments", 1));
 	else if (!(ft_strcmp(args->value, "-")))
 	{
 		temp = ft_search_in_list(head, "OLDPWD");

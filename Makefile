@@ -2,7 +2,7 @@ NAME= minishell
 
 SRC_EXECUTE= src/execution/builtins.c  src/execution/execution.c src/execution/list.c src/execution/redirection.c
 
-SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/parser.c src/parse/expansion.c src/readline/readline.c
+SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/lexer_debug.c src/parse/lexer_get_tokens.c src/parse/lexer_get_tokens_op.c src/parse/lexer_get_tokens_word.c src/parse/parser.c src/parse/expansion.c src/readline/readline.c
 
 SRC_MAIN= src/main.c 
 

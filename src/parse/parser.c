@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 13:31:12 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/02 09:22:17 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,30 +197,7 @@ void ft_print_cmd_list(t_command_list *cmd_list)
 	}
 }
 
-void ft_destoy_token_list(t_token *tokens_list)
-{
-	t_token *tmp;
 
-	tmp = NULL;
-	while (tokens_list->type != NEWLINE)
-	{
-		tmp = tokens_list;
-		tokens_list = tokens_list->next;
-		free(tmp->value);
-		tmp->value = NULL;
-		free(tmp);
-		tmp = NULL;
-	}
-	if (tokens_list->type == NEWLINE)
-	{
-		free(tokens_list->value);
-		tokens_list->value = NULL;
-		free(tokens_list);
-		tokens_list = NULL;
-		write(1,CYAN,ft_strlen(CYAN));
-		//ft_putstr_fd("token_list freed\n",1);
-	}
-}
 
 int ft_check_closing_quotes(char *word)
 {
@@ -354,14 +331,14 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				result = 1;
 				*status = 258;
-				break; //// for dont get segfault  in tmp = tmp->next;
+				break ; //// for dont get segfault  in tmp = tmp->next;
 			}
 			else if (tmp->next->type == NEWLINE)
 			{
 				ft_destoy_token_list(tokens_list);
-				*status = 258;
+				//*status = 258;
 				result = 1;
-				break; //// for dont get segfault  in tmp = tmp->next;
+				break ; //// for dont get segfault  in tmp = tmp->next;
 			}
 		}
 		/*** if token is redirection ***/
@@ -373,7 +350,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
-				break; /// for egfault
+				break ; /// for egfault
 			}
 		}
 		else if (tmp->type == PIPE)
@@ -384,7 +361,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
-				break; /// for egfault
+				break ; /// for egfault
 			}
 			else if (tmp->next->type == NEWLINE)
 			{
@@ -392,7 +369,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
-				break; // for segfqult
+				break ; // for segfqult
 			}	
 		}
 		else if (tmp->type == WORD && tmp->next->type == NEWLINE)
@@ -403,7 +380,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
-				break;
+				break ;
 			}
 			if (ft_check_closing_quotes(tmp->value))
 			{
@@ -411,7 +388,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
-				break;
+				break ;
 			}
 		}
 		else if (tmp->type == WORD) ///// check multiline
@@ -422,7 +399,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
-				break;
+				break ;
 			}
 		}
 		else if (tmp->type == SEMI) ///// check multiline
@@ -433,14 +410,8 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
-				break; //// for dont get segfault  in tmp = tmp->next;
+				break ; //// for dont get segfault  in tmp = tmp->next;
 			}
-			//else if (tmp->next->type == NEWLINE)
-			//{
-			//	ft_destoy_token_list(tokens_list);
-			//	result = 1;
-			//	break; //// for dont get segfault  in tmp = tmp->next;
-			//}
 		}
 		tmp = tmp->next;
 	}

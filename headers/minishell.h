@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 11:10:59 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/02 10:52:44 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ typedef struct s_token
 	int index;
 	t_token_type type;
 	char *value;
-	char *fields;
 	struct s_token *next;
 }t_token;
 
@@ -163,10 +162,24 @@ typedef struct s_env
 	struct s_env *next;
 }				t_env;
 
+/*
+*	lexer fuctions 
+*/
 
-int get_next_line(char **line);
+int		get_next_line(char **line);
 t_token	*ft_lexer(char *line);
-void ft_destoy_token_list(t_token *tokens_list);
+void	ft_get_word(t_token *tokens_list, char *line, int *table);
+void	get_space_pipe_semi_redir(t_token *tokens_list,
+							   char *line, int *j, int *index);
+void	ft_destoy_token_list(t_token *tokens_list);
+void	print_tokens(t_token *tokens_list);
+void	add_token(t_token *token_list, t_token_type type,
+		char *content, int index);
+char	*ft_get_words(char *line, int *j, char *word, int *quoting);
+/* 
+* parser functions 
+*/
+
 t_command_list *ft_parser(t_token *tokens_list,int *status);
 void ft_destroy_ast(t_command_list *cmd_list);
 int ft_check_syntax(t_token *tokens_list,int *status);

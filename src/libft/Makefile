@@ -6,7 +6,7 @@
 #    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/30 09:48:13 by mbari             #+#    #+#              #
-#    Updated: 2021/03/26 16:10:24 by mbari            ###   ########.fr        #
+#    Updated: 2021/05/02 15:22:39 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ OBJ = $(SRC:%.c=%.o)
 
 CC = gcc
 
-CFLAGS = #-Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra
 
 all: $(NAME)
 

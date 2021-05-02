@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/30 17:09:19 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/02 15:22:23 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,20 +56,20 @@ int main(int ac,char **av,char **env)
 	(void)env;
 	int i = 0;
 	
-	//readline = ft_init_readline(&termios);
+	readline = ft_init_readline(&termios);
 	head = NULL;
 	cmd = NULL;
-	//readline = ft_init_readline(&termios);
+	readline = ft_init_readline(&termios);
 	init_env(&head, env);
 	while (i == 0)
 	{
 		show_prompt();
-		//micro_read_line(&line, readline, &lines_list,status);
+		micro_read_line(&line, readline, &lines_list,status);
 		//ioctl(readline->term_fd,TIOCGSIZE,&window);
 		//printf("lines %d\n",window.ws_row);
 		//printf("columns %d\n",window.ws_col);
 		//
-		read_command_list(&line);
+		//read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);

@@ -62,8 +62,8 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 		//ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
 			ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), 1);
-			//ft_putendl_fd(strerror(errno), 2);
-			
+		// ft_putendl_fd(strerror(errno), 2);
+		// ft_putnbr_fd(f_status, 1);
 			
 			//ft_putstr_fd("Command not found or permission denied.\n", 2);
 	}
@@ -77,6 +77,7 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 		//parrent process;
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
+		// ft_putnbr_fd(f_status, 1);
 		return (f_status);
 	}
 	return (1);
@@ -159,7 +160,7 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
 	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))
-		return (ft_echo(cmd->args));
+		return (ft_echo(head, cmd->args));
 	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));
 	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))

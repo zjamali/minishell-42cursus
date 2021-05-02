@@ -56,7 +56,7 @@ int main(int ac,char **av,char **env)
 	(void)env;
 	int i = 0;
 	
-	readline = ft_init_readline(&termios);
+	//readline = ft_init_readline(&termios);
 	head = NULL;
 	cmd = NULL;
 	//readline = ft_init_readline(&termios);

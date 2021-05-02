@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/15 15:06:29 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 13:31:12 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,7 +336,7 @@ int ft_check_backslash(char *word)
 		return (0);
 }
 
-int ft_check_syntax(t_token *tokens_list)
+int ft_check_syntax(t_token *tokens_list,int *status)
 {
 	int result;
 	t_token *tmp;
@@ -353,11 +353,13 @@ int ft_check_syntax(t_token *tokens_list)
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
 				result = 1;
+				*status = 258;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
 			else if (tmp->next->type == NEWLINE)
 			{
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
@@ -369,6 +371,7 @@ int ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break; /// for egfault
 			}
@@ -379,6 +382,7 @@ int ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break; /// for egfault
 			}
@@ -386,6 +390,7 @@ int ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp);
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break; // for segfqult
 			}	
@@ -396,6 +401,7 @@ int ft_check_syntax(t_token *tokens_list)
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break;
 			}
@@ -403,6 +409,7 @@ int ft_check_syntax(t_token *tokens_list)
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break;
 			}
@@ -413,6 +420,7 @@ int ft_check_syntax(t_token *tokens_list)
 			{
 				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break;
 			}
@@ -423,6 +431,7 @@ int ft_check_syntax(t_token *tokens_list)
 			{
 				ft_print_systax_error(tmp->next);
 				ft_destoy_token_list(tokens_list);
+				*status = 258;
 				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
@@ -653,18 +662,15 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 
 /***************************************/
 
-t_command_list *ft_parser(t_token *tokens_list)
+t_command_list *ft_parser(t_token *tokens_list,int *status)
 {
 	t_command_list *command_list;
 	command_list = NULL;
 	write(1,RED,ft_strlen(RED));
-	if (!ft_check_syntax(tokens_list))
+	if (!ft_check_syntax(tokens_list,status))
 	{
 		command_list = ft_create_ast(tokens_list);
 		ft_destoy_token_list(tokens_list);
 	}
 	return (command_list);
 }
-
-
-//// ""

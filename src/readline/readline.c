@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/04/30 07:16:25 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/01 15:46:54 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void ft_get_cursor_position(int *x, int *y)
 	int i = 0;
 	int first = 0;
 	c = (char*)malloc(20);
+	ft_bzero(c,20);
 	c[20] = '\0';
 	write(0, "\033[6n", 4);
 	read(0, c, 19);
@@ -100,10 +101,12 @@ void ft_get_cursor_position(int *x, int *y)
 		{
 			*y = ft_atoi(c + i);
 			first = 2;
-			return;
+			//return;
 		}
 		i++;
 	}
+	free(c);
+	c = NULL;
 }
 
 t_readline *ft_init_readline(struct termios *termios)
@@ -137,7 +140,7 @@ t_readline *ft_init_readline(struct termios *termios)
 	readline->line_count = tgetnum("li");
 	readline->cursor.col_position = 0;
 	readline->cursor.line_postion = 0;
-	readline->line = 0;	
+	readline->line = NULL;	
 	return (readline);
 }
 
@@ -284,7 +287,7 @@ void ft_add_to_char_list(t_readline *readline, char c, t_char_list **chars_list)
 
 	tmp = NULL;
 	ft_move_cursor_and_clear(readline->cursor);
-	if (*chars_list == NULL)
+	if ( *chars_list == NULL || (*chars_list)->value == 0)
 	{
 		ft_putchar_fd(c, 1);
 		*chars_list = (t_char_list*)malloc(sizeof(t_char_list));
@@ -321,7 +324,8 @@ t_lines_list *ft_create_line_node(void)
 	ret->up_or_down = false;
 	ret->next = NULL;
 	ret->prev = NULL;
-	ret->value = NULL;
+	//ret->value = NULL;
+	ret->value = 0;
 	return ret;
 }
 
@@ -389,10 +393,10 @@ int get_charctere(t_readline *readline, long c,
 	new_line = NULL;
 	if (ft_isprint(c))
 	{
-		if (current && current->up_or_down == true)
-			ft_add_to_char_list(readline, c, &current->char_list);
-		else
-			ft_add_to_char_list(readline, c, &current->char_list);
+		//if (current && current->up_or_down == true)
+		//	ft_add_to_char_list(readline, c, &current->char_list);
+		//else
+		ft_add_to_char_list(readline, c, &current->char_list);
 	}
 	else if (c == D_KEY_ENTER)
 	{
@@ -425,11 +429,13 @@ int get_charctere(t_readline *readline, long c,
 				{
 					current->history = 0;
 					*lines_list = current;
+					readline->line = create_line_from_chars_list(current->char_list);
 				}
 				else
+				{
 					*lines_list = ft_insert_node_to_line_list(*lines_list, current, 0);
-				
-				readline->line = create_line_from_chars_list(current->char_list);
+					readline->line = create_line_from_chars_list(current->char_list);
+				}
 			}
 		}
 		newline_break = 0;
@@ -542,7 +548,8 @@ t_lines_list *ft_init_line_list(void)
 	lines_list->index = 0;
 	lines_list->next = NULL;
 	lines_list->prev = NULL;
-	lines_list->value = NULL;
+	//lines_list->value = NULL;
+	lines_list->value = 0;
 	lines_list->history = 0;
 	return lines_list;
 }
@@ -579,7 +586,7 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 		ft_print_char_list((*current)->char_list);
 }
 
-int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list,int status)
+int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list,int *status)
 {
 	long character;
 	t_lines_list *current;
@@ -593,7 +600,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 	while (newline_break)
 	{
 		read(0, &character, 6);
-		if (character == D_KEY_UP)
+		if (*lines_list && character == D_KEY_UP)
 		{
 			if (current->char_list != NULL || *lines_list != NULL)
 			{
@@ -605,7 +612,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 				current = *lines_list;
 			}
 		}
-		else if (character == D_KEY_DOWN)
+		else if (*lines_list && character == D_KEY_DOWN)
 		{
 			if (current->char_list != NULL && *lines_list != NULL)
 			{
@@ -625,16 +632,17 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 				current->char_list = NULL;
 			}
 			newline_break = 0;
+			*status = 1;
 		}
 		else if (character == D_KEY_CTRL_D)
 		{
 			if (current->char_list == NULL || current->char_list->value == 0)
 			{
 				ft_putstr_fd("exit",1);
-				exit(status);
+				exit(*status);
 			}
 		}
-		else
+		else if (ft_isprint(character) || character == D_KEY_ENTER)
 		{
 			if (current)
 			{
@@ -664,7 +672,13 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		*line = ft_strdup(readline->line);
 		free(readline->line);
 		readline->line = NULL;
-	}	
+	}
+	else
+	{
+		if (current && !(*lines_list))
+			current = ft_destory_line(current);
+	
+	}
 	tcsetattr(readline->term_fd, TCSANOW, readline->old_termios);
 	return 1;
 }

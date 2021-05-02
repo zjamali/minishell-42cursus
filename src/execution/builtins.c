@@ -18,13 +18,16 @@ void	 ft_loop(t_env **head, t_args *args)
 
 	while (args != NULL)
 	{
-		if (args->value[0] == '~' && args->value[1] == '\0')
+		if (args->value != NULL)
 		{
-			temp = ft_search_in_list(head, "HOME");
-			ft_putstr_fd(temp->value, 1);
+			if (args->value[0] == '~' && args->value[1] == '\0')
+			{
+				temp = ft_search_in_list(head, "HOME");
+				ft_putstr_fd(temp->value, 1);
+			}
+			else
+				ft_putstr_fd(args->value, 1); 
 		}
-		else if (args->value != NULL)
-			ft_putstr_fd(args->value, 1); 
 		else
 			ft_putchar_fd(' ', 1);
 		if (args->next != NULL)
@@ -47,14 +50,14 @@ int ft_isitn(char *arg)
 
 int	 ft_echo(t_env **head, t_args *args)
 {
-	if (args == NULL || args->value ==  NULL)
+	if (args == NULL)
 	{
 		ft_putchar_fd('\n', 1);
 		return (0);
 	}
-	if (args->value[0] == '-')
+	if (args->value != NULL && args->value[0] == '-')
 	{
-		while (ft_isitn(args->value + 1))
+		while (args && ft_isitn(args->value + 1))
 			args = args->next;
 		ft_loop(head, args);
 	}

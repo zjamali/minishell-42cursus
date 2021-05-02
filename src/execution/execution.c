@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/24 15:25:22 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/02 15:49:15 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 		//ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
 			ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), 1);
-			//ft_putendl_fd(strerror(errno), 2);
-			
+		// ft_putendl_fd(strerror(errno), 2);
+		// ft_putnbr_fd(f_status, 1);
 			
 			//ft_putstr_fd("Command not found or permission denied.\n", 2);
 	}
@@ -77,6 +77,7 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 		//parrent process;
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
+		// ft_putnbr_fd(f_status, 1);
 		return (f_status);
 	}
 	return (1);
@@ -159,11 +160,11 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
 	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))
-		return (ft_echo(cmd->args));
+		return (ft_echo(head, cmd->args));
 	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));
 	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
-		return (ft_pwd(head));
+		return (ft_pwd());
 	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
 		return (ft_env(head));
 	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))
@@ -218,12 +219,17 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 		{
 			// if not the last command
 			if (cmd->child->next)
-				if (mini->red_fd[1] == 0 && dup2(mini->fd[command + 1], STDOUT_FILENO) < 0)
+				if (dup2(mini->fd[command + 1], STDOUT_FILENO) < 0)
 					return(ft_put_err("dup2", ": couldn't clone the fd", 1));
 			// if not the first command
 			if (command != 0)
-				if (mini->red_fd[0] == 0 && dup2(mini->fd[command - 2], STDIN_FILENO) < 0)
+				if (dup2(mini->fd[command - 2], STDIN_FILENO) < 0)
 					return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+			if (cmd->child->redirections != NULL)
+			{
+				if (ft_redirection(mini, cmd->child->redirections))
+					return (1);
+			}
 			while (i < (cmd->simple_cmd_count * 2))
 				close(mini->fd[i++]);
 			mini->ret = ft_is_builtins(cmd->child, head);
@@ -298,7 +304,7 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	*/
 	ft_putstr_fd(BLUE,1);
-	//ft_putendl_fd("------------------------------------------------------------", 1);
+	ft_putendl_fd("------------------------------------------------------------", 1);
 	// if (cmd->simple_cmd_count != 1)
 	do_backups(1);
 	mini.flag = 0;
@@ -316,6 +322,6 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	else
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
-	//ft_putendl_fd("------------------------------------------------------------", 1);
+	ft_putendl_fd("------------------------------------------------------------", 2);
 	return (mini.ret);
 }

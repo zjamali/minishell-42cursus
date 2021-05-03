@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/03 15:27:53 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/03 17:12:42 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -514,7 +514,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 	free(word);
 }
 
-t_simple_cmd *ft_handle_expanding(t_simple_cmd **cmd)
+t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 {
 	char **splited;
 	char *to_free;
@@ -525,6 +525,43 @@ t_simple_cmd *ft_handle_expanding(t_simple_cmd **cmd)
 	
 	i = 1;
 	to_free = (*cmd)->command;
+	splited = ft_split((*cmd)->command,' ');
+	
+	(*cmd)->command = splited[0];
+
+	new_args = (t_args*)malloc(sizeof(t_args));
+	tmp = new_args;
+	while(splited[i])
+	{
+		new_args->value = splited[i];
+		new_args->inside_quotes = 0;
+		new_args->next = NULL;
+	//	ft_putstr_fd(splited[i],1);
+		if (splited[i + 1])
+		{
+			new_args->next = (t_args*)malloc(sizeof(t_args));
+			new_args = new_args->next;
+		}
+		i++;
+	}
+	
+	new_args->next = (*cmd)->args;
+
+	(*cmd)->args = tmp;
+	return (*cmd);
+}
+/*
+t_simple_cmd *ft_handle_arg_expanding(t_simple_cmd **cmd)
+{
+	char **splited;
+	char *to_free;
+	t_args *new_args;
+	t_args *tmp;
+	int i;
+
+	
+	i = 1;
+	to_free = (*cmd)->args->;
 	splited = ft_split((*cmd)->command,' ');
 	
 	(*cmd)->command = splited[0];
@@ -550,13 +587,15 @@ t_simple_cmd *ft_handle_expanding(t_simple_cmd **cmd)
 	(*cmd)->args = tmp;
 	return (*cmd);
 }
-
+*/
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 {
 	t_args *args;
 	t_redirection *redis;
 	char *befor_expand_cmd;
 	char *after_expand_cmd;
+	//char *befor_expand_arg;
+	//char *after_expand_arg;
 	char *space;
 	
 	
@@ -574,15 +613,26 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 			if (++space)
 			{
 				//ft_putstr_fd(space,1);
-				*cmd = ft_handle_expanding(cmd);
+				*cmd = ft_handle_cmd_expanding(cmd);
 			}
 		}
 	}
 	args = (*cmd)->args;
 	while (args)
 	{
+		//befor_expand_arg = ft_strdup((args->value));
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, status, 0);
+		//after_expand_arg = ft_strdup((args->value));
+		//if ((*cmd)->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg,after_expand_arg) && ft_strchr(after_expand_arg,' '))
+		//{
+		//	space = ft_strchr(after_expand_arg,' ');
+		//	if (++space)
+		//	{
+		//		//ft_putstr_fd(space,1);
+		//		*cmd = ft_handle_arg_expanding(cmd);
+		//	}
+		//}
 		args = args->next;
 	}
 	redis = (*cmd)->redirections;

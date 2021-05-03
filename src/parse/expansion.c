@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/03 15:21:50 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/03 15:27:53 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -571,7 +571,6 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd,after_expand_cmd) && ft_strchr(after_expand_cmd,' '))
 		{
 			space = ft_strchr(after_expand_cmd,' ');
-			ft_putstr_fd("seg----",1);
 			if (++space)
 			{
 				//ft_putstr_fd(space,1);

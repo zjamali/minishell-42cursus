@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/03 14:59:20 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/03 15:21:50 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -536,10 +536,11 @@ t_simple_cmd *ft_handle_expanding(t_simple_cmd **cmd)
 		new_args->value = splited[i];
 		new_args->inside_quotes = 0;
 		new_args->next = NULL;
+		ft_putstr_fd(splited[i],1);
 		if (splited[i + 1])
 		{
+			new_args->next = (t_args*)malloc(sizeof(t_args));
 			new_args = new_args->next;
-			new_args = (t_args*)malloc(sizeof(t_args));
 		}
 		i++;
 	}
@@ -547,9 +548,6 @@ t_simple_cmd *ft_handle_expanding(t_simple_cmd **cmd)
 	new_args->next = (*cmd)->args;
 
 	(*cmd)->args = tmp;
-	
-	ft_print_simple_cmd((*cmd));
-
 	return (*cmd);
 }
 

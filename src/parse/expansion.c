@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 13:32:19 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/03 14:59:20 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -514,18 +514,72 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 	free(word);
 }
 
+t_simple_cmd *ft_handle_expanding(t_simple_cmd **cmd)
+{
+	char **splited;
+	char *to_free;
+	t_args *new_args;
+	t_args *tmp;
+	int i;
+
+	
+	i = 1;
+	to_free = (*cmd)->command;
+	splited = ft_split((*cmd)->command,' ');
+	
+	(*cmd)->command = splited[0];
+
+	new_args = (t_args*)malloc(sizeof(t_args));
+	tmp = new_args;
+	while(splited[i])
+	{
+		new_args->value = splited[i];
+		new_args->inside_quotes = 0;
+		new_args->next = NULL;
+		if (splited[i + 1])
+		{
+			new_args = new_args->next;
+			new_args = (t_args*)malloc(sizeof(t_args));
+		}
+		i++;
+	}
+	
+	new_args->next = (*cmd)->args;
+
+	(*cmd)->args = tmp;
+	
+	ft_print_simple_cmd((*cmd));
+
+	return (*cmd);
+}
+
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 {
 	t_args *args;
 	t_redirection *redis;
-	char *tmp;
+	char *befor_expand_cmd;
+	char *after_expand_cmd;
+	char *space;
+	
+	
 
-	tmp = NULL;
 	redis = NULL;
 	if ((*cmd)->command)
 	{
+		befor_expand_cmd = ft_strdup((*cmd)->command);
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
 		ft_expande_word(&((*cmd)->command), env, status, 0);
+		after_expand_cmd = ft_strdup((*cmd)->command);
+		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd,after_expand_cmd) && ft_strchr(after_expand_cmd,' '))
+		{
+			space = ft_strchr(after_expand_cmd,' ');
+			ft_putstr_fd("seg----",1);
+			if (++space)
+			{
+				//ft_putstr_fd(space,1);
+				*cmd = ft_handle_expanding(cmd);
+			}
+		}
 	}
 	args = (*cmd)->args;
 	while (args)

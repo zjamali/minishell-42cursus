@@ -457,7 +457,6 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 						}
 						else //// just a 1 dollar sign
 						{
-							
 							tmp1 = expanded;
 							tmp = ft_substr(word, i, 1);
 							expanded = ft_strjoin(expanded, tmp);
@@ -466,7 +465,8 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 							i++;
 						}
 					}
-					i++;
+					else 
+						i++;
 				}
 				else /// env variavle not exist  no multiple sign dollars
 				{

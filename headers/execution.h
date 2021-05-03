@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/19 16:51:34 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/02 15:49:05 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ t_env	*ft_create_node(char *name, char *value);
 void    ft_add_to_list(t_env **head, t_env *newnode);
 void	ft_delete_from_list(t_env **head, char *name);
 void	ft_replaceit(t_env **head, char *name, char *value);
-void	ft_loop(t_args *args);
-int		ft_echo(t_args *args);
+void	ft_loop(t_env **head, t_args *args);
+int		ft_echo(t_env **head, t_args *args);
 int		ft_cd(t_args *args, t_env **head);
-int		ft_pwd(t_env **head);
+int		ft_pwd();
 int		ft_env(t_env **head);
 int		ft_unset(t_args *args, t_env **head);
 int		ft_export(t_env **head, t_args *args);

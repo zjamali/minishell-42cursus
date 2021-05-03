@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
+#    Updated: 2021/05/02 16:01:58 by mbari            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME= minishell
 
 SRC_EXECUTE= src/execution/builtins.c  src/execution/execution.c src/execution/list.c src/execution/redirection.c

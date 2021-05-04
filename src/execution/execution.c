@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/30 17:09:52 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/02 15:49:15 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));
 	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
-		return (ft_pwd(head));
+		return (ft_pwd());
 	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
 		return (ft_env(head));
 	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/30 17:30:03 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/02 15:49:39 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,12 @@ int	 ft_echo(t_env **head, t_args *args)
 	return (0);
 }
 
-int	 ft_pwd(t_env **head)
+int	 ft_pwd()
 {
-	t_env *pwd;
+	char *buff;
 
-	pwd = ft_search_in_list(head, "PWD");
-	ft_putendl_fd(pwd->value, 1);
+	buff = NULL;
+	ft_putendl_fd(getcwd(buff, 100), 1);
 	return (0);
 }
 

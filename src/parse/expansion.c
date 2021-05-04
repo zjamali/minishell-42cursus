@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/03 17:12:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/04 14:17:36 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -526,9 +526,8 @@ t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 	i = 1;
 	to_free = (*cmd)->command;
 	splited = ft_split((*cmd)->command,' ');
-	
 	(*cmd)->command = splited[0];
-
+	
 	new_args = (t_args*)malloc(sizeof(t_args));
 	tmp = new_args;
 	while(splited[i])
@@ -544,26 +543,36 @@ t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 		}
 		i++;
 	}
-	
+	if (i > 1)
+	{
 	new_args->next = (*cmd)->args;
-
 	(*cmd)->args = tmp;
+	}
 	return (*cmd);
 }
 
-t_args *ft_handle_arg_expanding(t_args **args,int index)
+t_args *ft_handle_arg_expanding(t_args **args,int *index)
 {
 	char **splited;
 	char *to_free;
-	t_args *new_args;
 	t_args *tmp;
+	t_args *new_args;
+	t_args *tmp1;
 	int i;
 
-	
 	i = 0;
-	to_free = (*args)->value;
-	splited = ft_split((*args)->value,' ');
-	
+	tmp1 = *args;
+	while (i < *index)
+	{
+		tmp1 = tmp1->next;
+		i++;
+	}
+	ft_putstr_fd("{",1);
+	to_free = tmp1->value;
+	ft_putstr_fd(to_free,1);
+	ft_putstr_fd("}\n",1);
+	splited = ft_split(tmp1->value,' ');
+	i = 0;
 	new_args = (t_args*)malloc(sizeof(t_args));
 	tmp = new_args;
 	while(splited[i])
@@ -579,13 +588,7 @@ t_args *ft_handle_arg_expanding(t_args **args,int index)
 		}
 		i++;
 	}
-	
-	while (index > 0)
-	{
-		*args = (*args)->next;
-		index--;
-	}
-	
+	i = 0;
 	new_args->next = (*args)->next;
 	(*args) = tmp;
 	return new_args->next;
@@ -600,7 +603,6 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 	char *befor_expand_arg;
 	char *after_expand_arg;
 	char *space;
-	
 	
 
 	redis = NULL;
@@ -623,24 +625,27 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 	args = (*cmd)->args;
 	while (args)
 	{
-		ft_putstr_fd("zbi",1);
 		befor_expand_arg = ft_strdup((args->value));
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, status, 0);
 		after_expand_arg = ft_strdup((args->value));
+		ft_putstr_fd(befor_expand_arg,1);
+		ft_putstr_fd("|",1);
+		ft_putstr_fd(after_expand_arg,1);
+		ft_putstr_fd("\n",1);
 		if (befor_expand_arg[0] == '$' && args->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg,after_expand_arg) && ft_strchr(after_expand_arg,' '))
 		{
 			space = ft_strchr(after_expand_arg,' ');
 			if (++space)
 			{
-				args = ft_handle_arg_expanding(&(*cmd)->args,i);
+				args = ft_handle_arg_expanding(&(*cmd)->args,&i);
 				ft_putstr_fd("''",1);
 				if (args)
 					ft_putstr_fd(args->value,1);
-				ft_putstr_fd("''",1);
+				ft_putstr_fd("''\n",1);
 			}
 		}
-		else 
+		else if (args)
 			args = args->next;
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/02 15:49:15 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/04 16:29:48 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));
 	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
-		return (ft_pwd());
+		return (ft_pwd(head));
 	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
 		return (ft_env(head));
 	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))
@@ -315,11 +315,11 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 		if (ft_redirection(&mini, cmd->child->redirections))
 			return (1);
 	}
-	if (cmd->child->command == NULL)
+	if (cmd->child->command == NULL && cmd->child->redirections == NULL)
 		return (ft_put_err("\0", ": command not found", 127));
 	if (cmd->simple_cmd_count > 1)
 		mini.ret = ft_pipe(&mini, cmd, head);
-	else
+	else if (cmd->child->command != NULL)
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
 	ft_putendl_fd("------------------------------------------------------------", 2);

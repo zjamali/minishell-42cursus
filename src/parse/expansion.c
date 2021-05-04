@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 13:32:19 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/03 17:12:42 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -457,7 +457,6 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 						}
 						else //// just a 1 dollar sign
 						{
-							
 							tmp1 = expanded;
 							tmp = ft_substr(word, i, 1);
 							expanded = ft_strjoin(expanded, tmp);
@@ -466,7 +465,8 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 							i++;
 						}
 					}
-					i++;
+					else 
+						i++;
 				}
 				else /// env variavle not exist  no multiple sign dollars
 				{
@@ -514,25 +514,135 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 	free(word);
 }
 
+t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
+{
+	char **splited;
+	char *to_free;
+	t_args *new_args;
+	t_args *tmp;
+	int i;
+
+	
+	i = 1;
+	to_free = (*cmd)->command;
+	splited = ft_split((*cmd)->command,' ');
+	
+	(*cmd)->command = splited[0];
+
+	new_args = (t_args*)malloc(sizeof(t_args));
+	tmp = new_args;
+	while(splited[i])
+	{
+		new_args->value = splited[i];
+		new_args->inside_quotes = 0;
+		new_args->next = NULL;
+	//	ft_putstr_fd(splited[i],1);
+		if (splited[i + 1])
+		{
+			new_args->next = (t_args*)malloc(sizeof(t_args));
+			new_args = new_args->next;
+		}
+		i++;
+	}
+	
+	new_args->next = (*cmd)->args;
+
+	(*cmd)->args = tmp;
+	return (*cmd);
+}
+
+t_args *ft_handle_arg_expanding(t_args **args,int index)
+{
+	char **splited;
+	char *to_free;
+	t_args *new_args;
+	t_args *tmp;
+	int i;
+
+	
+	i = 0;
+	to_free = (*args)->value;
+	splited = ft_split((*args)->value,' ');
+	
+	new_args = (t_args*)malloc(sizeof(t_args));
+	tmp = new_args;
+	while(splited[i])
+	{
+		new_args->value = splited[i];
+		new_args->inside_quotes = 0;
+		new_args->next = NULL;
+		ft_putstr_fd(splited[i],1);
+		if (splited[i + 1])
+		{
+			new_args->next = (t_args*)malloc(sizeof(t_args));
+			new_args = new_args->next;
+		}
+		i++;
+	}
+	
+	while (index > 0)
+	{
+		*args = (*args)->next;
+		index--;
+	}
+	
+	new_args->next = (*args)->next;
+	(*args) = tmp;
+	return new_args->next;
+}
+
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 {
 	t_args *args;
 	t_redirection *redis;
-	char *tmp;
+	char *befor_expand_cmd;
+	char *after_expand_cmd;
+	char *befor_expand_arg;
+	char *after_expand_arg;
+	char *space;
+	
+	
 
-	tmp = NULL;
 	redis = NULL;
 	if ((*cmd)->command)
 	{
+		befor_expand_cmd = ft_strdup((*cmd)->command);
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
 		ft_expande_word(&((*cmd)->command), env, status, 0);
+		after_expand_cmd = ft_strdup((*cmd)->command);
+		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd,after_expand_cmd) && ft_strchr(after_expand_cmd,' '))
+		{
+			space = ft_strchr(after_expand_cmd,' ');
+			if (++space)
+			{
+				*cmd = ft_handle_cmd_expanding(cmd);
+			}
+		}
 	}
+	int i = 0;
 	args = (*cmd)->args;
 	while (args)
 	{
+		ft_putstr_fd("zbi",1);
+		befor_expand_arg = ft_strdup((args->value));
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, status, 0);
-		args = args->next;
+		after_expand_arg = ft_strdup((args->value));
+		if (befor_expand_arg[0] == '$' && args->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg,after_expand_arg) && ft_strchr(after_expand_arg,' '))
+		{
+			space = ft_strchr(after_expand_arg,' ');
+			if (++space)
+			{
+				args = ft_handle_arg_expanding(&(*cmd)->args,i);
+				ft_putstr_fd("''",1);
+				if (args)
+					ft_putstr_fd(args->value,1);
+				ft_putstr_fd("''",1);
+			}
+		}
+		else 
+			args = args->next;
+		i++;
 	}
 	redis = (*cmd)->redirections;
 	while (redis)

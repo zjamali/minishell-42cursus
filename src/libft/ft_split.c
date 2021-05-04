@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/23 22:12:29 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/30 17:16:49 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/04 16:20:41 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ char **my_split(char *str)
 		s[0][i] = str[i];
 		i++;
 	}
-	//ft_putchar_fd(str[i], 1);
+	s[0][i] = '\0';
 	if (str[i] == '=' && str[i + 1] == '\0')
 		s[1][0] = '\0';
 	else if (str[i] == '\0')
@@ -125,5 +125,6 @@ char **my_split(char *str)
 	else
 		while (str[++i] != '\0')
 			s[1][j++] = str[i];
+	s[1][j] = '\0';
 	return (s);
 }

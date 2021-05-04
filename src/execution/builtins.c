@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/02 15:49:39 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/04 15:56:36 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,21 @@ int	 ft_echo(t_env **head, t_args *args)
 	return (0);
 }
 
-int	 ft_pwd()
+int	 ft_pwd(t_env **head)
 {
 	char *buff;
+	t_env *temp;
+	char *pwd;
 
 	buff = NULL;
-	ft_putendl_fd(getcwd(buff, 100), 1);
+	if ((pwd = getcwd(buff, 100)))
+		ft_putendl_fd(pwd, 1);
+	else
+	{
+		temp = ft_search_in_list(head, "PWD");
+		if (temp)
+			ft_putendl_fd(temp->value, 1);
+	}
 	return (0);
 }
 
@@ -191,6 +200,7 @@ int ft_cd(t_args *args, t_env **head)
 {
 	char *buff;
 	char *dir;
+	char *new_pwd;
 	t_env *temp;
 	
 	buff = NULL;
@@ -212,6 +222,8 @@ int ft_cd(t_args *args, t_env **head)
 	}
 	else
 		dir = args->value;
+	if (!getcwd(buff, 100))
+		ft_put_err("cd: error retrieving current directory: getcwd: cannot access parent directories: ", strerror(errno), 1);
 	temp = ft_search_in_list(head, "PWD");
 		if (temp == NULL)
 			ft_add_to_list(head, ft_create_node("PWD", ""));
@@ -219,10 +231,14 @@ int ft_cd(t_args *args, t_env **head)
 		if (temp == NULL)
 			ft_add_to_list(head, ft_create_node("OLDPWD", ""));
 	if (chdir(dir) == -1)
-		return (ft_put_err("cd: ", ft_strjoin(dir, ": No such file or directory"), 1));
+		return (ft_put_err("cd: ", ft_strjoin(dir, ft_strjoin(": ", strerror(errno))), 1));
+	// ft_strjoin(dir, ": No such file or directory")
 	temp = ft_search_in_list(head, "PWD");
 	ft_replaceit(head, "OLDPWD", temp->value);
-	ft_replaceit(head, "PWD", getcwd(buff, 100));
+	if ((new_pwd = getcwd(buff, 100)))
+		ft_replaceit(head, "PWD", new_pwd);
+	else
+		ft_replaceit(head, "PWD", ft_strjoin(temp->value, ft_strjoin("/", dir)));
 	return (0);
 }
 

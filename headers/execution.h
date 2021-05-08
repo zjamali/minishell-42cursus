@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/04 15:57:11 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/08 17:00:55 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,7 @@ int		ft_less_than(int *fd, t_redirection *redirect);
 int		ft_great_than(int *fd, t_redirection *redirect);
 int 	ft_double_great(int *fd, t_redirection *redirect);
 int		ft_redirection(t_mini *mini, t_redirection *redirect);
+int		ft_file_err(t_redirection *redirect);
+int 	ft_file_check(t_simple_cmd *cmd, t_env **head);
+int		ft_check_exit(char *arg);
 #endif

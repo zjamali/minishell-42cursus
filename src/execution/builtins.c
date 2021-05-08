@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/04 15:56:36 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/08 16:59:51 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,11 +242,26 @@ int ft_cd(t_args *args, t_env **head)
 	return (0);
 }
 
+int ft_check_exit(char *arg)
+{
+	int i;
+
+	i = 0;
+	while(arg[i])
+	{
+		if (!ft_isdigit(arg[i]))
+			return(ft_put_err("exit: ", ft_strjoin(arg, ": numeric argument required"), 255));
+		i++;
+	}
+	return (ft_atoi(arg));
+}
+
 int	 ft_exit(t_args *args)
 {
 	if (args == NULL)
 		exit(0);
 	if (args->next != NULL)
 		return (ft_put_err("exit", ": too many arguments", 1));
-	exit(ft_atoi(args->value));
+	ft_putendl_fd("exit", 1);
+	exit(ft_check_exit(args->value));
 }

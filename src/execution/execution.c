@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/04 16:29:48 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/08 16:45:19 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,32 +55,30 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 	int		status;
 	int		f_status;
 
-
 	if (!(pid = fork()))
 	{
 		//child_process;
 		//ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
-			ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), 1);
+			exit(ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), errno));
 		// ft_putendl_fd(strerror(errno), 2);
-		// ft_putnbr_fd(f_status, 1);
-			
+		// ft_putnbr_fd(errno, 1);
 			//ft_putstr_fd("Command not found or permission denied.\n", 2);
 	}
 	else if (pid == -1)
 	{
 		//error;
-		ft_putstr_fd("Fork failed.\n", 2);
+		return (ft_put_err("fork", ft_strjoin(": ", "Fork failed"), 2));
 	}
 	else
 	{
 		//parrent process;
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
-		// ft_putnbr_fd(f_status, 1);
+		ft_putnbr_fd(f_status, 1);
 		return (f_status);
 	}
-	return (1);
+	return (77);
 }
 
 void	do_backups(int flag)
@@ -124,6 +122,20 @@ void init_env(t_env **head, char **env)
 	}
 }
 
+int ft_file_check(t_simple_cmd *cmd, t_env **head)
+{
+	struct stat *buf;
+
+	buf = malloc(sizeof(struct stat));
+	if (stat(cmd->command, buf) == -1)
+		return (ft_put_err(cmd->command, ": No such file or directory", 127));
+	else if (buf->st_mode & S_IFDIR)
+		return (ft_put_err(cmd->command, ": Is a directory", 126));
+	else if ((buf->st_mode & S_IXUSR) == 0)
+		return (ft_put_err(cmd->command, ": Permission denied", 126));
+	return (ft_exec(cmd, head));
+}
+
 int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 {
 	t_env *temp;
@@ -132,7 +144,7 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 	struct stat *buf;
 	
 	if (cmd->command[0] == '/' || cmd->command[0] == '.')
-		return (ft_exec(cmd, head));
+		return (ft_file_check(cmd, head));
 	else
 	{
 		temp = ft_search_in_list(head, "PATH");
@@ -150,11 +162,9 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 			free(buf);
 			path++;
 		}
-		//zsh: command not found: ubadsia
 		return(ft_put_err(cmd->command, ": command not found", 127));
 	}
 	return (0);
-		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
 }
 
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)

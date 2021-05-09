@@ -12,7 +12,7 @@
 
 NAME= minishell
 
-SRC_EXECUTE= src/execution/builtins.c  src/execution/execution.c src/execution/list.c src/execution/redirection.c
+SRC_EXECUTE= src/execution/cd_exit.c src/execution/echo_pwd_env.c src/execution/export_unset.c src/execution/execution.c src/execution/list.c src/execution/redirection.c
 
 SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/parser.c src/parse/expansion.c src/readline/readline.c
 
@@ -35,7 +35,7 @@ $(NAME):
 	@echo "███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     "
 	@echo "████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║     "
 	@echo "██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║     "
-	@echo "██║╚██╔╝██║██║██║╚██╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║     "
+	@echo "██║╚██╔╝██║██║██║╚█f█╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║     "
 	@echo "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗"
 	@echo "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝"
 	@echo "Compilation of minishell:  \033[1;32mOK\033[m"

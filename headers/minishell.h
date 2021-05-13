@@ -171,10 +171,11 @@ t_command_list *ft_parser(t_token *tokens_list,int *status);
 void ft_destroy_ast(t_command_list *cmd_list);
 int ft_check_syntax(t_token *tokens_list,int *status);
 
-void ft_expanding(t_pipe_line *pipe_line,t_env **env,int status);
+void ft_expanding(t_pipe_line *pipe_line,t_env **env,char **last_env);
 void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
+char *ft_int_to_string(int n);
 
 t_readline *ft_init_readline(struct termios *termios);
 int micro_read_line(char **line,t_readline *readline,t_lines_list **lines_list,int *status);

@@ -14,6 +14,55 @@
 #include "../headers/minishell.h"
 #include "../headers/execution.h"
 
+char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
+
+	t_args *args;
+	char **split;
+
+	split = NULL;
+	args = NULL;
+	if (current_pipe_line->child->next != NULL)
+	{
+		ft_putstr_fd("\nlast command :",1);
+		ft_putstr_fd("nothing",1);
+		return (NULL);
+	}
+	else {
+		args = current_pipe_line->child->args;
+		if (args == NULL)
+		{
+			ft_putstr_fd("\nlast command :",1);
+			ft_putstr_fd(current_pipe_line->child->command,1);
+			return (ft_strdup(current_pipe_line->child->command));
+		}
+		else{
+			while (args->next != NULL)
+			{
+				args = args->next;
+			}
+			if (!ft_strcmp(current_pipe_line->child->command,"export"))
+			{
+				split = ft_split(args->value,'=');
+				ft_putstr_fd("\nlast command :",1);
+				ft_putstr_fd(split[0],1);
+				free(split[1]);
+				return (split[0]);
+			}
+			else {
+				ft_putstr_fd("\nlast command :",1);
+				ft_putstr_fd(args->value,1);
+				if (args->value)
+					return ft_strdup(args->value);
+				else
+					return (ft_strdup(current_pipe_line->child->command));
+			}
+		}
+	}
+	ft_putstr_fd("\nlast command :",1);
+	ft_putstr_fd("nothing",1);
+	return NULL;
+}
+
 void read_command_list(char **line)
 {
 	get_next_line(&(*line));
@@ -81,6 +130,7 @@ t_lines_list *ft_destroy_line_list(t_lines_list *lines_list)
 	return NULL;
 }
 
+
 int main(int ac,char **av,char **env)
 {
 	t_token *tokens_list;
@@ -89,18 +139,22 @@ int main(int ac,char **av,char **env)
 	t_env *head;
 	char *line;
 	int status;
+	char *last_argumet_or_command;
 //
 	current_pipe_line = NULL;
 	t_lines_list *lines_list;
-	// struct termios termios;
-	// t_readline *readline;
+	 struct termios termios;
+	 t_readline *readline;
+	 last_argumet_or_command = NULL;
 
 	//// get terminal window size
 	
 	//struct winsize window;
 	
-	
-	
+	char **last_env;
+	last_env = (char **)malloc(sizeof(char) * 2);
+	last_env[0] = NULL;
+	last_env[1] = NULL;
 
 	lines_list = NULL;
 	status = 0;
@@ -113,14 +167,14 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	//readline = ft_init_readline(&termios);
+	readline = ft_init_readline(&termios);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
 		//i++;
 		show_prompt();
-		//micro_read_line(&line, readline, &lines_list,&status);
-		read_command_list(&line);
+		micro_read_line(&line, readline, &lines_list,&status);
+		//read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -136,9 +190,11 @@ int main(int ac,char **av,char **env)
 			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
 		{
-			ft_expanding(current_pipe_line,&head,status);
+			last_env[0] = ft_int_to_string(status); 
+			ft_expanding(current_pipe_line,&head,last_env);
 			ft_print_pipeline_cmd(current_pipe_line);
 			//ft_putstr_fd("-----------------------\n",1);
+			last_env[1] = get_last_argument_or_command(current_pipe_line);
 			status = ft_execute(current_pipe_line, &head);
 			current_pipe_line = current_pipe_line->next;
 		}

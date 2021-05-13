@@ -13,6 +13,8 @@
 #include "../../headers/minishell.h"
 #include "../../headers/execution.h"
 
+
+
 int check_exiting_of_qoutes(char *str)
 {
 	if (str)
@@ -112,7 +114,7 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 		return NULL;
 }
 
-char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
+char *ft_remove_double_quotes(char *word, int *i, t_env **env,char **last_env)
 {
 	int j;
 	char *expand;
@@ -160,6 +162,12 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 					tmp = get_env_value(word + j, env, 1);
 					if (tmp)
 					{
+						if (word[j + 1] == '_' && word[j + 2] == '"')
+						{
+							free(tmp);
+							tmp = NULL;
+							tmp = ft_strdup(last_env[1]);
+						}
 						expand = ft_strjoin(expand, tmp);
 						free(tmp1);
 						free(tmp);
@@ -232,9 +240,11 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 							}
 							else if (word[j + 1] == '?')
 							{
-								char *status_string = ft_int_to_string(status);
+								//char *status_string = ft_int_to_string(status);
+								tmp = last_env[0];
 								tmp1 = expand;
-								expand = ft_strjoin(expand, status_string);
+								//expand = ft_strjoin(expand, status_string);
+								expand = ft_strjoin(expand, tmp);
 								free(tmp1);
 								free(tmp);
 								j += 2;
@@ -291,7 +301,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 	return expand;
 }
 
-void ft_expande_word(char **string, t_env **env_list, int status, int redirection)
+void ft_expande_word(char **string, t_env **env_list, char **last_env, int redirection)
 {
 	char *word;
 	char *expanded;
@@ -343,7 +353,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 		else if (word[i] == '"')
 		{
 			tmp1 = expanded;
-			tmp = ft_remove_double_quotes(word, &i, env_list,status);
+			tmp = ft_remove_double_quotes(word, &i, env_list,last_env);
 			if (tmp)
 			{
 				expanded = ft_strjoin(expanded, tmp);
@@ -369,6 +379,12 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 
 				if (tmp) /// env variavle exist
 				{
+					if (word[i + 1] == '_' && word[i + 2] == '\0')
+					{
+						free(tmp);
+						tmp = NULL;
+						tmp = ft_strdup(last_env[1]);
+					}
 					expanded = ft_strjoin(expanded, tmp);
 					free(tmp1);
 					free(tmp);
@@ -443,9 +459,11 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 						}
 						else if (word[i + 1] == '?')
 						{
-							char *status_string = ft_int_to_string(status);
+							//char *status_string = ft_int_to_string(status);
+							tmp = last_env[0];
 							tmp1 = expanded;
-							expanded = ft_strjoin(expanded, status_string);
+							//expanded = ft_strjoin(expanded, status_string);
+							expanded = ft_strjoin(expanded, tmp);
 							free(tmp1);
 							free(tmp);
 							i += 2;
@@ -594,7 +612,7 @@ t_args *ft_handle_arg_expanding(t_args **args,int *index)
 	return new_args->next;
 }
 
-void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
+void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
 	t_args *args;
 	t_redirection *redis;
@@ -610,7 +628,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 	{
 		befor_expand_cmd = ft_strdup((*cmd)->command);
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
-		ft_expande_word(&((*cmd)->command), env, status, 0);
+		ft_expande_word(&((*cmd)->command), env, last_env, 0);
 		after_expand_cmd = ft_strdup((*cmd)->command);
 		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd,after_expand_cmd) && ft_strchr(after_expand_cmd,' '))
 		{
@@ -627,7 +645,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 	{
 		befor_expand_arg = ft_strdup((args->value));
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
-		ft_expande_word(&args->value, env, status, 0);
+		ft_expande_word(&args->value, env, last_env, 0);
 		after_expand_arg = ft_strdup((args->value));
 		ft_putstr_fd(befor_expand_arg,1);
 		ft_putstr_fd("|",1);
@@ -653,12 +671,12 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
 	while (redis)
 	{
 		redis->inside_quotes = check_exiting_of_qoutes(redis->file_name);
-		ft_expande_word(&redis->file_name, env, status, 1);
+		ft_expande_word(&redis->file_name, env, last_env, 1);
 		redis = redis->next;
 	}
 }
 
-void ft_expanding(t_pipe_line *pipe_line, t_env **env, int status)
+void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)
 {
 	t_simple_cmd *current_cmd;
 	t_simple_cmd *head_cmd;
@@ -671,7 +689,7 @@ void ft_expanding(t_pipe_line *pipe_line, t_env **env, int status)
 	while (head_cmd)
 	{
 		current_cmd = head_cmd;
-		ft_expande_simple_cmd(&current_cmd, env, status);
+		ft_expande_simple_cmd(&current_cmd, env, last_env);
 		head_cmd = head_cmd->next;
 	}
 }

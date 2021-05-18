@@ -23,15 +23,12 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 	args = NULL;
 	if (current_pipe_line->child->next != NULL)
 	{
-		ft_putstr_fd("\nlast command :",1);
-		ft_putstr_fd("nothing",1);
 		return (NULL);
 	}
 	else {
 		args = current_pipe_line->child->args;
 		if (args == NULL)
 		{
-			ft_putstr_fd("\nlast command :",1);
 			ft_putstr_fd(current_pipe_line->child->command,1);
 			return (ft_strdup(current_pipe_line->child->command));
 		}
@@ -43,14 +40,11 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 			if (!ft_strcmp(current_pipe_line->child->command,"export"))
 			{
 				split = ft_split(args->value,'=');
-				ft_putstr_fd("\nlast command :",1);
-				ft_putstr_fd(split[0],1);
 				free(split[1]);
 				return (split[0]);
 			}
 			else {
-				ft_putstr_fd("\nlast command :",1);
-				ft_putstr_fd(args->value,1);
+
 				if (args->value)
 					return ft_strdup(args->value);
 				else
@@ -58,8 +52,6 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 			}
 		}
 	}
-	ft_putstr_fd("\nlast command :",1);
-	ft_putstr_fd("nothing",1);
 	return NULL;
 }
 

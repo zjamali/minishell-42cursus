@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/17 16:45:34 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/18 18:23:51 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 			str = ft_strdup("_");
 		else
 		{
-			while (ft_isalpha(env_variable[j]))
+			while (!ft_isalnum(env_variable[0]) && ( ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
 		}
@@ -100,7 +100,7 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 			str = ft_strdup("_");
 		else
 		{
-			while (ft_isalpha(env_variable[j]))
+			while (!ft_isalnum(env_variable[0]) && ( ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
 		}
@@ -177,7 +177,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,char **last_env)
 							j++;
 						else
 						{
-							while (ft_isalpha(word[j]))
+							while (ft_isalpha(word[j]) || ft_isalnum(word[j]) || word[j] == '_')
 								j++;
 							//ft_putstr_fd(&word[j],1);
 						}
@@ -395,7 +395,7 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 						i++;
 					else
 					{
-						while (ft_isalpha(word[i]))
+						while (ft_isalpha(word[i]) || ft_isalnum(word[i]) || word[i] == '_')
 							i++;
 						//ft_putstr_fd(&word[i],1);
 					}
@@ -534,7 +534,7 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 
 t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 {
-	char **splited;
+	char **splited = NULL;
 	char *to_free;
 	t_args *new_args;
 	t_args *tmp;
@@ -545,7 +545,6 @@ t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 	to_free = (*cmd)->command;
 	splited = ft_split((*cmd)->command,' ');
 	(*cmd)->command = splited[0];
-	
 	new_args = (t_args*)malloc(sizeof(t_args));
 	tmp = new_args;
 	while(splited[i])
@@ -608,6 +607,38 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	return (new_args);
 }
 
+t_simple_cmd *ft_handle_emty_cmd(t_simple_cmd **cmd)
+{
+	return *cmd;
+}
+
+t_args *ft_delete_emty_args_nodes(t_args **args)
+{
+	t_args *cureent;
+	t_args *prev;
+	t_args *next;
+	t_args *new_args;
+	
+	cureent = NULL;
+	prev = NULL;
+	next = NULL;
+	new_args = NULL;
+	new_args =  *args;
+	while((*args)->next)
+	{
+		cureent = (*args)->next;
+		prev = *args;
+		if ((*args)->next)
+			next = (*args)->next->next;
+		if (cureent->inside_quotes == 0 && !cureent->value)
+		{
+			prev->next = next;	
+		}
+		if (*args)
+			*args = (*args)->next;
+	}
+	return new_args;
+}
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
 	t_args *args;
@@ -657,12 +688,20 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		else
 			args = args->next;
 	}
+	args = (*cmd)->args;
+	//*args = *ft_delete_emty_args_nodes(&args);
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
 		redis->inside_quotes = check_exiting_of_qoutes(redis->file_name);
 		ft_expande_word(&redis->file_name, env, last_env, 1);
 		redis = redis->next;
+	}
+
+	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
+	{
+		ft_putstr_fd("zbi",1);
+		*cmd = ft_handle_emty_cmd(cmd);
 	}
 }
 

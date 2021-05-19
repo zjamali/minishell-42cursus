@@ -609,35 +609,57 @@ t_args *ft_handle_arg_expanding(t_args **args)
 
 t_simple_cmd *ft_handle_emty_cmd(t_simple_cmd **cmd)
 {
+	//if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
+	//{
+	//	if ()
+	//} 
 	return *cmd;
 }
 
 t_args *ft_delete_emty_args_nodes(t_args **args)
 {
-	t_args *cureent;
+	t_args *temp;
 	t_args *prev;
-	t_args *next;
-	t_args *new_args;
 	
-	cureent = NULL;
 	prev = NULL;
-	next = NULL;
-	new_args = NULL;
-	new_args =  *args;
-	while((*args)->next)
+	temp = *args;
+
+	while (temp && (temp->inside_quotes == 0 && !temp->value))
 	{
-		cureent = (*args)->next;
-		prev = *args;
-		if ((*args)->next)
-			next = (*args)->next->next;
-		if (cureent->inside_quotes == 0 && !cureent->value)
+		if (temp->next)
 		{
-			prev->next = next;	
+			*args = temp->next;
+			temp = *args;
 		}
-		if (*args)
-			*args = (*args)->next;
+		else{
+		ft_putstr_fd("zaaabi",1);
+			temp = NULL;
+			//*args = (*args)->next;
+		}
+		
+		// free(tmp);
 	}
-	return new_args;
+	while (temp)
+	{
+		while (temp && (temp->inside_quotes != 0 || ( temp->value && temp->inside_quotes == 0)))
+		{
+			prev = temp;
+			temp = temp->next;
+		}
+
+		if (temp == NULL)
+		{
+            //return;
+			return *args;
+		}
+		prev->next = temp->next;
+
+	//	free(temp); // Free memory
+
+		temp = prev->next;
+	}
+
+	return *args;
 }
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
@@ -689,7 +711,12 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			args = args->next;
 	}
 	args = (*cmd)->args;
-	//*args = *ft_delete_emty_args_nodes(&args);
+	if (args)
+	{
+		*args = *ft_delete_emty_args_nodes(&args);
+		if (!args->value && args->inside_quotes == 0 && args->next == NULL)
+			(*cmd)->args = NULL;
+	}
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
@@ -700,7 +727,6 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 
 	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
 	{
-		ft_putstr_fd("zbi",1);
 		*cmd = ft_handle_emty_cmd(cmd);
 	}
 }

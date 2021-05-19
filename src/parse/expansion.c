@@ -6,14 +6,12 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/19 11:12:19 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/19 15:55:41 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 #include "../../headers/execution.h"
-
-
 
 int check_exiting_of_qoutes(char *str)
 {
@@ -87,27 +85,28 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 	if (inside_dq == 1)
 	{
 		j++;
-		if (env_variable[j] == '_')
-			str = ft_strdup("_");
-		else
-		{
-			while (!ft_isalnum(env_variable[0]) && ( ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
+		//if (env_variable[j] == '_')
+		//	str = ft_strdup("_");
+		//else
+		//{
+			while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
-		}
-		//ft_putstr_fd(str,1);
+		//}
+		ft_putstr_fd(str, 1);
 	}
 	if (inside_dq == 0)
 	{
 		j++;
-		if (env_variable[j] == '_')
-			str = ft_strdup("_");
-		else
-		{
-			while (!ft_isalnum(env_variable[0]) && ( ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
-				j++;
-			str = ft_substr(env_variable, 1, j - 1);
-		}
+		//if (env_variable[j] == '_')
+		//	str = ft_strdup("_");
+		//else
+		//{
+		while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
+			j++;
+		str = ft_substr(env_variable, 1, j - 1);
+		//}
+		ft_putstr_fd(str, 1);
 	}
 	tmp = ft_search_in_list(env, str);
 	if (str)
@@ -118,7 +117,7 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 		return NULL;
 }
 
-char *ft_remove_double_quotes(char *word, int *i, t_env **env,char **last_env)
+char *ft_remove_double_quotes(char *word, int *i, t_env **env, char **last_env)
 {
 	int j;
 	char *expand;
@@ -143,8 +142,12 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,char **last_env)
 			}
 			else
 			{
-				expand = ft_substr(word, j, 2);
+				tmp = expand;
+				tmp1 = ft_substr(word, j, 2);
+				expand = ft_strjoin(expand, tmp1);
 				j += 2;
+				free(tmp);
+				free(tmp1);
 			}
 		}
 		else
@@ -190,90 +193,121 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,char **last_env)
 					{
 						//if (word[j + 1] != '"')
 						//{
-							//// Special Parameters of $
-							if (ft_isdigit(word[j + 1]) || ft_strchr("!:#%@-*=", word[j + 1]))
+						//// Special Parameters of $
+						if (ft_isdigit(word[j + 1]) || ft_strchr("!:#%@-*=/\\", word[j + 1]))
+						{
+							if (ft_isdigit(word[j + 1]))
 							{
-								if (ft_isdigit(word[j + 1]))
+								if (word[j + 1] == '0')
 								{
-									if (word[j + 1] == '0')
-									{
-										tmp1 = expand;
-										tmp = ft_strdup("minishell");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
-									}
-									j += 2;
+									tmp1 = expand;
+									tmp = ft_strdup("minishell");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
 								}
-								else
+								j += 2;
+							}
+							else
+							{
+								if (word[j + 1] == '#')
 								{
-									if (word[j + 1] == '#')
+									tmp1 = expand;
+									tmp = ft_strdup("0");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (word[j + 1] == '-')
+								{
+									tmp1 = expand;
+									tmp = ft_strdup("himBH");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (word[j + 1] == '!')
+								{
+									tmp1 = expand;
+									tmp = ft_strdup("$!");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (ft_strchr(":%=/\\", word[j + 1]))
+								{
+									if (word[j + 1] == '\\')
 									{
-										tmp1 = expand;
-										tmp = ft_strdup("0");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
+										int k = 0;
+										int l = j + 1;
+										while (word[l] == '\\')
+										{
+											l++;
+											k++;
+											/* code */
+										}
+										if (k % 2 != 0)
+										{
+											tmp1 = expand;
+											tmp = ft_substr(word, j, 2);
+											expand = ft_strjoin(expand, tmp);
+											free(tmp1);
+											free(tmp);
+										}
+										else
+										{
+											tmp1 = expand;
+											tmp = ft_substr(word, j, 1);
+											expand = ft_strjoin(expand, tmp);
+											free(tmp1);
+											free(tmp);
+										}
 									}
-									else if (word[j + 1] == '-')
+									else
 									{
-										tmp1 = expand;
-										tmp = ft_strdup("himBH");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
-									}
-									else if (word[j + 1] == '!')
-									{
-										tmp1 = expand;
-										tmp = ft_strdup("$!");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
-									}
-									else if (ft_strchr(":%=", word[j + 1]))
-									{
+
 										tmp1 = expand;
 										tmp = ft_substr(word, j, 2);
 										expand = ft_strjoin(expand, tmp);
 										free(tmp1);
 										free(tmp);
 									}
-									j += 2;
 								}
-							}
-							else if (word[j + 1] == '?')
-							{
-								//char *status_string = ft_int_to_string(status);
-								tmp = last_env[0];
-								tmp1 = expand;
-								//expand = ft_strjoin(expand, status_string);
-								expand = ft_strjoin(expand, tmp);
-								free(tmp1);
-								free(tmp);
 								j += 2;
 							}
-							else if (word[j + 1] && word[j + 1] != '\"' && word[j + 1] != ' ')
-							{
-								while (ft_isalpha(word[j]) || (word[j] == '$'))
-									j++;
-							}
-							else //// just a 1 dollar sign
-							{
-								tmp1 = expand;
-								tmp = ft_substr(word, j, 1);
-								expand = ft_strjoin(expand, tmp);
-								free(tmp1);
-								free(tmp);
+						}
+						else if (word[j + 1] == '?')
+						{
+							//char *status_string = ft_int_to_string(status);
+							tmp = last_env[0];
+							tmp1 = expand;
+							//expand = ft_strjoin(expand, status_string);
+							expand = ft_strjoin(expand, tmp);
+							free(tmp1);
+							free(tmp);
+							j += 2;
+						}
+						else if (word[j + 1] && word[j + 1] != '\"' && word[j + 1] != ' ')
+						{
+							while (ft_isalpha(word[j]) || (word[j] == '$') || word[j] == '_' || ft_isalnum(word[j]))
 								j++;
-							}
+						}
+						else //// just a 1 dollar sign
+						{
+							tmp1 = expand;
+							tmp = ft_substr(word, j, 1);
+							expand = ft_strjoin(expand, tmp);
+							free(tmp1);
+							free(tmp);
+							j++;
+						}
 						//}
 					}
 					else
 					{
 						if (!word[j + 1]) //get last dollar after double dollars sign
 						{
-							
+
 							tmp = expand;
 							tmp1 = ft_substr(word, j, 1);
 							expand = ft_strjoin(expand, tmp1);
@@ -357,7 +391,7 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 		else if (word[i] == '"')
 		{
 			tmp1 = expanded;
-			tmp = ft_remove_double_quotes(word, &i, env_list,last_env);
+			tmp = ft_remove_double_quotes(word, &i, env_list, last_env);
 			if (tmp)
 			{
 				expanded = ft_strjoin(expanded, tmp);
@@ -410,7 +444,7 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 					if (word[i + 1] != '"')
 					{
 						//// Special Parameters of $
-						if (ft_isdigit(word[i + 1]) || ft_strchr("!:#%@-*=", word[i + 1]))
+						if (ft_isdigit(word[i + 1]) || ft_strchr("!:#%@-*=/\\", word[i + 1]))
 						{
 							if (ft_isdigit(word[i + 1]))
 							{
@@ -450,14 +484,61 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 									free(tmp1);
 									free(tmp);
 								}
-								else if (ft_strchr(":%=", word[i + 1]))
+								else if (ft_strchr(":%=/\\", word[i + 1]))
 								{
-									tmp1 = expanded;
-									tmp = ft_substr(word, i, 2);
-									expanded = ft_strjoin(expanded, tmp);
-									free(tmp1);
-									free(tmp);
+									if (word[i + 1] == '\\')
+									{
+										int k = 0;
+										int l = i + 1;
+										while (word[l] == '\\')
+										{
+											l++;
+											k++;
+											/* code */
+										}
+										if (k % 2 != 0)
+										{
+											tmp1 = expanded;
+											tmp = ft_substr(word, i, 1);
+											expanded = ft_strjoin(expanded, tmp);
+											free(tmp1);
+											free(tmp);
+										}
+										else
+										{
+											tmp1 = expanded;
+											tmp = ft_substr(word, i, 2);
+											expanded = ft_strjoin(expanded, tmp);
+											free(tmp1);
+											free(tmp);
+										}
+									}
+									else
+									{
+										tmp1 = expanded;
+										tmp = ft_substr(word, i, 2);
+										expanded = ft_strjoin(expanded, tmp);
+										free(tmp1);
+										free(tmp);
+									}
 								}
+								//else if (word[i + 1] == '\\')
+								//{
+								//	int k = 0;
+								//	int l = i+1;
+								//	while (word[l] == '\\')
+								//	{
+								//		l++;
+								//		k++;
+								//		/* code */
+								//	}
+								//	tmp1 = expanded;
+								//	tmp = ft_substr(word, l, 1);
+								//	expanded = ft_strjoin(expanded, tmp);
+								//	free(tmp1);
+								//	free(tmp);
+
+								//}
 								i += 2;
 							}
 						}
@@ -474,7 +555,8 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 						}
 						else if (word[i + 1])
 						{
-							while (ft_isalpha(word[i]) || (word[i] == '$'))
+							ft_putstr_fd("hello", 1);
+							while (ft_isalpha(word[i]) || (word[i] == '$') || word[i] == '_' || ft_isalnum(word[i]))
 								i++;
 						}
 						else //// just a 1 dollar sign
@@ -487,11 +569,12 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 							i++;
 						}
 					}
-					else 
+					else
 						i++;
 				}
 				else /// env variavle not exist  no multiple sign dollars
 				{
+
 					if (!word[i + 1]) //get last dollar after double dollars sign
 					{
 						//ft_putstr_fd(word + i,1);
@@ -544,30 +627,29 @@ t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 	t_args *tmp;
 	int i;
 
-	
 	i = 1;
 	to_free = (*cmd)->command;
-	splited = ft_split((*cmd)->command,' ');
+	splited = ft_split((*cmd)->command, ' ');
 	(*cmd)->command = splited[0];
-	new_args = (t_args*)malloc(sizeof(t_args));
+	new_args = (t_args *)malloc(sizeof(t_args));
 	tmp = new_args;
-	while(splited[i])
+	while (splited[i])
 	{
 		new_args->value = splited[i];
 		new_args->inside_quotes = 0;
 		new_args->next = NULL;
-	//	ft_putstr_fd(splited[i],1);
+		//	ft_putstr_fd(splited[i],1);
 		if (splited[i + 1])
 		{
-			new_args->next = (t_args*)malloc(sizeof(t_args));
+			new_args->next = (t_args *)malloc(sizeof(t_args));
 			new_args = new_args->next;
 		}
 		i++;
 	}
 	if (i > 1)
 	{
-	new_args->next = (*cmd)->args;
-	(*cmd)->args = tmp;
+		new_args->next = (*cmd)->args;
+		(*cmd)->args = tmp;
 	}
 	return (*cmd);
 }
@@ -582,32 +664,32 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	int i;
 
 	tmp1 = *args;
-	ft_putstr_fd("{",1);
+	ft_putstr_fd("{", 1);
 	to_free = tmp1->value;
-	ft_putstr_fd(to_free,1);
-	ft_putstr_fd("}\n",1);
-	splited = ft_split(tmp1->value,' ');
+	ft_putstr_fd(to_free, 1);
+	ft_putstr_fd("}\n", 1);
+	splited = ft_split(tmp1->value, ' ');
 	i = 0;
-	new_args = (t_args*)malloc(sizeof(t_args));
+	new_args = (t_args *)malloc(sizeof(t_args));
 	tmp = new_args;
-	while(splited[i])
+	while (splited[i])
 	{
 		tmp->value = splited[i];
 		tmp->inside_quotes = 0;
 		tmp->next = NULL;
-		ft_putstr_fd(splited[i],1);
+		ft_putstr_fd(splited[i], 1);
 		if (splited[i + 1])
 		{
-			tmp->next = (t_args*)malloc(sizeof(t_args));
+			tmp->next = (t_args *)malloc(sizeof(t_args));
 			tmp = tmp->next;
 		}
 		i++;
 	}
 	tmp->next = tmp1->next;
 	*args = new_args;
-	ft_putstr_fd("[",1);
-	ft_putstr_fd(new_args->value,1);
-	ft_putstr_fd("]",1);
+	ft_putstr_fd("[", 1);
+	ft_putstr_fd(new_args->value, 1);
+	ft_putstr_fd("]", 1);
 	return (new_args);
 }
 
@@ -615,7 +697,7 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 {
 	t_args *temp;
 	t_args *prev;
-	
+
 	prev = NULL;
 	temp = *args;
 
@@ -626,16 +708,17 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			*args = temp->next;
 			temp = *args;
 		}
-		else{
+		else
+		{
 			temp = NULL;
 			//*args = (*args)->next;
 		}
-		
+
 		// free(tmp);
 	}
 	while (temp)
 	{
-		while (temp && (temp->inside_quotes != 0 || ( temp->value && temp->inside_quotes == 0)))
+		while (temp && (temp->inside_quotes != 0 || (temp->value && temp->inside_quotes == 0)))
 		{
 			prev = temp;
 			temp = temp->next;
@@ -643,12 +726,12 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 
 		if (temp == NULL)
 		{
-            //return;
+			//return;
 			return *args;
 		}
 		prev->next = temp->next;
 
-	//	free(temp); // Free memory
+		//	free(temp); // Free memory
 
 		temp = prev->next;
 	}
@@ -666,7 +749,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	char *after_expand_arg;
 
 	char *space;
-	
+
 	redis = NULL;
 	if ((*cmd)->command)
 	{
@@ -674,12 +757,12 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
 		ft_expande_word(&((*cmd)->command), env, last_env, 0);
 		after_expand_cmd = ft_strdup((*cmd)->command);
-		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd,after_expand_cmd) && ft_strchr(after_expand_cmd,' ') && ft_strchr(befor_expand_cmd,'$'))
+		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd, after_expand_cmd) && ft_strchr(after_expand_cmd, ' ') && ft_strchr(befor_expand_cmd, '$'))
 		{
-			space = ft_strchr(after_expand_cmd,' ');
+			space = ft_strchr(after_expand_cmd, ' ');
 			if (++space)
 			{
-				ft_putstr_fd(after_expand_cmd,1);
+				ft_putstr_fd(after_expand_cmd, 1);
 				*cmd = ft_handle_cmd_expanding(cmd);
 			}
 		}
@@ -692,10 +775,10 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, last_env, 0);
 		after_expand_arg = ft_strdup(args->value);
-		if (args->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg,after_expand_arg) && ft_strchr(after_expand_arg,' ') && ft_strchr(befor_expand_arg,'$') )
+		if (args->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg, after_expand_arg) && ft_strchr(after_expand_arg, ' ') && ft_strchr(befor_expand_arg, '$'))
 		{
 			next_args = args->next;
-			space = ft_strchr(after_expand_arg,' ');
+			space = ft_strchr(after_expand_arg, ' ');
 			if (++space)
 			{
 				*args = *ft_handle_arg_expanding(&args);
@@ -718,10 +801,9 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		redis->inside_quotes = check_exiting_of_qoutes(redis->file_name);
 		if (redis->inside_quotes != 0)
 			ft_expande_word(&redis->file_name, env, last_env, 0);
-		else 
+		else
 			ft_expande_word(&redis->file_name, env, last_env, 1);
-		
-		
+
 		redis = redis->next;
 	}
 	args = (*cmd)->args;

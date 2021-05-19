@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/19 09:15:24 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/19 17:40:28 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,11 @@ char *get_quoting_word(char *line, int *i, int quoting)
 {
 	int j;
 	char *word;
+	int k;
+	k = 0;
+	int back_slash_count;
+
+	back_slash_count = 0;
 	
 	j = *i;
 	word = NULL;
@@ -183,12 +188,35 @@ char *get_quoting_word(char *line, int *i, int quoting)
 		j++;
 		while(line[j])
 		{
+			
 			if (line[j] == '"' && line[j - 1] != '\\')
+			{	
+				ft_putstr_fd("hello 1",1);
 				break;
+			}
+			else if (line[j] == '"' && line[j - 1] == '\\')
+			{
+				
+				k = j - 1;
+				while(line[k] == '\\')
+				{
+					back_slash_count++;
+					k--;
+				}
+				if (back_slash_count %2 == 0)
+				{
+					ft_putstr_fd("hello",1);
+					back_slash_count = 0;
+					break;
+				}
+			}
 			j++;
 		}
 		word = ft_substr(line, *i, j - *i + 1);
 		*i = j + 1;
+		ft_putstr_fd("$",1);
+		ft_putstr_fd(word,1);
+		ft_putstr_fd("$",1);
 		return word;
 	}
 	return word;

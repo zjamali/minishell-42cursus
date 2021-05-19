@@ -609,10 +609,9 @@ t_args *ft_handle_arg_expanding(t_args **args)
 
 t_simple_cmd *ft_handle_emty_cmd(t_simple_cmd **cmd)
 {
-	//if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
-	//{
-	//	if ()
-	//} 
+	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
+	{
+	} 
 	return *cmd;
 }
 
@@ -632,7 +631,6 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			temp = *args;
 		}
 		else{
-		ft_putstr_fd("zaaabi",1);
 			temp = NULL;
 			//*args = (*args)->next;
 		}
@@ -724,10 +722,18 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		ft_expande_word(&redis->file_name, env, last_env, 1);
 		redis = redis->next;
 	}
-
+	args = (*cmd)->args;
 	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
 	{
-		*cmd = ft_handle_emty_cmd(cmd);
+		if (args)
+		{
+			(*cmd)->command = ft_strdup(args->value);
+			(*cmd)->inside_quotes = args->inside_quotes;
+			if (args->next)
+				*args = *args->next;
+			else
+				(*cmd)->args = NULL;
+		}
 	}
 }
 

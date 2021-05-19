@@ -122,6 +122,53 @@ t_lines_list *ft_destroy_line_list(t_lines_list *lines_list)
 	}
 	return NULL;
 }
+t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
+{
+	// Store head node
+    t_simple_cmd *head;
+	t_simple_cmd *prev;
+	prev = NULL;
+
+	head = (*pipe_line)->child;
+
+ 
+	t_simple_cmd *temp;
+    // If head node itself holds the key or multiple
+    // occurrences of key
+	temp = head;
+    while (temp != NULL && (!temp->command && temp->inside_quotes == 0))
+    {
+        head = temp->next; // Changed head
+        //free(temp); // free old head
+        temp = head; // Change Temp
+    }
+ 
+    // Delete occurrences other than head
+    while (temp != NULL)
+    {
+        // Search for the key to be deleted, keep track of
+        // the previous node as we need to change
+        // 'prev->next'
+        while (temp != NULL && (temp->inside_quotes != 0 || ( temp->command && temp->inside_quotes == 0)))
+        {
+            prev = temp;
+            temp = temp->next;
+        }
+ 
+        // If key was not present in linked list
+        if (temp == NULL)
+            return head;
+ 
+        // Unlink the node from linked list
+        prev->next = temp->next;
+ 
+        //free(temp); // Free memory
+ 
+        // Update Temp for next iteration of outer loop
+        temp = prev->next;
+    }
+	return head;
+}
 
 
 int main(int ac,char **av,char **env)
@@ -185,11 +232,15 @@ int main(int ac,char **av,char **env)
 		{
 			last_env[0] = ft_int_to_string(status); 
 			ft_expanding(current_pipe_line,&head,last_env);
-			ft_print_pipeline_cmd(current_pipe_line);
-			ft_putstr_fd("-----------------------\n",1);
-			last_env[1] = get_last_argument_or_command(current_pipe_line);
-			status = ft_execute(current_pipe_line, &head);
-			ft_putstr_fd("******\n",1);
+			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
+			if (current_pipe_line->child)
+			{
+				ft_print_pipeline_cmd(current_pipe_line);
+				ft_putstr_fd("-----------------------\n",1);
+				last_env[1] = get_last_argument_or_command(current_pipe_line);
+				status = ft_execute(current_pipe_line, &head);
+				ft_putstr_fd("******\n",1);
+			}
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)

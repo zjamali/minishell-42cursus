@@ -607,14 +607,6 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	return (new_args);
 }
 
-t_simple_cmd *ft_handle_emty_cmd(t_simple_cmd **cmd)
-{
-	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
-	{
-	} 
-	return *cmd;
-}
-
 t_args *ft_delete_emty_args_nodes(t_args **args)
 {
 	t_args *temp;

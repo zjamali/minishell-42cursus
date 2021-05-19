@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/18 18:23:51 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/19 07:47:14 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,20 @@
 
 int check_exiting_of_qoutes(char *str)
 {
-	if (str)
+	int i;
+
+	i = 0;
+	while (str[i])
 	{
-		if (str[0] == '\'')
+		if (str[i] == '\'')
 		{
 			return (1);
 		}
-		else if (str[0] == '\"')
+		else if (str[i] == '\"')
 			return 2;
-		else
-			return (0);
+		//else
+		//	return (0);
+		i++;
 	}
 	return (0);
 }
@@ -711,7 +715,12 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	while (redis)
 	{
 		redis->inside_quotes = check_exiting_of_qoutes(redis->file_name);
-		ft_expande_word(&redis->file_name, env, last_env, 1);
+		if (redis->inside_quotes != 0)
+			ft_expande_word(&redis->file_name, env, last_env, 0);
+		else 
+			ft_expande_word(&redis->file_name, env, last_env, 1);
+		
+		
 		redis = redis->next;
 	}
 	args = (*cmd)->args;

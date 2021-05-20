@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/19 17:40:28 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/20 19:40:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,10 +205,16 @@ char *get_quoting_word(char *line, int *i, int quoting)
 				}
 				if (back_slash_count %2 == 0)
 				{
+					ft_putnbr_fd(back_slash_count,1);
 					ft_putstr_fd("hello",1);
 					back_slash_count = 0;
 					break;
 				}
+				else
+				{
+					back_slash_count = 0;
+				}
+				
 			}
 			j++;
 		}

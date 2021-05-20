@@ -657,12 +657,14 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	t_redirection *redis;
 	char *befor_expand_cmd;
 	char *after_expand_cmd;
-
+	befor_expand_cmd = NULL;
+	after_expand_cmd = NULL;
 	char *befor_expand_arg;
 	char *after_expand_arg;
-
+	befor_expand_arg = NULL;
+	after_expand_arg = NULL;
 	char *space;
-	
+	space = NULL;
 	redis = NULL;
 	if ((*cmd)->command)
 	{
@@ -677,7 +679,11 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			{
 				*cmd = ft_handle_cmd_expanding(cmd);
 			}
+			free(space);
+			space = NULL;
 		}
+		free(befor_expand_cmd);
+		free(after_expand_cmd);
 	}
 	args = (*cmd)->args;
 	t_args *next_args = NULL;
@@ -699,6 +705,10 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		}
 		else
 			args = args->next;
+		free(befor_expand_arg);
+		befor_expand_arg = NULL;
+		free(after_expand_arg);
+		after_expand_arg = NULL;
 	}
 	args = (*cmd)->args;
 	if (args)

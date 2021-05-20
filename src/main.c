@@ -133,8 +133,6 @@ t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 
  
 	t_simple_cmd *temp;
-    // If head node itself holds the key or multiple
-    // occurrences of key
 	temp = head;
     while (temp != NULL && (!temp->command && temp->inside_quotes == 0))
     {
@@ -146,9 +144,7 @@ t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
     // Delete occurrences other than head
     while (temp != NULL)
     {
-        // Search for the key to be deleted, keep track of
-        // the previous node as we need to change
-        // 'prev->next'
+
         while (temp != NULL && (temp->inside_quotes != 0 || ( temp->command && temp->inside_quotes == 0)))
         {
             prev = temp;
@@ -230,17 +226,22 @@ int main(int ac,char **av,char **env)
 			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
 		{
-			last_env[0] = ft_int_to_string(status); 
-			ft_expanding(current_pipe_line,&head,last_env);
-			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
-			if (current_pipe_line->child)
+			if (last_env[0])
 			{
-				ft_print_pipeline_cmd(current_pipe_line);
-				ft_putstr_fd("-----------------------\n",1);
-				last_env[1] = get_last_argument_or_command(current_pipe_line);
-				status = ft_execute(current_pipe_line, &head);
-				ft_putstr_fd("******\n",1);
+				free(last_env[0]);
+				last_env[0] = NULL;
 			}
+			last_env[0] = ft_int_to_string(status); 
+			//ft_expanding(current_pipe_line,&head,last_env);
+			//current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
+			//if (current_pipe_line->child)
+			//{
+				ft_print_pipeline_cmd(current_pipe_line);
+			//	ft_putstr_fd("-----------------------\n",1);
+			//	last_env[1] = get_last_argument_or_command(current_pipe_line);
+			//	//status = ft_execute(current_pipe_line, &head);
+			//	ft_putstr_fd("******\n",1);
+			//}
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)

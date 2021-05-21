@@ -232,16 +232,16 @@ int main(int ac,char **av,char **env)
 				last_env[0] = NULL;
 			}
 			last_env[0] = ft_int_to_string(status); 
-			//ft_expanding(current_pipe_line,&head,last_env);
-			//current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
-			//if (current_pipe_line->child)
-			//{
+			ft_expanding(current_pipe_line,&head,last_env);
+			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
+			if (current_pipe_line->child)
+			{
 				ft_print_pipeline_cmd(current_pipe_line);
-			//	ft_putstr_fd("-----------------------\n",1);
-			//	last_env[1] = get_last_argument_or_command(current_pipe_line);
-			//	//status = ft_execute(current_pipe_line, &head);
-			//	ft_putstr_fd("******\n",1);
-			//}
+				ft_putstr_fd("-----------------------\n",1);
+				last_env[1] = get_last_argument_or_command(current_pipe_line);
+				status = ft_execute(current_pipe_line, &head);
+				ft_putstr_fd("******\n",1);
+			}
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)

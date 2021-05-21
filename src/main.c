@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/19 11:40:28 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/21 16:25:11 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,13 +203,13 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	//readline = ft_init_readline(&termios);
+	// readline = ft_init_readline(&termios);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
 		//i++;
 		show_prompt();
-		//micro_read_line(&line, readline, &lines_list,&status);
+		// micro_read_line(&line, readline, &lines_list,&status);
 		read_command_list(&line);
 		if (line)
 		{
@@ -240,7 +240,7 @@ int main(int ac,char **av,char **env)
 				ft_putstr_fd("-----------------------\n",1);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				status = ft_execute(current_pipe_line, &head);
-				ft_putstr_fd("******\n",1);
+				ft_putstr_fd("-----------------------\n",1);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}

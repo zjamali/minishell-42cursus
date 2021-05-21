@@ -75,7 +75,7 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 		//parrent process;
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
-		ft_putnbr_fd(f_status, 1);
+		// ft_putnbr_fd(f_status, 1);
 		return (f_status);
 	}
 	return (77);
@@ -314,7 +314,7 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	*/
 	ft_putstr_fd(BLUE,1);
-	ft_putendl_fd("------------------------------------------------------------", 1);
+	// ft_putendl_fd("------------------------------------------------------------", 1);
 	// if (cmd->simple_cmd_count != 1)
 	do_backups(1);
 	mini.flag = 0;
@@ -332,6 +332,6 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	else if (cmd->child->command != NULL)
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
-	ft_putendl_fd("------------------------------------------------------------", 2);
+	// ft_putendl_fd("------------------------------------------------------------", 2);
 	return (mini.ret);
 }

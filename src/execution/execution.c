@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/08 16:45:19 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/21 20:32:58 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,9 @@ void	do_backups(int flag)
 	if (flag)
 	{
 		//do a backup for all the standars if flag == 1
-		stdin = dup2(0, 1337);
-		stdou = dup2(1, 1338);
-		stdou = dup2(2, 1339);
+		stdin = dup(STDIN_FILENO);
+		stdou = dup(STDOUT_FILENO);
+		stderr = dup(STDERR_FILENO);
 	}
 	else if (!flag)
 	{
@@ -332,6 +332,6 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	else if (cmd->child->command != NULL)
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
-	// ft_putendl_fd("------------------------------------------------------------", 2);
+	ft_putendl_fd("-------------------------execution finished------------------------------", 1);
 	return (mini.ret);
 }

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 20:18:51 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/21 20:47:55 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	// readline = ft_init_readline(&termios);
+	//readline = ft_init_readline(&termios);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
@@ -233,6 +233,7 @@ int main(int ac,char **av,char **env)
 			if (current_pipe_line->child)
 			{
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
+				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);
 			}
 			current_pipe_line = current_pipe_line->next;

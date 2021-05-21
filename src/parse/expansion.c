@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 17:13:51 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/21 20:18:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
 		//}
-		ft_putstr_fd(str, 1);
+		//ft_putstr_fd(str, 1);
 	}
 	if (inside_dq == 0)
 	{
@@ -106,7 +106,7 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 			j++;
 		str = ft_substr(env_variable, 1, j - 1);
 		//}
-		ft_putstr_fd(str, 1);
+		//ft_putstr_fd(str, 1);
 	}
 	tmp = ft_search_in_list(env, str);
 	if (str)
@@ -554,7 +554,7 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 						}
 						else if (word[i + 1])
 						{
-							ft_putstr_fd("hello", 1);
+						//	ft_putstr_fd("hello", 1);
 							while (ft_isalpha(word[i]) || (word[i] == '$') || word[i] == '_' || ft_isalnum(word[i]))
 								i++;
 						}
@@ -637,7 +637,7 @@ t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 		new_args->value = splited[i];
 		new_args->inside_quotes = 0;
 		new_args->next = NULL;
-			ft_putstr_fd(splited[i],1);
+		//	ft_putstr_fd(splited[i],1);
 		if (splited[i + 1])
 		{
 			new_args->next = (t_args *)malloc(sizeof(t_args));
@@ -663,10 +663,10 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	int i;
 
 	tmp1 = *args;
-	ft_putstr_fd("{", 1);
+	//ft_putstr_fd("{", 1);
 	to_free = tmp1->value;
-	ft_putstr_fd(to_free, 1);
-	ft_putstr_fd("}\n", 1);
+//	ft_putstr_fd(to_free, 1);
+//	ft_putstr_fd("}\n", 1);
 	splited = ft_split(tmp1->value, ' ');
 	i = 0;
 	new_args = (t_args *)malloc(sizeof(t_args));
@@ -676,7 +676,7 @@ t_args *ft_handle_arg_expanding(t_args **args)
 		tmp->value = splited[i];
 		tmp->inside_quotes = 0;
 		tmp->next = NULL;
-		ft_putstr_fd(splited[i], 1);
+		//ft_putstr_fd(splited[i], 1);
 		if (splited[i + 1])
 		{
 			tmp->next = (t_args *)malloc(sizeof(t_args));
@@ -686,9 +686,9 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	}
 	tmp->next = tmp1->next;
 	*args = new_args;
-	ft_putstr_fd("[", 1);
-	ft_putstr_fd(new_args->value, 1);
-	ft_putstr_fd("]", 1);
+	//ft_putstr_fd("[", 1);
+	//ft_putstr_fd(new_args->value, 1);
+	//ft_putstr_fd("]", 1);
 	return (new_args);
 }
 
@@ -839,7 +839,7 @@ void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)
 
 	current_cmd = NULL;
 	head_cmd = NULL;
-	ft_putstr_fd(PURPLE, 1);
+	//ft_putstr_fd(PURPLE, 1);
 	head_cmd = pipe_line->child;
 	while (head_cmd)
 	{

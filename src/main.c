@@ -199,6 +199,7 @@ int main(int ac,char **av,char **env)
 	(void)ac;
 	(void)av;
 	(void)env;
+	
 	int i = 0;
 	//
 	head = NULL;
@@ -236,12 +237,12 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				ft_print_pipeline_cmd(current_pipe_line);
-				ft_putstr_fd("-----------------------\n",1);
+				//ft_print_pipeline_cmd(current_pipe_line);
+				//ft_putstr_fd("-----------------------\n",1);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
-				ft_putchar_fd('\n', 1);
+				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);
-				ft_putstr_fd("-----------------------\n",1);
+				//ft_putstr_fd("-----------------------\n",1);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}

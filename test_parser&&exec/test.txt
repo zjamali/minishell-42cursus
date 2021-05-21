@@ -1,5 +1,5 @@
 /bin/ls
-exit a aa a
+exit a aa a ----
 echo ";;;;;"
 /bin/pwd
 ls -la

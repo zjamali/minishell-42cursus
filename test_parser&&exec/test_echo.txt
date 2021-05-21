@@ -24,14 +24,14 @@ echo"
 echo
 echo $TEST
 echo $PWD ; echo $HOME ; echo "$PWD" ; echo '$PWD' ; echo "$HOME"
-echo > ilovewords.txt count me ; wc ilovewords.txt.                     -------
+echo > ilovewords.txt count me ; wc ilovewords.txt.                     
 echo 'how are you'
 echo '$PWD'
-echo > "hardesttest.txt".    ----
-echo adding stuff >> working.txt.   ---
-echo more stuff >> working.txt.  ---
-echo > working.txt.  ----
-echo dit > test1 gaat > test2 goed > test3. ----
+echo > "hardesttest.txt".    
+echo adding stuff >> working.txt.  
+echo more stuff >> working.txt. 	
+echo > working.txt
+echo dit > test1 gaat > test2 goed > test3 
 echo dit > test1 gaat > test2 goed > test3 > test4
 echo > doethet ; echo hoi >> doethet "of niet" ; echo clear > "doethet" ; echo test > working.txt ; echo > newfile.txt hardertest
 echo hallo daar | echo hoi maran
@@ -41,13 +41,13 @@ echo hallo daar
 echo "hallo daar"
 echo hallo daar | echo hoi maran
 echo hallo daar ; echo hoi maran
-echo hallo >file1 >file2.        -------
-echo hallo >file1 >file2 maran.  --------
-echo hallo >file1 >file2 >>file3 maran siemons. ------
-echo hallo <file1 >file2. -------
+echo hallo >file1 >file2.      
+echo hallo >file1 >file2 maran 
+echo hallo >file1 >file2 >>file3 maran siemons
+echo hallo <file1 >file2. 
 echo $USER""
 echo $USER"
-echo $USER_    ********
+echo $USER_    
 echo $
 echo 123$USER----
 echo 123$USER----$
@@ -108,9 +108,9 @@ echo hallo
 echo hallo | echo hoi
 echo hallo ; echo hoi
 echo hallo >x1 >x2 >x3 | echo hoi	 ----- 				
-echo hallo >x1 >x2 >x3 ; echo hoi	 ------			
+echo hallo >x1 >x2 >x3 ; echo hoi			
 echo hallo | echo poep >x1 >x2		---				
-echo hallo ; echo poep >x1 >x2		----				
+echo hallo ; echo poep >x1 >x2						
 echo hallo | echo hoi | cat
 echo hallo | echo hoi > y1 >y2 | cat -e. -----
 echo hoi > y1 >y2 ; cat -e.             ----

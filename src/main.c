@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 19:26:57 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/21 20:29:51 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	// readline = ft_init_readline(&termios);
+	//readline = ft_init_readline(&termios);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
@@ -237,19 +237,19 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				ft_print_pipeline_cmd(current_pipe_line);
-				ft_putstr_fd("-----------------------\n",1);
+				//ft_print_pipeline_cmd(current_pipe_line);
+				//ft_putstr_fd("-----------------------\n",1);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
+				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);
-				ft_putstr_fd("hhhhh",1);
-				ft_putstr_fd("-----------------------\n",1);
+				//ft_putstr_fd("-----------------------\n",1);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)
 		{
 			ft_destroy_ast(cmd);
-			ft_putstr_fd(RESET,ft_strlen(RESET));
+			//ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
 		cmd = NULL;
 		//readline= ft_destroy_read_line(readline);

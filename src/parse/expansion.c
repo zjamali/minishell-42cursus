@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/20 19:19:41 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/21 17:13:51 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -750,31 +750,10 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	befor_expand_arg = NULL;
 	after_expand_arg = NULL;
 	char *space;
+	space = NULL;
 	redis = NULL;
-	if ((*cmd)->command)
-	{
-		befor_expand_cmd = ft_strdup((*cmd)->command);
-		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
-		ft_expande_word(&((*cmd)->command), env, last_env, 0);
-		after_expand_cmd = ft_strdup((*cmd)->command);
-		ft_putstr_fd(befor_expand_cmd,1);
-		ft_putstr_fd("||",1);
-		ft_putstr_fd(after_expand_cmd,1);
-		ft_putstr_fd("\n",1);
-		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd, after_expand_cmd) && ft_strchr(after_expand_cmd, ' ') && ft_strchr(befor_expand_cmd, '$'))
-		{
-			space = ft_strchr(after_expand_cmd, ' ');
-			if (++space)
-			{
-				ft_putstr_fd(after_expand_cmd, 1);
-				*cmd = ft_handle_cmd_expanding(cmd);
-			}
-			free(space);
-			space = NULL;
-		}
-		free(befor_expand_cmd);
-		free(after_expand_cmd);
-	}
+
+	
 	args = (*cmd)->args;
 	t_args *next_args = NULL;
 	while (args)
@@ -799,6 +778,26 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		befor_expand_arg = NULL;
 		free(after_expand_arg);
 		after_expand_arg = NULL;
+	}
+	
+	if ((*cmd)->command)
+	{
+		befor_expand_cmd = ft_strdup((*cmd)->command);
+		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
+		ft_expande_word(&((*cmd)->command), env, last_env, 0);
+		after_expand_cmd = ft_strdup((*cmd)->command);
+		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd, after_expand_cmd) && ft_strchr(after_expand_cmd, ' ') && ft_strchr(befor_expand_cmd, '$'))
+		{
+			space = ft_strchr(after_expand_cmd, ' ');
+			if (++space)
+			{
+				*cmd = ft_handle_cmd_expanding(cmd);
+			}
+			//free(space);
+			//space = NULL;
+		}
+		free(befor_expand_cmd);
+		free(after_expand_cmd);
 	}
 	args = (*cmd)->args;
 	if (args)

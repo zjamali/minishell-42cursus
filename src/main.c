@@ -6,13 +6,55 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/04 16:50:45 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/21 16:25:11 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../headers/minishell.h"
 #include "../headers/execution.h"
+
+char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
+
+	t_args *args;
+	char **split;
+
+	split = NULL;
+	args = NULL;
+	if (current_pipe_line->child->next != NULL)
+	{
+		return (NULL);
+	}
+	else {
+		args = current_pipe_line->child->args;
+		if (args == NULL)
+		{
+			ft_putstr_fd(current_pipe_line->child->command,1);
+			return (ft_strdup(current_pipe_line->child->command));
+		}
+		else{
+			while (args->next != NULL)
+			{
+				args = args->next;
+			}
+			if (current_pipe_line->child->command && !ft_strcmp(current_pipe_line->child->command,"export"))
+			{
+				split = ft_split(args->value,'=');
+				free(split[1]);
+				return (split[0]);
+			}
+			else {
+				if (args->value)
+					return ft_strdup(args->value);
+				else
+				{
+					return (ft_strdup(current_pipe_line->child->command));
+				}
+			}
+		}
+	}
+	return NULL;
+}
 
 void read_command_list(char **line)
 {
@@ -80,6 +122,50 @@ t_lines_list *ft_destroy_line_list(t_lines_list *lines_list)
 	}
 	return NULL;
 }
+t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
+{
+	// Store head node
+    t_simple_cmd *head;
+	t_simple_cmd *prev;
+	prev = NULL;
+
+	head = (*pipe_line)->child;
+
+ 
+	t_simple_cmd *temp;
+	temp = head;
+    while (temp != NULL && (!temp->command && temp->inside_quotes == 0))
+    {
+        head = temp->next; // Changed head
+        //free(temp); // free old head
+        temp = head; // Change Temp
+    }
+ 
+    // Delete occurrences other than head
+    while (temp != NULL)
+    {
+
+        while (temp != NULL && (temp->inside_quotes != 0 || ( temp->command && temp->inside_quotes == 0)))
+        {
+            prev = temp;
+            temp = temp->next;
+        }
+ 
+        // If key was not present in linked list
+        if (temp == NULL)
+            return head;
+ 
+        // Unlink the node from linked list
+        prev->next = temp->next;
+ 
+        //free(temp); // Free memory
+ 
+        // Update Temp for next iteration of outer loop
+        temp = prev->next;
+    }
+	return head;
+}
+
 
 int main(int ac,char **av,char **env)
 {
@@ -89,18 +175,22 @@ int main(int ac,char **av,char **env)
 	t_env *head;
 	char *line;
 	int status;
+	char *last_argumet_or_command;
 //
 	current_pipe_line = NULL;
 	t_lines_list *lines_list;
 	// struct termios termios;
 	// t_readline *readline;
+	 last_argumet_or_command = NULL;
 
 	//// get terminal window size
 	
 	//struct winsize window;
 	
-	
-	
+	char **last_env;
+	last_env = (char **)malloc(sizeof(char) * 2);
+	last_env[0] = NULL;
+	last_env[1] = NULL;
 
 	lines_list = NULL;
 	status = 0;
@@ -113,13 +203,13 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	//readline = ft_init_readline(&termios);
+	// readline = ft_init_readline(&termios);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
 		//i++;
 		show_prompt();
-		//micro_read_line(&line, readline, &lines_list,&status);
+		// micro_read_line(&line, readline, &lines_list,&status);
 		read_command_list(&line);
 		if (line)
 		{
@@ -136,10 +226,22 @@ int main(int ac,char **av,char **env)
 			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
 		{
-			ft_expanding(current_pipe_line,&head,status);
-			//ft_print_pipeline_cmd(current_pipe_line);
-			//ft_putstr_fd("-----------------------\n",1);
-			status = ft_execute(current_pipe_line, &head);
+			if (last_env[0])
+			{
+				free(last_env[0]);
+				last_env[0] = NULL;
+			}
+			last_env[0] = ft_int_to_string(status); 
+			ft_expanding(current_pipe_line,&head,last_env);
+			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
+			if (current_pipe_line->child)
+			{
+				ft_print_pipeline_cmd(current_pipe_line);
+				ft_putstr_fd("-----------------------\n",1);
+				last_env[1] = get_last_argument_or_command(current_pipe_line);
+				status = ft_execute(current_pipe_line, &head);
+				ft_putstr_fd("-----------------------\n",1);
+			}
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)
@@ -154,3 +256,9 @@ int main(int ac,char **av,char **env)
 	}
 	return 0;
 }
+/*
+echo >      \;
+> f1 bouvle
+echo hello >''>f1 boucle 
+echo helo > $jefh boucle infinie ambigious redirection
+*/

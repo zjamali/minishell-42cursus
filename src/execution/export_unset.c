@@ -88,8 +88,7 @@ int	ft_export(t_env **head, t_args *args)
 	{
 		if (args->value != NULL && ft_isalpha(args->value[0]))
 			ft_add_var(head, args);
-		else
-			args = args->next;
+		args = args->next;
 	}
 	return (ret);
 }

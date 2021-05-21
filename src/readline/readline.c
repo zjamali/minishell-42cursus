@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 15:46:54 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/17 15:13:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void ft_get_cursor_position(int *x, int *y)
 		{
 			*y = ft_atoi(c + i);
 			first = 2;
-			//return;
 		}
 		i++;
 	}
@@ -224,8 +223,6 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 
 	tmp = NULL;
 	tmp_list = NULL;
-
-	
 	if (!list)
 	{
 		current->history = history;
@@ -392,12 +389,7 @@ int get_charctere(t_readline *readline, long c,
 	newline_break = 1;
 	new_line = NULL;
 	if (ft_isprint(c))
-	{
-		//if (current && current->up_or_down == true)
-		//	ft_add_to_char_list(readline, c, &current->char_list);
-		//else
 		ft_add_to_char_list(readline, c, &current->char_list);
-	}
 	else if (c == D_KEY_ENTER)
 	{
 		if (current && current->up_or_down == true)
@@ -446,6 +438,7 @@ int get_charctere(t_readline *readline, long c,
 t_char_list *init_character_list(void)
 {
 	t_char_list *tmp;
+
 	tmp = (t_char_list*)malloc(sizeof(t_char_list));
 	tmp->len = 0;
 	tmp->next = NULL;
@@ -639,6 +632,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 			if (current->char_list == NULL || current->char_list->value == 0)
 			{
 				ft_putstr_fd("exit",1);
+				*status = 0;
 				exit(*status);
 			}
 		}

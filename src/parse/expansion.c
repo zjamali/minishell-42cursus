@@ -12,6 +12,10 @@
 
 #include "../../headers/minishell.h"
 #include "../../headers/execution.h"
+void ft_replace_tab_with_space(t_simple_cmd **cmd)
+{
+
+}
 
 int check_exiting_of_qoutes(char *str)
 {
@@ -755,10 +759,23 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 
 	
 	args = (*cmd)->args;
-	t_args *next_args = NULL;
+	t_args *next_args = NULL;	
+	/// replace space by tab
+	///
+	args = (*cmd)->args;
 	while (args)
 	{
 		befor_expand_arg = ft_strdup(args->value);
+		int i ;
+		i = 0;
+		/// replace space by tab
+		while (args->value[i] != '\0')
+		{
+			if (args->value[i] == ' ')
+				args->value[i] = '\t';
+			i++;
+		}
+		///
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, last_env, 0);
 		after_expand_arg = ft_strdup(args->value);
@@ -783,6 +800,16 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	if ((*cmd)->command)
 	{
 		befor_expand_cmd = ft_strdup((*cmd)->command);
+		int i = 0;
+		
+		while ((*cmd)->command[i] != '\0')
+		{
+			if ((*cmd)->command[i] == ' ')
+				(*cmd)->command[i] = '\t';
+			i++;
+		}
+		i = 0;
+		ft_putstr_fd(befor_expand_cmd,1);
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
 		ft_expande_word(&((*cmd)->command), env, last_env, 0);
 		after_expand_cmd = ft_strdup((*cmd)->command);
@@ -830,6 +857,31 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 				(*cmd)->args = NULL;
 		}
 	}
+	
+	/// replace tab by space
+	int i = 0;
+	while ((*cmd)->command[i] != '\0')
+	{
+		if ((*cmd)->command[i] == '\t')
+			(*cmd)->command[i] = ' ';
+		i++;
+	}
+	i = 0;
+	args = (*cmd)->args;
+	while (args)
+	{
+		i = 0;
+		while (args->value[i] != '\0')
+		{
+			if (args->value[i] == '\t')
+				args->value[i] = ' ';
+			i++;
+		}
+		args = args->next;
+	}
+	
+
+	
 }
 
 void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)

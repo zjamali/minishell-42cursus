@@ -234,7 +234,7 @@ int main(int ac,char **av,char **env)
 			{
 				ft_print_pipeline_cmd(current_pipe_line);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
-				//ft_putchar_fd('\n', 1);
+				ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);
 			}
 			current_pipe_line = current_pipe_line->next;

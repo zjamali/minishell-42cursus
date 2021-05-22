@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/21 20:32:58 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/22 20:40:09 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,6 +332,6 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	else if (cmd->child->command != NULL)
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
-	ft_putendl_fd("-------------------------execution finished------------------------------", 1);
+	//ft_putendl_fd("-------------------------execution finished------------------------------", 1);
 	return (mini.ret);
 }

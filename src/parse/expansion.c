@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 20:18:25 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/22 20:41:29 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -809,7 +809,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			i++;
 		}
 		i = 0;
-		ft_putstr_fd(befor_expand_cmd,1);
+		//ft_putstr_fd(befor_expand_cmd,1);
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
 		ft_expande_word(&((*cmd)->command), env, last_env, 0);
 		after_expand_cmd = ft_strdup((*cmd)->command);

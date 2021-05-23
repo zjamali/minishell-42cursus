@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:51:44 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/04 17:09:32 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/23 17:10:53 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
 void				ft_putendl_fd(char *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
-int					ft_atoi(const char *str);
+long long			ft_atoi(const char *str);
 int					ft_isalnum(int a);
 int					ft_isalpha(int c);
 int					ft_isascii(int asci);

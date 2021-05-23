@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/23 15:21:12 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/23 18:11:50 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,6 +247,7 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 		}
 		cmd->child = cmd->child->next;
 		command+=2;
+		do_backups(0);
 		k++;
 	}
 	i = 0;

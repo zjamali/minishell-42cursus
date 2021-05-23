@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/22 21:14:43 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/23 09:02:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,20 +131,19 @@ t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 
 	head = (*pipe_line)->child;
 
- 
+	
 	t_simple_cmd *temp;
 	temp = head;
-    while (temp != NULL && (!temp->command && temp->inside_quotes == 0))
+    while (temp != NULL && (!temp->command && temp->inside_quotes == 0) && temp->args == NULL && temp->redirections == NULL)
     {
         head = temp->next; // Changed head
         //free(temp); // free old head
         temp = head; // Change Temp
     }
- 
+	
     // Delete occurrences other than head
     while (temp != NULL)
     {
-
         while (temp != NULL && (temp->inside_quotes != 0 || ( temp->command && temp->inside_quotes == 0)))
         {
             prev = temp;
@@ -156,12 +155,18 @@ t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
             return head;
  
         // Unlink the node from linked list
-        prev->next = temp->next;
- 
-        //free(temp); // Free memory
- 
-        // Update Temp for next iteration of outer loop
-        temp = prev->next;
+		if (prev)
+		{
+        	prev->next = temp->next;
+			
+			//free(temp); // Free memory
+			temp = prev->next;
+        	// Update Temp for next iteration of outer loop
+		}
+		else
+		{
+			temp = temp->next;
+		}        
     }
 	return head;
 }
@@ -232,7 +237,7 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				//ft_print_pipeline_cmd(current_pipe_line);
+				ft_print_pipeline_cmd(current_pipe_line);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);

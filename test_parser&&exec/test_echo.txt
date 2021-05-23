@@ -105,7 +105,7 @@ echo 123"hallo$"456
 echo $1234
 echo $_1234.    **********
 echo hallo
-echo hallo | echo hoi
+echo hallo | echo hoi.    
 echo hallo ; echo hoi
 echo hallo >x1 >x2 >x3 | echo hoi	 ----- 				
 echo hallo >x1 >x2 >x3 ; echo hoi			

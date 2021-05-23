@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/22 20:41:29 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/23 10:56:10 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 	if (inside_dq == 1)
 	{
 		j++;
-		//if (env_variable[j] == '_')
-		//	str = ft_strdup("_");
+		//if (env_variable[j] == '~' && env_variable[j+1] == '\0')
+		//	str = ft_strdup("HOME");
 		//else
 		//{
 			while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
@@ -102,15 +102,17 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 	if (inside_dq == 0)
 	{
 		j++;
-		//if (env_variable[j] == '_')
-		//	str = ft_strdup("_");
+		//if (env_variable[j] == '~' && env_variable[j + 1] == '\0')
+		//{
+		//	str = ft_strdup("HOME");
+		//}
 		//else
 		//{
-		while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
-			j++;
-		str = ft_substr(env_variable, 1, j - 1);
+			while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
+				j++;
+			str = ft_substr(env_variable, 1, j - 1);
 		//}
-		//ft_putstr_fd(str, 1);
+		ft_putstr_fd(str, 1);
 	}
 	tmp = ft_search_in_list(env, str);
 	if (str)
@@ -361,7 +363,24 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 	j = 0;
 	tmp1 = NULL;
 	tmp = NULL;
-
+	
+	if (word[0] == '~' &&  (word[1] == '\0' || word[1] =='/'))
+	{
+		tmp = word;
+		if (word[1] == '\0')
+			word = ft_strdup("$HOME");
+		else if (word[1] =='/')
+		{
+			int len = ft_strlen(word);
+			tmp1 = ft_substr(word,1,len - 1);
+			free(word);
+			tmp =  ft_strdup("$HOME");
+			word =  ft_strjoin(tmp,tmp1);
+			free(tmp1);
+		}
+		free(tmp);
+		tmp = NULL;
+	}
 	while (word[i])
 	{
 		if (word[i] == '\\')
@@ -769,13 +788,14 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		int i ;
 		i = 0;
 		/// replace space by tab
-		while (args->value[i] != '\0')
+		while (args->value && args->value[i] != '\0')
 		{
 			if (args->value[i] == ' ')
 				args->value[i] = '\t';
 			i++;
 		}
 		///
+		
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, last_env, 0);
 		after_expand_arg = ft_strdup(args->value);
@@ -857,21 +877,23 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 				(*cmd)->args = NULL;
 		}
 	}
-	
 	/// replace tab by space
 	int i = 0;
-	while ((*cmd)->command[i] != '\0')
+	if ((*cmd)->command)
 	{
-		if ((*cmd)->command[i] == '\t')
-			(*cmd)->command[i] = ' ';
-		i++;
+		while ((*cmd)->command[i] != '\0')
+		{
+			if ((*cmd)->command[i] == '\t')
+				(*cmd)->command[i] = ' ';
+			i++;
+		}
 	}
 	i = 0;
 	args = (*cmd)->args;
 	while (args)
 	{
 		i = 0;
-		while (args->value[i] != '\0')
+		while (args->value && args->value[i] != '\0')
 		{
 			if (args->value[i] == '\t')
 				args->value[i] = ' ';
@@ -891,7 +913,7 @@ void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)
 
 	current_cmd = NULL;
 	head_cmd = NULL;
-	//ft_putstr_fd(PURPLE, 1);
+	ft_putstr_fd(RED, 1);
 	head_cmd = pipe_line->child;
 	while (head_cmd)
 	{

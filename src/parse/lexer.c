@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 20:44:20 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/23 06:36:34 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,6 +301,6 @@ t_token	*ft_lexer(char *line)
 	tokens_list = NULL;
 	tokens_list = first_token();
 	create_tokens_list(tokens_list, line);
-	//print_tokens(tokens_list);
+	///print_tokens(tokens_list);
 	return (tokens_list);
 }

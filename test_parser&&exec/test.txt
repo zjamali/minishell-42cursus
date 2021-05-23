@@ -1,5 +1,11 @@
+
+{
+unset PATH
+ls
+}
+ls > 1 > 2 > 3 > 4 < 5 > 6 > 7 > 8
 /bin/ls
-exit a aa a
+exit a aa a ----
 echo ";;;;;"
 /bin/pwd
 ls -la
@@ -12,8 +18,8 @@ Echo ; echo \n ' \n this is the; "first line"' ; echo "and right here;;; 'We hav
 echo /$"123$USER"
 echo $"123$USER"
 echo | cd .. | pwd
-echo DOET HET NIET > test1 | cat test1
-echo hallo >x1 >x2 >x3 | echo hoi
+echo DOET HET NIET > test1 | cat test1           --------
+echo hallo >x1 >x2 >x3 | echo hoi                --------
 echo $POEP hallo
 echo "hallo$"
 echo "\poep"
@@ -43,18 +49,18 @@ hoi
 echo
 hallo$
 env
-export ; export a="\\" ; export b='\\' ; export c="\b" ; export
+export ; export a="\\" ; export b='\\' ; export c="\b" ; export.  +++++++
 env
 export a=hijdoehet ; export
 export test=working ; export
-export test1
+export test1.                    -------
 export
 export test1=
 export
 export 1test
-export _TEST=DOethetwelmetunderscore
+export _TEST=DOethetwelmetunderscore     ------
 env
-env ; echo ; export a=hijdoehet ; echo ; env ; echo ; export test=working;echo ;env ; echo ; export test1; export; echo ; env ; echo ; export test1= ; echo ; env
+env ; echo ; export a=hijdoehet ; echo ; env ; echo ; export test=working;echo ;env ; echo ; export test1; export; echo ; env ; echo ; export test1= ; echo ; env.  --------
 export
 export ZZZ
 export ZZZ=
@@ -125,12 +131,12 @@ echo $USER"
 echo $USER_
 cd
 export
-export ZZZ
-export ZZZ=
+export ZZZ.  ---
+export ZZZ=.  ---- 
 export ZZZ=new_value
 export ZZZ======new
 export ZZZ=new YYY=new2 XXX===new3
-export $USER
+export $USER.                           --------
 export TEST=$USER4857987345
 export 123$USER---
 export MARANSIEMONS
@@ -435,7 +441,7 @@ echo \y
 echo \z
 echo \{
 echo \}
-echo \~
+echo \~.                  ----------------------
 echo "\!"
 echo "\""
 echo "\#"

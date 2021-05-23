@@ -6,12 +6,16 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 17:13:51 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/23 10:56:10 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 #include "../../headers/execution.h"
+void ft_replace_tab_with_space(t_simple_cmd **cmd)
+{
+
+}
 
 int check_exiting_of_qoutes(char *str)
 {
@@ -85,26 +89,28 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 	if (inside_dq == 1)
 	{
 		j++;
-		//if (env_variable[j] == '_')
-		//	str = ft_strdup("_");
+		//if (env_variable[j] == '~' && env_variable[j+1] == '\0')
+		//	str = ft_strdup("HOME");
 		//else
 		//{
 			while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
 		//}
-		ft_putstr_fd(str, 1);
+		//ft_putstr_fd(str, 1);
 	}
 	if (inside_dq == 0)
 	{
 		j++;
-		//if (env_variable[j] == '_')
-		//	str = ft_strdup("_");
+		//if (env_variable[j] == '~' && env_variable[j + 1] == '\0')
+		//{
+		//	str = ft_strdup("HOME");
+		//}
 		//else
 		//{
-		while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
-			j++;
-		str = ft_substr(env_variable, 1, j - 1);
+			while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
+				j++;
+			str = ft_substr(env_variable, 1, j - 1);
 		//}
 		ft_putstr_fd(str, 1);
 	}
@@ -357,7 +363,24 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 	j = 0;
 	tmp1 = NULL;
 	tmp = NULL;
-
+	
+	if (word[0] == '~' &&  (word[1] == '\0' || word[1] =='/'))
+	{
+		tmp = word;
+		if (word[1] == '\0')
+			word = ft_strdup("$HOME");
+		else if (word[1] =='/')
+		{
+			int len = ft_strlen(word);
+			tmp1 = ft_substr(word,1,len - 1);
+			free(word);
+			tmp =  ft_strdup("$HOME");
+			word =  ft_strjoin(tmp,tmp1);
+			free(tmp1);
+		}
+		free(tmp);
+		tmp = NULL;
+	}
 	while (word[i])
 	{
 		if (word[i] == '\\')
@@ -554,7 +577,7 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 						}
 						else if (word[i + 1])
 						{
-							ft_putstr_fd("hello", 1);
+						//	ft_putstr_fd("hello", 1);
 							while (ft_isalpha(word[i]) || (word[i] == '$') || word[i] == '_' || ft_isalnum(word[i]))
 								i++;
 						}
@@ -637,7 +660,7 @@ t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
 		new_args->value = splited[i];
 		new_args->inside_quotes = 0;
 		new_args->next = NULL;
-			ft_putstr_fd(splited[i],1);
+		//	ft_putstr_fd(splited[i],1);
 		if (splited[i + 1])
 		{
 			new_args->next = (t_args *)malloc(sizeof(t_args));
@@ -663,10 +686,10 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	int i;
 
 	tmp1 = *args;
-	ft_putstr_fd("{", 1);
+	//ft_putstr_fd("{", 1);
 	to_free = tmp1->value;
-	ft_putstr_fd(to_free, 1);
-	ft_putstr_fd("}\n", 1);
+//	ft_putstr_fd(to_free, 1);
+//	ft_putstr_fd("}\n", 1);
 	splited = ft_split(tmp1->value, ' ');
 	i = 0;
 	new_args = (t_args *)malloc(sizeof(t_args));
@@ -676,7 +699,7 @@ t_args *ft_handle_arg_expanding(t_args **args)
 		tmp->value = splited[i];
 		tmp->inside_quotes = 0;
 		tmp->next = NULL;
-		ft_putstr_fd(splited[i], 1);
+		//ft_putstr_fd(splited[i], 1);
 		if (splited[i + 1])
 		{
 			tmp->next = (t_args *)malloc(sizeof(t_args));
@@ -686,9 +709,9 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	}
 	tmp->next = tmp1->next;
 	*args = new_args;
-	ft_putstr_fd("[", 1);
-	ft_putstr_fd(new_args->value, 1);
-	ft_putstr_fd("]", 1);
+	//ft_putstr_fd("[", 1);
+	//ft_putstr_fd(new_args->value, 1);
+	//ft_putstr_fd("]", 1);
 	return (new_args);
 }
 
@@ -755,10 +778,24 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 
 	
 	args = (*cmd)->args;
-	t_args *next_args = NULL;
+	t_args *next_args = NULL;	
+	/// replace space by tab
+	///
+	args = (*cmd)->args;
 	while (args)
 	{
 		befor_expand_arg = ft_strdup(args->value);
+		int i ;
+		i = 0;
+		/// replace space by tab
+		while (args->value && args->value[i] != '\0')
+		{
+			if (args->value[i] == ' ')
+				args->value[i] = '\t';
+			i++;
+		}
+		///
+		
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, last_env, 0);
 		after_expand_arg = ft_strdup(args->value);
@@ -783,6 +820,16 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	if ((*cmd)->command)
 	{
 		befor_expand_cmd = ft_strdup((*cmd)->command);
+		int i = 0;
+		
+		while ((*cmd)->command[i] != '\0')
+		{
+			if ((*cmd)->command[i] == ' ')
+				(*cmd)->command[i] = '\t';
+			i++;
+		}
+		i = 0;
+		//ft_putstr_fd(befor_expand_cmd,1);
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
 		ft_expande_word(&((*cmd)->command), env, last_env, 0);
 		after_expand_cmd = ft_strdup((*cmd)->command);
@@ -830,6 +877,33 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 				(*cmd)->args = NULL;
 		}
 	}
+	/// replace tab by space
+	int i = 0;
+	if ((*cmd)->command)
+	{
+		while ((*cmd)->command[i] != '\0')
+		{
+			if ((*cmd)->command[i] == '\t')
+				(*cmd)->command[i] = ' ';
+			i++;
+		}
+	}
+	i = 0;
+	args = (*cmd)->args;
+	while (args)
+	{
+		i = 0;
+		while (args->value && args->value[i] != '\0')
+		{
+			if (args->value[i] == '\t')
+				args->value[i] = ' ';
+			i++;
+		}
+		args = args->next;
+	}
+	
+
+	
 }
 
 void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)
@@ -839,7 +913,7 @@ void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)
 
 	current_cmd = NULL;
 	head_cmd = NULL;
-	ft_putstr_fd(PURPLE, 1);
+	ft_putstr_fd(RED, 1);
 	head_cmd = pipe_line->child;
 	while (head_cmd)
 	{

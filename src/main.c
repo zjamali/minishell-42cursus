@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 20:29:51 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/23 09:02:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 		args = current_pipe_line->child->args;
 		if (args == NULL)
 		{
-			ft_putstr_fd(current_pipe_line->child->command,1);
+		//	ft_putstr_fd(current_pipe_line->child->command,1);
 			return (ft_strdup(current_pipe_line->child->command));
 		}
 		else{
@@ -131,20 +131,19 @@ t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 
 	head = (*pipe_line)->child;
 
- 
+	
 	t_simple_cmd *temp;
 	temp = head;
-    while (temp != NULL && (!temp->command && temp->inside_quotes == 0))
+    while (temp != NULL && (!temp->command && temp->inside_quotes == 0) && temp->args == NULL && temp->redirections == NULL)
     {
         head = temp->next; // Changed head
         //free(temp); // free old head
         temp = head; // Change Temp
     }
- 
+	
     // Delete occurrences other than head
     while (temp != NULL)
     {
-
         while (temp != NULL && (temp->inside_quotes != 0 || ( temp->command && temp->inside_quotes == 0)))
         {
             prev = temp;
@@ -156,12 +155,18 @@ t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
             return head;
  
         // Unlink the node from linked list
-        prev->next = temp->next;
- 
-        //free(temp); // Free memory
- 
-        // Update Temp for next iteration of outer loop
-        temp = prev->next;
+		if (prev)
+		{
+        	prev->next = temp->next;
+			
+			//free(temp); // Free memory
+			temp = prev->next;
+        	// Update Temp for next iteration of outer loop
+		}
+		else
+		{
+			temp = temp->next;
+		}        
     }
 	return head;
 }
@@ -199,6 +204,7 @@ int main(int ac,char **av,char **env)
 	(void)ac;
 	(void)av;
 	(void)env;
+	
 	int i = 0;
 	//
 	head = NULL;
@@ -226,29 +232,22 @@ int main(int ac,char **av,char **env)
 			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
 		{
-			//if (last_env[0])
-			//{
-			//	free(last_env[0]);
-			//	last_env[0] = NULL;
-			//}
 			last_env[0] = ft_int_to_string(status); 
 			ft_expanding(current_pipe_line,&head,last_env);
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
 				ft_print_pipeline_cmd(current_pipe_line);
-				ft_putstr_fd("-----------------------\n",1);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
-				ft_putchar_fd('\n', 1);
+				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);
-				ft_putstr_fd("-----------------------\n",1);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}
 		if (cmd)
 		{
 			ft_destroy_ast(cmd);
-			//ft_putstr_fd(RESET,ft_strlen(RESET));
+			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
 		cmd = NULL;
 		//readline= ft_destroy_read_line(readline);

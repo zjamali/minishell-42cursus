@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 17:59:31 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/20 19:40:56 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/23 06:36:34 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ char *get_quoting_word(char *line, int *i, int quoting)
 			
 			if (line[j] == '"' && line[j - 1] != '\\')
 			{	
-				ft_putstr_fd("hello 1",1);
+				//ft_putstr_fd("hello 1",1);
 				break;
 			}
 			else if (line[j] == '"' && line[j - 1] == '\\')
@@ -205,8 +205,8 @@ char *get_quoting_word(char *line, int *i, int quoting)
 				}
 				if (back_slash_count %2 == 0)
 				{
-					ft_putnbr_fd(back_slash_count,1);
-					ft_putstr_fd("hello",1);
+					//ft_putnbr_fd(back_slash_count,1);
+					//ft_putstr_fd("hello",1);
 					back_slash_count = 0;
 					break;
 				}
@@ -220,9 +220,9 @@ char *get_quoting_word(char *line, int *i, int quoting)
 		}
 		word = ft_substr(line, *i, j - *i + 1);
 		*i = j + 1;
-		ft_putstr_fd("$",1);
-		ft_putstr_fd(word,1);
-		ft_putstr_fd("$",1);
+		//ft_putstr_fd("$",1);
+		//ft_putstr_fd(word,1);
+		//ft_putstr_fd("$",1);
 		return word;
 	}
 	return word;
@@ -301,6 +301,6 @@ t_token	*ft_lexer(char *line)
 	tokens_list = NULL;
 	tokens_list = first_token();
 	create_tokens_list(tokens_list, line);
-	print_tokens(tokens_list);
+	///print_tokens(tokens_list);
 	return (tokens_list);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   readline.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/24 19:04:38 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/24 19:32:29 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ t_readline *ft_init_readline(struct termios *termios)
 		return (NULL);
 	}
 	/// config terminal
+	readline->old_termios = malloc(sizeof(struct termios));
+	ft_bzero(readline->old_termios,sizeof(struct termios));
 	tcgetattr(readline->term_fd, readline->old_termios); /// save termios first state
 	tcgetattr(readline->term_fd, termios);
 	termios->c_lflag &= ~(ECHO | ICANON | ISIG);

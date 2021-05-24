@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/23 09:02:25 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/24 19:02:48 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,8 +184,8 @@ int main(int ac,char **av,char **env)
 //
 	current_pipe_line = NULL;
 	t_lines_list *lines_list;
-	// struct termios termios;
-	// t_readline *readline;
+	struct termios termios;
+	t_readline *readline;
 	 last_argumet_or_command = NULL;
 
 	//// get terminal window size
@@ -209,14 +209,15 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	//readline = ft_init_readline(&termios);
+	
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
 		//i++;
+		readline = ft_init_readline(&termios);
 		show_prompt();
-		// micro_read_line(&line, readline, &lines_list,&status);
-		read_command_list(&line);
+		micro_read_line(&line, readline, &lines_list,&status);
+		// read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -237,7 +238,7 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				ft_print_pipeline_cmd(current_pipe_line);
+				//ft_print_pipeline_cmd(current_pipe_line);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);

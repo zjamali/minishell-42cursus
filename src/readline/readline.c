@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/21 20:09:52 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/24 19:04:38 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,6 @@ t_lines_list *ft_insert_node_to_line_list(t_lines_list *list, t_lines_list *curr
 void ft_move_cursor_and_clear(t_cursor cursor)
 {
 	char *move_cursor;
-	ft_putstr_fd("wa     we",1);
 	move_cursor = tgetstr("cm", NULL);
 	ft_putstr_fd(tgoto(move_cursor, cursor.col_position - 1,
 					   cursor.line_postion - 1),
@@ -673,6 +672,6 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 			current = ft_destory_line(current);
 	
 	}
-	tcsetattr(readline->term_fd, TCSANOW, readline->old_termios);
+	tcsetattr(readline->term_fd, 0, readline->old_termios);
 	return 1;
 }

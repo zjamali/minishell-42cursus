@@ -900,10 +900,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			i++;
 		}
 		args = args->next;
-	}
-	
-
-	
+	}	
 }
 
 void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)

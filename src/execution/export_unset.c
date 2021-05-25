@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:35 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/21 20:32:36 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/25 17:57:37 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	ft_checkargs(t_args **args)
 	{
 		if (temp->value == NULL)
 			ret = ft_put_err("export:", " `': not a valid identifier", 1);
-		else if (!ft_isalpha(temp->value[0]))
+		else if (!(ft_isalpha(temp->value[0]) || temp->value[0] == '_'))
 			ret = ft_put_err("export:", ft_strjoin(" `",
 						ft_strjoin(temp->value,
 							"': not a valid identifier")), 1);
@@ -98,7 +98,7 @@ int	ft_export(t_env **head, t_args *args)
 	ret = ft_checkargs(&args);
 	while (args != NULL)
 	{
-		if (args->value != NULL && ft_isalpha(args->value[0]))
+		if (args->value != NULL && (ft_isalpha(args->value[0]) || args->value[0] == '_'))
 			ft_add_var(head, args);
 		args = args->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/23 17:32:43 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/25 18:07:30 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,8 @@ int	ft_exit(t_args *args)
 		ft_putendl_fd("exit", 1);
 		exit(0);
 	}
+	ft_putendl_fd("exit", 1);
 	if (args->next != NULL)
 		return (ft_put_err("exit", ": too many arguments", 1));
-	ft_putendl_fd("exit", 1);
 	exit(ft_check_exit(args->value));
 }

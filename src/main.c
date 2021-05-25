@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/25 16:36:27 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/25 17:28:24 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,8 +215,8 @@ int main(int ac,char **av,char **env)
 	{
 		//i++;
 		show_prompt();
-		micro_read_line(&line, &lines_list,&status);
-		// read_command_list(&line);
+		// micro_read_line(&line, &lines_list,&status);
+		read_command_list(&line);
 		
 		if (line)
 		{

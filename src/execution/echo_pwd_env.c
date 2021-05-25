@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/25 18:02:54 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/25 19:36:24 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,12 @@ int	ft_env(t_env **head)
 	temp = *head;
 	while (temp != NULL)
 	{
-		ft_putstr_fd(temp->name, 1);
-		ft_putchar_fd('=', 1);
-		ft_putendl_fd(temp->value, 1);
+		if (temp->value != NULL)
+		{
+			ft_putstr_fd(temp->name, 1);
+			ft_putchar_fd('=', 1);
+			ft_putendl_fd(temp->value, 1);
+		}
 		temp = temp->next;
 	}
 	return (0);

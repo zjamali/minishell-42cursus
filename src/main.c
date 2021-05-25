@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/25 16:17:31 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/25 17:06:01 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void show_prompt()
 	write(1,"minishell$ ",strlen("minishell$ "));
 	write(1,RESET,ft_strlen(RESET));
 }
-
+/*
 t_readline *ft_destroy_read_line(t_readline *read_line)
 {
 	read_line->term_type = NULL;
@@ -80,7 +80,7 @@ t_readline *ft_destroy_read_line(t_readline *read_line)
 
 	return read_line;
 }
-
+*/
 t_lines_list *ft_destory_line(t_lines_list *node)
 {
 	if (node->char_list)
@@ -184,8 +184,13 @@ int main(int ac,char **av,char **env)
 //
 	current_pipe_line = NULL;
 	t_lines_list *lines_list;
+<<<<<<< HEAD
 	// struct termios termios;
 	// t_readline *readline;
+=======
+	//struct termios termios;
+	t_readline *readline;
+>>>>>>> 52c1ffd1e576d1d6209193b5869568d8669274c5
 	 last_argumet_or_command = NULL;
 
 	//// get terminal window size
@@ -214,10 +219,17 @@ int main(int ac,char **av,char **env)
 	while (i == 0)
 	{
 		//i++;
+<<<<<<< HEAD
 		// readline = ft_init_readline(&termios);
 		show_prompt();
 		// micro_read_line(&line, readline, &lines_list,&status);
 		read_command_list(&line);
+=======
+		show_prompt();
+		micro_read_line(&line, &lines_list,&status);
+		// read_command_list(&line);
+		
+>>>>>>> 52c1ffd1e576d1d6209193b5869568d8669274c5
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -238,7 +250,7 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				//ft_print_pipeline_cmd(current_pipe_line);
+			//	ft_print_pipeline_cmd(current_pipe_line);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);
@@ -250,10 +262,12 @@ int main(int ac,char **av,char **env)
 			ft_destroy_ast(cmd);
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
+		
 		cmd = NULL;
 		//readline= ft_destroy_read_line(readline);
+		readline= NULL;
 		//if (lines_list)
-		//	lines_list = ft_destroy_line_list(lines_list);
+		//			lines_list = ft_destroy_line_list(lines_list);
 	}
 	return 0;
 }

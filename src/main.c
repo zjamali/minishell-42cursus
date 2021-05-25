@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/25 17:06:01 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/25 17:28:24 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,13 +184,8 @@ int main(int ac,char **av,char **env)
 //
 	current_pipe_line = NULL;
 	t_lines_list *lines_list;
-<<<<<<< HEAD
-	// struct termios termios;
-	// t_readline *readline;
-=======
 	//struct termios termios;
 	t_readline *readline;
->>>>>>> 52c1ffd1e576d1d6209193b5869568d8669274c5
 	 last_argumet_or_command = NULL;
 
 	//// get terminal window size
@@ -219,17 +214,10 @@ int main(int ac,char **av,char **env)
 	while (i == 0)
 	{
 		//i++;
-<<<<<<< HEAD
-		// readline = ft_init_readline(&termios);
 		show_prompt();
-		// micro_read_line(&line, readline, &lines_list,&status);
+		// micro_read_line(&line, &lines_list,&status);
 		read_command_list(&line);
-=======
-		show_prompt();
-		micro_read_line(&line, &lines_list,&status);
-		// read_command_list(&line);
 		
->>>>>>> 52c1ffd1e576d1d6209193b5869568d8669274c5
 		if (line)
 		{
 			tokens_list = ft_lexer(line);

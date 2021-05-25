@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/23 10:56:10 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/25 17:29:22 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
 		//}
-		ft_putstr_fd(str, 1);
 	}
 	tmp = ft_search_in_list(env, str);
 	if (str)

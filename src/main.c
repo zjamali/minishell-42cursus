@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/24 19:32:11 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/25 16:36:27 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void show_prompt()
 	write(1,"minishell$ ",strlen("minishell$ "));
 	write(1,RESET,ft_strlen(RESET));
 }
-
+/*
 t_readline *ft_destroy_read_line(t_readline *read_line)
 {
 	read_line->term_type = NULL;
@@ -80,7 +80,7 @@ t_readline *ft_destroy_read_line(t_readline *read_line)
 
 	return read_line;
 }
-
+*/
 t_lines_list *ft_destory_line(t_lines_list *node)
 {
 	if (node->char_list)
@@ -184,7 +184,7 @@ int main(int ac,char **av,char **env)
 //
 	current_pipe_line = NULL;
 	t_lines_list *lines_list;
-	struct termios termios;
+	//struct termios termios;
 	t_readline *readline;
 	 last_argumet_or_command = NULL;
 
@@ -214,10 +214,10 @@ int main(int ac,char **av,char **env)
 	while (i == 0)
 	{
 		//i++;
-		readline = ft_init_readline(&termios);
 		show_prompt();
-		micro_read_line(&line, readline, &lines_list,&status);
+		micro_read_line(&line, &lines_list,&status);
 		// read_command_list(&line);
+		
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
@@ -250,11 +250,12 @@ int main(int ac,char **av,char **env)
 			ft_destroy_ast(cmd);
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
+		
 		cmd = NULL;
-		readline= ft_destroy_read_line(readline);
+		//readline= ft_destroy_read_line(readline);
 		readline= NULL;
 		//if (lines_list)
-		//	lines_list = ft_destroy_line_list(lines_list);
+		//			lines_list = ft_destroy_line_list(lines_list);
 	}
 	return 0;
 }

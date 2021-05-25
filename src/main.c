@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/25 16:36:27 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/25 21:26:46 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ t_lines_list *ft_destory_line(t_lines_list *node)
 	node->prev = NULL;
 	free(node);
 	node = NULL;
-	return node;
+	return NULL;
 }
 
 t_lines_list *ft_destroy_line_list(t_lines_list *lines_list)
@@ -220,10 +220,10 @@ int main(int ac,char **av,char **env)
 		
 		if (line)
 		{
-			tokens_list = ft_lexer(line);
+			//tokens_list = ft_lexer(line);
 			free(line);
 			line = NULL;
-		}
+		}/*
 		if (tokens_list)
 		{
 			cmd = ft_parser(tokens_list,&status);
@@ -250,12 +250,12 @@ int main(int ac,char **av,char **env)
 			ft_destroy_ast(cmd);
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
-		
+		*/
 		cmd = NULL;
 		//readline= ft_destroy_read_line(readline);
 		readline= NULL;
 		//if (lines_list)
-		//			lines_list = ft_destroy_line_list(lines_list);
+		//	lines_list = ft_destroy_line_list(lines_list);
 	}
 	return 0;
 }

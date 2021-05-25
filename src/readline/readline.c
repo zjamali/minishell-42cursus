@@ -675,5 +675,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 	
 	}
 	tcsetattr(readline->term_fd, 0, readline->old_termios);
+	free(readline->old_termios);
+	readline->old_termios = NULL;
 	return 1;
 }

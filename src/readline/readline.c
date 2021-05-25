@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/24 19:32:29 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/25 14:21:43 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,12 +108,12 @@ void ft_get_cursor_position(int *x, int *y)
 	c = NULL;
 }
 
-t_readline *ft_init_readline(struct termios *termios)
+void ft_init_readline(t_readline *readline)
 {
-	t_readline *readline;
+	// struct termios termios;
+	// struct termios old;
 	int load_term;
-	if (!(readline = (t_readline*)malloc(sizeof(t_readline))))
-		return (NULL);
+
 	readline->term_type = getenv("TERM");
 	load_term = tgetent(NULL, readline->term_type);
 	if (!load_term)
@@ -121,28 +121,31 @@ t_readline *ft_init_readline(struct termios *termios)
 		ft_putstr_fd("Could not access to the termcap database orterminal \
 		type is not defined in termcap\n",
 					 1);
-		return (NULL);
+		// return (NULL);
 	}
 	readline->path = ttyname(1);
 	readline->term_fd = open(readline->path, O_RDWR /* | O_NOCTTY | O_NDELAY*/);
 	if (!isatty(readline->term_fd))
 	{
 		ft_putstr_fd("file descriptors not point to terminal\n", 1);
-		return (NULL);
+		// return (NULL);
 	}
 	/// config terminal
-	readline->old_termios = malloc(sizeof(struct termios));
-	ft_bzero(readline->old_termios,sizeof(struct termios));
-	tcgetattr(readline->term_fd, readline->old_termios); /// save termios first state
-	tcgetattr(readline->term_fd, termios);
-	termios->c_lflag &= ~(ECHO | ICANON | ISIG);
-	tcsetattr(readline->term_fd, TCSANOW, termios);
+	//readline.old_termios = malloc(sizeof(struct termios));
+
+
+	// tcgetattr(readline.term_fd, &old); /// save termios first state
+	// tcgetattr(readline.term_fd, &termios);
+	// termios.c_lflag &= ~(ECHO | ICANON | ISIG);
+	// tcsetattr(readline.term_fd, TCSANOW, &termios);
+
+
 	readline->colums_count = tgetnum("co");
 	readline->line_count = tgetnum("li");
 	readline->cursor.col_position = 0;
 	readline->cursor.line_postion = 0;
 	readline->line = NULL;	
-	return (readline);
+	// return (readline);
 }
 
 char *create_line_from_chars_list(t_char_list *char_list)
@@ -580,16 +583,33 @@ void ft_delete(t_lines_list **current, t_readline *readline)
 		ft_print_char_list((*current)->char_list);
 }
 
-int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list,int *status)
+void	reset_terminal(struct termios old_termios, int fd)
+{
+	tcsetattr(fd, TCSANOW, &old_termios);
+}
+
+void	set_terminal(struct termios *termios, struct termios *old, int fd)
+{
+	tcgetattr(fd, old); /// save termios first state
+	tcgetattr(fd, termios);
+	termios->c_lflag &= ~(ECHO | ICANON | ISIG);
+	tcsetattr(fd, TCSANOW, termios);
+}
+
+int micro_read_line(char **line, t_lines_list **lines_list,int *status)
 {
 	long character;
 	t_lines_list *current;
 	int newline_break;
-
+	struct termios termios;
+	struct termios old_termios;
+	t_readline readline;
+	ft_init_readline(&readline);
+	set_terminal(&termios, &old_termios, readline.term_fd);
 	character = 0;
 	current = ft_create_line_node();
-	ft_get_cursor_position(&readline->cursor.line_postion,
-						   &readline->cursor.col_position);
+	ft_get_cursor_position(&readline.cursor.line_postion,
+						   &readline.cursor.col_position);
 	newline_break = 1;
 	while (newline_break)
 	{
@@ -602,7 +622,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 				{
 					*lines_list = ft_insert_node_to_line_list(*lines_list, current, 1);
 				}
-				ft_up_in_lines(readline, lines_list);
+				ft_up_in_lines(&readline, lines_list);
 				current = *lines_list;
 			}
 		}
@@ -610,14 +630,14 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		{
 			if (current->char_list != NULL && *lines_list != NULL)
 			{
-				ft_down_in_lines(readline, lines_list, 1);
+				ft_down_in_lines(&readline, lines_list, 1);
 				current = *lines_list;
 			}
 			else
-				ft_down_in_lines(readline, lines_list, 0);
+				ft_down_in_lines(&readline, lines_list, 0);
 		}
 		else if (character == D_KEY_BACKSPACE)
-			ft_delete(&current, readline);
+			ft_delete(&current, &readline);
 		else if (character == D_KEY_CTRL_C)
 		{
 			if (current && current->history == 1 && (current->char_list != NULL && current->char_list->value != 0))
@@ -633,6 +653,9 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 			if (current->char_list == NULL || current->char_list->value == 0)
 			{
 				ft_putstr_fd("exit",1);
+				if (*lines_list)
+					*lines_list = ft_destroy_line_list(*lines_list);
+				reset_terminal(old_termios, readline.term_fd);
 				*status = 0;
 				exit(*status);
 			}
@@ -641,14 +664,14 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		{
 			if (current)
 			{
-				newline_break = get_charctere(readline, character, current, lines_list);
+				newline_break = get_charctere(&readline, character, current, lines_list);
 			}
 			else
 			{
 				if (!current)
 				{
 					current = ft_create_line_node();
-					newline_break = get_charctere(readline, character, current, lines_list);
+					newline_break = get_charctere(&readline, character, current, lines_list);
 				}
 				
 			}
@@ -662,11 +685,11 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 		}
 	}
 	character= 0;
-	if (readline->line)
+	if (readline.line)
 	{
-		*line = ft_strdup(readline->line);
-		free(readline->line);
-		readline->line = NULL;
+		*line = ft_strdup(readline.line);
+		free(readline.line);
+		readline.line = NULL;
 	}
 	else
 	{
@@ -674,8 +697,7 @@ int micro_read_line(char **line, t_readline *readline, t_lines_list **lines_list
 			current = ft_destory_line(current);
 	
 	}
-	tcsetattr(readline->term_fd, 0, readline->old_termios);
-	free(readline->old_termios);
-	readline->old_termios = NULL;
+	// tcsetattr(readline.term_fd, 0, &);
+	reset_terminal(old_termios, readline.term_fd);
 	return 1;
 }

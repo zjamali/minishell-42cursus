@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/23 17:32:43 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/26 16:51:22 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,6 @@ int	ft_change_dir(t_args *args, t_env **head, char *dir)
 	t_env	*temp;
 
 	buff = NULL;
-	if (!getcwd(buff, 100))
-		ft_put_err(ft_strjoin("cd: error retrieving current directory: ",
-				"getcwd: cannot access parent directories: "),
-			strerror(errno), 1);
 	temp = ft_search_in_list(head, "PWD");
 	if (temp == NULL)
 		ft_add_to_list(head, ft_create_node("PWD", ""));
@@ -46,6 +42,11 @@ int	ft_change_dir(t_args *args, t_env **head, char *dir)
 	if (chdir(dir) == -1)
 		return (ft_put_err("cd: ", ft_strjoin(dir,
 					ft_strjoin(": ", strerror(errno))), 1));
+	if (!getcwd(0, 100))
+		ft_put_err(ft_strjoin("cd: ", "error \
+					retrieving current directory: getcwd: \
+					cannot access parent directories: "),
+			strerror(errno), 1);
 	temp = ft_search_in_list(head, "PWD");
 	ft_replaceit(head, "OLDPWD", temp->value);
 	return (ft_replace_pwd(head, temp, dir));
@@ -79,34 +80,38 @@ int	ft_cd(t_args *args, t_env **head)
 
 int	ft_check_exit(char *arg)
 {
-	int		i;
+	int			i;
 	long long	estatus;
 
 	i = 0;
 	if (arg[i] == '-')
-			i++;
+		i++;
 	while (arg[i])
 	{
 		if (!ft_isdigit(arg[i]))
-			return (ft_put_err("exit: ",
+			exit(ft_put_err("exit: ",
 					ft_strjoin(arg, ": numeric argument required"), 255));
 		i++;
 	}
 	estatus = ft_atoi(arg);
-	if (estatus < 9223372036854775807)
-		return (ft_put_err("exit: ", ft_strjoin(arg, ": numeric argument required"), 255));
+	if (estatus < -9223372036854775807)
+		exit(ft_put_err("exit: ", ft_strjoin(arg,
+					": numeric argument required"), 255));
 	return (estatus);
 }
 
 int	ft_exit(t_args *args)
 {
+	int		i;
+
 	if (args == NULL)
 	{
 		ft_putendl_fd("exit", 1);
 		exit(0);
 	}
+	ft_putendl_fd("exit", 1);
+	i = ft_check_exit(args->value);
 	if (args->next != NULL)
 		return (ft_put_err("exit", ": too many arguments", 1));
-	ft_putendl_fd("exit", 1);
-	exit(ft_check_exit(args->value));
+	exit(i);
 }

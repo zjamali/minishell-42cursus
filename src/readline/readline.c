@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/27 20:08:48 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/27 21:55:29 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -575,7 +575,7 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 			ft_putstr_fd("\n", 1);
 		character = 0;
 	}
-	ft_print_lines_list(g_vars.history);
+	//ft_print_lines_list(g_vars.history);
 	character = 0;
 	if (readline.line)
 	{

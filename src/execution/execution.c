@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/25 16:55:47 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/25 19:59:20 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,8 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 	else
 	{
 		temp = ft_search_in_list(head, "PATH");
+		if (temp == NULL)
+			return (ft_put_err(cmd->command, ": No such file or directory", 127));
 		path = ft_split(temp->value, ':');
 		while (*path != NULL)
 		{

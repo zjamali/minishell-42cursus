@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/25 21:26:46 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/26 12:06:02 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ t_readline *ft_destroy_read_line(t_readline *read_line)
 	return read_line;
 }
 */
-t_lines_list *ft_destory_line(t_lines_list *node)
+t_lines_list *ft_destory_node(t_lines_list *node)
 {
 	if (node->char_list)
 		ft_delete_char_list(node->char_list);
@@ -91,19 +91,20 @@ t_lines_list *ft_destory_line(t_lines_list *node)
 	node->origin_char_list = NULL;
 	node->next = NULL;
 	node->prev = NULL;
-	free(node);
+	//if (node != NULL)
+		free(node);  //////////////
 	node = NULL;
 	return NULL;
 }
 
-t_lines_list *ft_destroy_line_list(t_lines_list *lines_list)
+t_lines_list *ft_destroy_history(t_lines_list *history)
 {
 	t_lines_list *last_node;
 	t_lines_list *tmp;
 	
 
 	tmp = NULL;
-	last_node = lines_list;
+	last_node = history;
 	if (last_node->next != NULL)
 	{
 		while (last_node->next != NULL)
@@ -118,7 +119,7 @@ t_lines_list *ft_destroy_line_list(t_lines_list *lines_list)
 		//if (tmp)
 			tmp = tmp->prev;
 		//if (last_node)
-		last_node = ft_destory_line(last_node);
+		last_node = ft_destory_node(last_node);
 	}
 	return NULL;
 }
@@ -183,9 +184,8 @@ int main(int ac,char **av,char **env)
 	char *last_argumet_or_command;
 //
 	current_pipe_line = NULL;
-	t_lines_list *lines_list;
+	
 	//struct termios termios;
-	t_readline *readline;
 	 last_argumet_or_command = NULL;
 
 	//// get terminal window size
@@ -197,7 +197,6 @@ int main(int ac,char **av,char **env)
 	last_env[0] = NULL;
 	last_env[1] = NULL;
 
-	lines_list = NULL;
 	status = 0;
 	tokens_list = NULL;
 	line = NULL;
@@ -215,7 +214,7 @@ int main(int ac,char **av,char **env)
 	{
 		//i++;
 		show_prompt();
-		micro_read_line(&line, &lines_list,&status);
+		micro_read_line(&line,&status);
 		// read_command_list(&line);
 		
 		if (line)
@@ -253,9 +252,9 @@ int main(int ac,char **av,char **env)
 		*/
 		cmd = NULL;
 		//readline= ft_destroy_read_line(readline);
-		readline= NULL;
-		//if (lines_list)
-		//	lines_list = ft_destroy_line_list(lines_list);
+		//readline= NULL;
+		//if (history)
+		//	history = ft_destroy_line_list(history);
 	}
 	return 0;
 }

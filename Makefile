@@ -6,7 +6,7 @@
 #    By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2021/05/25 16:38:22 by zjamali          ###   ########.fr        #
+#    Updated: 2021/05/26 08:36:58 by zjamali          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,4 +39,4 @@ $(NAME):
 	@echo "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗"
 	@echo "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝"
 	@echo "Compilation of minishell:  \033[1;32mOK\033[m"
-	@$(COM) $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT) -g -lncurses
+	@$(COM) -g $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT) -g -lncurses

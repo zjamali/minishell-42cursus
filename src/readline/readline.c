@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/27 17:45:46 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/27 20:08:48 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,11 +238,11 @@ t_lines_list *ft_insert_node_to_history(t_lines_list *list, t_lines_list *curren
 	if (!list)
 	{
 		current->history = history;
-		if (current->char_list)
-		{
-			current->up_or_down = true;
-			current->origin_char_list = ft_copy_char_list(current->char_list);
-		}
+		//if (current->char_list)
+		//{
+		//	current->up_or_down = true;
+		//	current->origin_char_list = ft_copy_char_list(current->char_list);
+		//}
 		current->index = 1;
 		list = current;
 		list->next = NULL;
@@ -309,11 +309,9 @@ void ft_add_to_char_list(t_readline *readline, char c, t_char_list **chars_list)
 
 	tmp = NULL;
 	ft_move_cursor_and_clear(readline->cursor);
-	if ( *chars_list == NULL)
+	if (*chars_list == NULL)
 	{
 		ft_putchar_fd(c, 1);
-		//if (*chars_list)
-		//	*chars_list = ft_free_char_list(*chars_list);
 		*chars_list = (t_char_list*)malloc(sizeof(t_char_list));
 		(*chars_list)->value = c;
 		(*chars_list)->len = 1;
@@ -342,7 +340,7 @@ t_lines_list *ft_create_line_node(void)
 	t_lines_list *ret;
 
 	ret = (t_lines_list*)malloc(sizeof(t_lines_list));
-	ft_bzero(ret,sizeof(t_lines_list));
+	//ft_bzero(ret,sizeof(t_lines_list));
 	ret->char_list = NULL;
 	ret->origin_char_list = NULL;
 	ret->up_or_down = false;
@@ -359,10 +357,12 @@ t_lines_list *ft_delete_node_from_list(t_lines_list *current)
 	t_char_list *tmp_char_list;
 	t_lines_list *next_line;
 	
+	next_line = NULL;
 	if (current == NULL)
 	{
 		return NULL;
 	}
+
 	tmp = current->char_list;
 	tmp_char_list = current->origin_char_list;
 
@@ -383,8 +383,10 @@ t_lines_list *ft_delete_node_from_list(t_lines_list *current)
 		free(tmp1);
 		tmp1 = NULL;
 	}
-	next_line = current->next;
-	free(current);
+	if (current->next)
+		next_line = current->next;
+	if (current)
+		free(current);
 	current = NULL;
 	return next_line;
 }
@@ -392,35 +394,22 @@ int add_curr_node_to_history(t_readline *readline, long c,
 				  t_lines_list *current, t_lines_list **history)
 {
 	t_lines_list *new_line_node;
-	// char *line;
 
-	// line = NULL;
-	// new_line_node = NULL;
-	// if (current /*&& current->char_list && current->char_list->value != 0*/)
-	// {
-		new_line_node = ft_create_line_node();
-		new_line_node->char_list = ft_copy_char_list(current->char_list);
-		ft_delete_char_list(current->char_list);
-		current->char_list = ft_copy_char_list(current->origin_char_list);
-		
-		// if (current->up_or_down == false)
-			// *history = ft_delete_node_from_list(current);
-		//else
-		//{
-			// t_lines_list *head;
-			// head = (*history)->next;
-			// printf("history_header = (%s)")
-			*history = ft_delete_node_from_list(*history);
-		//	// head->prev = NULL;
-			// *history = head;
-		//}
-		
-		if (new_line_node && new_line_node->char_list && new_line_node->char_list->value != 0)
-		{
-			*history = ft_insert_node_to_history(*history, new_line_node, 0);
-			readline->line = create_line_from_chars_list(new_line_node->char_list);
-		}
-	// }
+	new_line_node = NULL;
+	new_line_node = ft_create_line_node();
+	new_line_node->char_list = ft_copy_char_list(current->char_list);
+	new_line_node->origin_char_list = ft_copy_char_list(current->char_list);
+	
+	ft_delete_char_list(current->char_list);
+	current->char_list = ft_copy_char_list(current->origin_char_list);
+	*history = ft_delete_node_from_list(*history);
+	if (new_line_node && new_line_node->char_list && new_line_node->char_list->value != 0)
+	{
+		*history = ft_insert_node_to_history(*history, new_line_node, 0);
+		readline->line = create_line_from_chars_list(new_line_node->char_list);
+	}
+	else
+		ft_delete_node_from_list(new_line_node);
 	return 0;
 }
 
@@ -474,9 +463,6 @@ t_lines_list *ft_down_in_history(t_readline *readline, t_lines_list **history)
 		{
 			*history = (*history)->prev;
 			(*history)->up_or_down = true;
-			// if (*history)
-			// {
-			// }
 		}
 		ft_print_char_list((*history)->char_list);
 	}
@@ -488,7 +474,6 @@ void ft_delete_last_charactere_from_line(t_lines_list **current, t_readline *rea
 	int len;
 	t_char_list *tmp;
 	int i;
-
 
 	i = 1;
 	len = get_char_list_lenght((*current)->char_list);
@@ -536,22 +521,21 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 	char			*line;
 	static bool		inisialize_history = false;
 
+	character = 0;
+	line = NULL;
+	newline_break = 1;
 	if (inisialize_history == false)
 	{
 		g_vars.history = NULL;
 		inisialize_history = true;
 	}
-	
-	character = 0;
 	current = ft_create_line_node();
 	current->next = g_vars.history;
 	if (g_vars.history)
 	{
 		g_vars.history->prev = current;
-		g_vars.history = current;
 	}
-	
-	newline_break = 1;
+	g_vars.history = current;
 	while (newline_break)
 	{
 		read(0, &character, 6);
@@ -560,7 +544,7 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 		else if (current &&character == D_KEY_DOWN)
 				current = ft_down_in_history(&readline, &current);
 		else if (character == D_KEY_ENTER)
-			newline_break = add_curr_node_to_history(&readline, character, current, &g_vars.history);
+				newline_break = add_curr_node_to_history(&readline, character, current, &g_vars.history);
 		else if (character == D_KEY_BACKSPACE)
 				ft_delete_last_charactere_from_line(&current, &readline);
 		else if (character == D_KEY_CTRL_C)
@@ -599,6 +583,14 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 		free(readline.line);
 		readline.line = NULL;
 	}
+	//if (current)
+	//{
+	//	
+	//	ft_delete_node_from_list(current);
+	//	current = NULL;
+	//}
+	//if (g_vars.history)
+	//	g_vars.history = ft_destroy_history(g_vars.history);
 	return line;
 }
 
@@ -616,7 +608,7 @@ int micro_read_line(char **line,int *status)
 
 	ft_get_cursor_position(&readline.cursor.line_postion,
 						   &readline.cursor.col_position);
-	ft_get_input(readline,status,old_termios);
+	*line  = ft_get_input(readline,status,old_termios);
 	
 	reset_terminal(old_termios, readline.term_fd);
 	return 1;

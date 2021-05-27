@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/26 12:06:02 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/27 20:15:39 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 void read_command_list(char **line)
 {
-	get_next_line(&(*line));
+//	get_next_line(&(*line));
 }
 
 void show_prompt()
@@ -91,7 +91,7 @@ t_lines_list *ft_destory_node(t_lines_list *node)
 	node->origin_char_list = NULL;
 	node->next = NULL;
 	node->prev = NULL;
-	//if (node != NULL)
+	if (node != NULL)
 		free(node);  //////////////
 	node = NULL;
 	return NULL;
@@ -219,10 +219,10 @@ int main(int ac,char **av,char **env)
 		
 		if (line)
 		{
-			//tokens_list = ft_lexer(line);
+			tokens_list = ft_lexer(line);
 			free(line);
 			line = NULL;
-		}/*
+		}
 		if (tokens_list)
 		{
 			cmd = ft_parser(tokens_list,&status);
@@ -249,7 +249,7 @@ int main(int ac,char **av,char **env)
 			ft_destroy_ast(cmd);
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 		}
-		*/
+		
 		cmd = NULL;
 		//readline= ft_destroy_read_line(readline);
 		//readline= NULL;

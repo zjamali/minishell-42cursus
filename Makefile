@@ -6,7 +6,7 @@
 #    By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2021/05/26 08:36:58 by zjamali          ###   ########.fr        #
+#    Updated: 2021/05/27 18:46:53 by zjamali          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME= minishell
 
 SRC_EXECUTE= src/execution/cd_exit.c src/execution/echo_pwd_env.c src/execution/export_unset.c src/execution/execution.c src/execution/list.c src/execution/redirection.c
 
-SRC_PARSE=   src/parse/get_next_line.c src/parse/lexer.c src/parse/parser.c src/parse/expansion.c src/readline/readline.c
+SRC_PARSE=    src/parse/lexer.c src/parse/parser.c src/parse/expansion.c src/readline/readline.c # src/parse/get_next_line.c
 
 SRC_MAIN= src/main.c 
 

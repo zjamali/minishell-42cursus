@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 16:32:34 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/28 17:51:45 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,7 @@ typedef struct s_env
 
 typedef struct s_g_vars
 {
+	t_command_list *cmd;
 	t_lines_list *history;
 	int			cpid;
 }				t_g_vars;
@@ -184,6 +185,7 @@ void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
 char *ft_int_to_string(int n);
+void ft_destroy_simple(t_simple_cmd *cmd);
 
 // t_readline *ft_init_readline(struct termios *termios);
 int micro_read_line(char **line,int *status);

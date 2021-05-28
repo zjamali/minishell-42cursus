@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/27 21:55:09 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 15:04:10 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ int main(int ac,char **av,char **env)
 		
 		if (line)
 		{
-		//	tokens_list = ft_lexer(line);
+			tokens_list = ft_lexer(line);
 			free(line);
 			line = NULL;
 		}
@@ -210,7 +210,7 @@ int main(int ac,char **av,char **env)
 					last_env[1] = get_last_argument_or_command(current_pipe_line);
 				}
 				//ft_putchar_fd('\n', 1);
-				//status = ft_execute(current_pipe_line, &head);
+				status = ft_execute(current_pipe_line, &head);
 				if (last_env[0])
 				{
 					free(last_env[0]);

@@ -797,7 +797,8 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, last_env, 0);
-		after_expand_arg = ft_strdup(args->value);
+		if (args->value)
+			after_expand_arg = ft_strdup(args->value);
 		if (args->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg, after_expand_arg) && ft_strchr(after_expand_arg, ' ') && ft_strchr(befor_expand_arg, '$'))
 		{
 			next_args = args->next;

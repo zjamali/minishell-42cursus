@@ -309,9 +309,11 @@ void ft_add_to_char_list(t_readline *readline, char c, t_char_list **chars_list)
 
 	tmp = NULL;
 	ft_move_cursor_and_clear(readline->cursor);
-	if (*chars_list == NULL)
+	if (*chars_list == NULL || ( (*chars_list) && (*chars_list)->value == 0))
 	{
 		ft_putchar_fd(c, 1);
+		if ((*chars_list))
+			free(*chars_list);
 		*chars_list = (t_char_list*)malloc(sizeof(t_char_list));
 		(*chars_list)->value = c;
 		(*chars_list)->len = 1;
@@ -399,17 +401,18 @@ int add_curr_node_to_history(t_readline *readline, long c,
 	new_line_node = ft_create_line_node();
 	new_line_node->char_list = ft_copy_char_list(current->char_list);
 	new_line_node->origin_char_list = ft_copy_char_list(current->char_list);
-	
 	ft_delete_char_list(current->char_list);
 	current->char_list = ft_copy_char_list(current->origin_char_list);
 	*history = ft_delete_node_from_list(*history);
 	if (new_line_node && new_line_node->char_list && new_line_node->char_list->value != 0)
 	{
+		ft_putstr_fd("added",1);
 		*history = ft_insert_node_to_history(*history, new_line_node, 0);
 		readline->line = create_line_from_chars_list(new_line_node->char_list);
 	}
 	else
 		ft_delete_node_from_list(new_line_node);
+
 	return 0;
 }
 
@@ -521,32 +524,34 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 	char			*line;
 	static bool		inisialize_history = false;
 
+	current = ft_create_line_node();
 	character = 0;
 	line = NULL;
-	newline_break = 1;
 	if (inisialize_history == false)
 	{
 		g_vars.history = NULL;
 		inisialize_history = true;
 	}
-	current = ft_create_line_node();
 	current->next = g_vars.history;
 	if (g_vars.history)
 	{
 		g_vars.history->prev = current;
 	}
 	g_vars.history = current;
+	newline_break = 1;
 	while (newline_break)
 	{
 		read(0, &character, 6);
 		if (current && character == D_KEY_UP)
-				current = ft_up_in_history(&readline, &current);
+			current = ft_up_in_history(&readline, &current);
 		else if (current &&character == D_KEY_DOWN)
-				current = ft_down_in_history(&readline, &current);
+			current = ft_down_in_history(&readline, &current);
 		else if (character == D_KEY_ENTER)
-				newline_break = add_curr_node_to_history(&readline, character, current, &g_vars.history);
+			newline_break = add_curr_node_to_history(&readline, character, current, &g_vars.history);
 		else if (character == D_KEY_BACKSPACE)
-				ft_delete_last_charactere_from_line(&current, &readline);
+			ft_delete_last_charactere_from_line(&current, &readline);
+		else if (ft_isprint(character))
+			get_charcter(&readline, character, current);
 		else if (character == D_KEY_CTRL_C)
 		{
 			if (current && current->history == 1 && (current->char_list != NULL && current->char_list->value != 0))
@@ -569,13 +574,11 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 				exit(*status);
 			}
 		}
-		else if (ft_isprint(character))
-			get_charcter(&readline, character, current);
 		if (newline_break == 0)
 			ft_putstr_fd("\n", 1);
 		character = 0;
 	}
-	//ft_print_lines_list(g_vars.history);
+	ft_print_lines_list(g_vars.history);
 	character = 0;
 	if (readline.line)
 	{

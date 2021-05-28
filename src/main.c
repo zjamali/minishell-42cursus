@@ -242,7 +242,7 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				// ft_print_pipeline_cmd(current_pipe_line);
+				ft_print_pipeline_cmd(current_pipe_line);
 				if (last_env[1])
 				{
 					free(last_env[1]);
@@ -250,7 +250,7 @@ int main(int ac,char **av,char **env)
 					last_env[1] = get_last_argument_or_command(current_pipe_line);
 				}
 				//ft_putchar_fd('\n', 1);
-				status = ft_execute(current_pipe_line, &head);
+				//status = ft_execute(current_pipe_line, &head);
 				if (last_env[0])
 				{
 					free(last_env[0]);
@@ -265,10 +265,6 @@ int main(int ac,char **av,char **env)
 			ft_putstr_fd(RESET,ft_strlen(RESET));
 			cmd = NULL;
 		}
-		//readline= ft_destroy_read_line(readline);
-		//readline= NULL;
-		//if (history)
-		//	history = ft_destroy_line_list(history);
 	}
 	return 0;
 }

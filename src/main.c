@@ -81,48 +81,7 @@ t_readline *ft_destroy_read_line(t_readline *read_line)
 	return read_line;
 }
 */
-t_lines_list *ft_destory_node(t_lines_list *node)
-{
-	if (node->char_list)
-		ft_delete_char_list(node->char_list);
-	node->char_list = NULL;
-	if (node->origin_char_list)
-		ft_delete_char_list(node->origin_char_list);
-	node->origin_char_list = NULL;
-	node->next = NULL;
-	node->prev = NULL;
-	if (node != NULL)
-		free(node);  //////////////
-	node = NULL;
-	return NULL;
-}
 
-t_lines_list *ft_destroy_history(t_lines_list *history)
-{
-	t_lines_list *last_node;
-	t_lines_list *tmp;
-	
-
-	tmp = NULL;
-	last_node = history;
-	if (last_node->next != NULL)
-	{
-		while (last_node->next != NULL)
-		{
-			last_node = last_node->next;
-		}
-	}
-	tmp = last_node;
-	while (tmp)
-	{
-		last_node = tmp;
-		//if (tmp)
-			tmp = tmp->prev;
-		//if (last_node)
-		last_node = ft_destory_node(last_node);
-	}
-	return NULL;
-}
 t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 {
 	// Store head node
@@ -219,10 +178,11 @@ int main(int ac,char **av,char **env)
 		
 		if (line)
 		{
-			tokens_list = ft_lexer(line);
+		//	tokens_list = ft_lexer(line);
 			free(line);
 			line = NULL;
 		}
+		
 		if (tokens_list)
 		{
 			cmd = ft_parser(tokens_list,&status);

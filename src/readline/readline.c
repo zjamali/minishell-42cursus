@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 18:41:21 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/28 20:14:54 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -547,6 +547,7 @@ void ft_delete_last_charactere_from_line(t_lines_list **current, t_readline *rea
 void	reset_terminal(struct termios old_termios, int fd)
 {
 	tcsetattr(fd, TCSANOW, &old_termios);
+	
 }
 
 void	set_terminal(struct termios *termios, struct termios *old, int fd)
@@ -664,5 +665,6 @@ int micro_read_line(char **line,int *status)
 	*line  = ft_get_input(readline,status,old_termios);
 	
 	reset_terminal(old_termios, readline.term_fd);
+	close(readline.term_fd);
 	return 1;
 }

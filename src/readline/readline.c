@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 14:00:01 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 14:04:35 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -405,31 +405,31 @@ t_lines_list *ft_delete_node_from_list(t_lines_list *current)
 	{
 		return NULL;
 	}
-
-	tmp = current->char_list;
-	tmp_char_list = current->origin_char_list;
+	//tmp = current->char_list;
+	//tmp_char_list = current->origin_char_list;
 
 	if (current->next)
 		current->next->prev = current->prev;
-	while (tmp)
-	{
-		tmp1 = tmp;
-		tmp = tmp->next;
-		free(tmp1);
-		tmp1 = NULL;
-	}
-	while (tmp_char_list)
-	{
-		tmp1 = tmp_char_list;
-		tmp_char_list = tmp_char_list->next;
-		free(tmp1);
-		tmp1 = NULL;
-	}
+	//while (tmp)
+	//{
+	//	tmp1 = tmp;
+	//	tmp = tmp->next;
+	//	free(tmp1);
+	//	tmp1 = NULL;
+	//}
+	//while (tmp_char_list)
+	//{
+	//	tmp1 = tmp_char_list;
+	//	tmp_char_list = tmp_char_list->next;
+	//	free(tmp1);
+	//	tmp1 = NULL;
+	//}
 	if (current->next)
 		next_line = current->next;
-	if (current)
-		free(current);
-	current = NULL;
+	//if (current)
+	//	free(current);
+	//current = NULL;
+	current = ft_destory_node(current);
 	return next_line;
 }
 int add_curr_node_to_history(t_readline *readline, long c,
@@ -617,10 +617,10 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 				if (g_vars.history)
 					g_vars.history = ft_destroy_history(g_vars.history);
 				reset_terminal(old_term, readline.term_fd);
+				*status = 0;
+				ft_putstr_fd("exit",1);
+				exit(*status);
 			}
-			*status = 0;
-			ft_putstr_fd("exit",1);
-			exit(*status);
 		}
 		else if (ft_isprint(character))
 			get_charcter(&readline, character, current);

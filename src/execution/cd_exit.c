@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/26 16:51:22 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/28 18:24:51 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,14 +89,22 @@ int	ft_check_exit(char *arg)
 	while (arg[i])
 	{
 		if (!ft_isdigit(arg[i]))
+		{
+			if (g_vars.history)
+				g_vars.history = ft_destroy_history(g_vars.history);
 			exit(ft_put_err("exit: ",
 					ft_strjoin(arg, ": numeric argument required"), 255));
+		}
 		i++;
 	}
 	estatus = ft_atoi(arg);
 	if (estatus < -9223372036854775807)
+	{
+		if (g_vars.history)
+				g_vars.history = ft_destroy_history(g_vars.history);
 		exit(ft_put_err("exit: ", ft_strjoin(arg,
 					": numeric argument required"), 255));
+	}
 	return (estatus);
 }
 
@@ -113,5 +121,7 @@ int	ft_exit(t_args *args)
 	i = ft_check_exit(args->value);
 	if (args->next != NULL)
 		return (ft_put_err("exit", ": too many arguments", 1));
+	if (g_vars.history)
+		g_vars.history = ft_destroy_history(g_vars.history);
 	exit(i);
 }

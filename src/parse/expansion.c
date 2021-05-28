@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 19:51:41 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 21:22:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -748,7 +748,7 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 		prev->next = temp->next;
 
 		free(temp); // Free memory
-
+		
 		temp = prev->next;
 	}
 
@@ -867,8 +867,11 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	{
 		if (args)
 		{
-			(*cmd)->command = ft_strdup(args->value);
-			free(args->value);
+			if (args->value/* && args->value[0]*/)
+			{
+				(*cmd)->command = ft_strdup(args->value);
+				free(args->value);
+			}
 			(*cmd)->inside_quotes = args->inside_quotes;
 			if (args->next != NULL)
 			{
@@ -901,11 +904,14 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	while (args)
 	{
 		i = 0;
-		while (args->value && args->value[i] != '\0')
+		if (args->value)
 		{
-			if (args->value[i] == '\t')
-				args->value[i] = ' ';
-			i++;
+			while (args->value[i])
+			{
+				if (args->value[i] == '\t')
+					args->value[i] = ' ';
+				i++;
+			}
 		}
 		args = args->next;
 	}

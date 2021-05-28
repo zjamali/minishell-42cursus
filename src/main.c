@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             *
-/*   Updated: 2021/05/28 19:30:36 by zjamali          ###   ########.fr       */
+/*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
+/*   Updated: 2021/05/28 20:11:24 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 void read_command_list(char **line)
 {
-	// get_next_line(&(*line));
+	get_next_line(&(*line));
 }
 
 void show_prompt()
@@ -205,7 +205,7 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				ft_print_pipeline_cmd(current_pipe_line);
+				// ft_print_pipeline_cmd(current_pipe_line);
 				if (last_env[1])
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);

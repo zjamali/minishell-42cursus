@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/27 19:02:09 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/28 19:10:01 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,14 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 		//parrent process;
 		// signal(SIGINT, )
 		waitpid(pid, &status, 0);
-		f_status = WEXITSTATUS(status);
+		if (WIFEXITED(status))
+			f_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			f_status = 128 + WTERMSIG(status);
+			WTERMSIG(status) == SIGQUIT ? write(1, "Quit: 3\n", 8) : 1;
+		}
+		// f_status = WEXITSTATUS(status);
 		// ft_putnbr_fd(f_status, 1);
 		return (f_status);
 	}
@@ -264,6 +271,18 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 		i++;
 	}
 	return (mini->ret);
+}
+
+void signal_handler(int sig)
+{
+    char child_str[] = "this is ctrl + c in the child prosess\n";
+    if (sig == SIGINT) {
+        write(STDOUT_FILENO, "\n", 1);
+    }
+    // else if (sig == SIGQUIT)
+    // {
+    //     write(STDOUT_FILENO, "this is ctrl + \\ in the child prosess\n", sizeof("this is ctrl + \\ in the child prosess\n") - 1);
+    // }
 }
 
 int		ft_execute(t_pipe_line *cmd, t_env **head)

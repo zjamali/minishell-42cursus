@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/25 17:29:22 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/27 21:32:29 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -797,7 +797,8 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
 		ft_expande_word(&args->value, env, last_env, 0);
-		after_expand_arg = ft_strdup(args->value);
+		if (args->value)
+			after_expand_arg = ft_strdup(args->value);
 		if (args->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg, after_expand_arg) && ft_strchr(after_expand_arg, ' ') && ft_strchr(befor_expand_arg, '$'))
 		{
 			next_args = args->next;
@@ -831,7 +832,8 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		//ft_putstr_fd(befor_expand_cmd,1);
 		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
 		ft_expande_word(&((*cmd)->command), env, last_env, 0);
-		after_expand_cmd = ft_strdup((*cmd)->command);
+		if ((*cmd)->command)
+			after_expand_cmd = ft_strdup((*cmd)->command);
 		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd, after_expand_cmd) && ft_strchr(after_expand_cmd, ' ') && ft_strchr(befor_expand_cmd, '$'))
 		{
 			space = ft_strchr(after_expand_cmd, ' ');

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/24 17:41:33 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/28 18:32:10 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,5 @@ int		ft_redirection(t_mini *mini, t_redirection *redirect);
 int		ft_file_err(t_redirection *redirect);
 int 	ft_file_check(t_simple_cmd *cmd, t_env **head);
 int		ft_check_exit(char *arg);
+void	signal_handler(int sig);
 #endif

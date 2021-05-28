@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/25 14:17:40 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 16:32:34 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,15 @@ typedef struct s_env
 	struct s_env *next;
 }				t_env;
 
+typedef struct s_g_vars
+{
+	t_lines_list *history;
+	int			cpid;
+}				t_g_vars;
+
+t_g_vars	g_vars;
+
+
 
 int get_next_line(char **line);
 t_token	*ft_lexer(char *line);
@@ -177,9 +186,8 @@ void ft_print_simple_cmd(t_simple_cmd *cmd);
 char *ft_int_to_string(int n);
 
 // t_readline *ft_init_readline(struct termios *termios);
-void ft_read_line();
-int micro_read_line(char **line, t_lines_list **lines_list,int *status);
+int micro_read_line(char **line,int *status);
 void ft_delete_char_list(t_char_list *char_list);
-t_lines_list *ft_destory_line(t_lines_list *node);
-t_lines_list *ft_destroy_line_list(t_lines_list *lines_list);
+t_lines_list *ft_destory_node(t_lines_list *node);
+t_lines_list *ft_destroy_history(t_lines_list *lines_list);
 #endif

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 16:24:26 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/28 19:18:43 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 void read_command_list(char **line)
 {
-	get_next_line(&(*line));
+	// get_next_line(&(*line));
 }
 
 void show_prompt()
@@ -81,47 +81,7 @@ t_readline *ft_destroy_read_line(t_readline *read_line)
 	return read_line;
 }
 */
-t_lines_list *ft_destory_line(t_lines_list *node)
-{
-	if (node->char_list)
-		ft_delete_char_list(node->char_list);
-	node->char_list = NULL;
-	if (node->origin_char_list)
-		ft_delete_char_list(node->origin_char_list);
-	node->origin_char_list = NULL;
-	node->next = NULL;
-	node->prev = NULL;
-	free(node);
-	node = NULL;
-	return node;
-}
 
-t_lines_list *ft_destroy_line_list(t_lines_list *lines_list)
-{
-	t_lines_list *last_node;
-	t_lines_list *tmp;
-	
-
-	tmp = NULL;
-	last_node = lines_list;
-	if (last_node->next != NULL)
-	{
-		while (last_node->next != NULL)
-		{
-			last_node = last_node->next;
-		}
-	}
-	tmp = last_node;
-	while (tmp)
-	{
-		last_node = tmp;
-		//if (tmp)
-			tmp = tmp->prev;
-		//if (last_node)
-		last_node = ft_destory_line(last_node);
-	}
-	return NULL;
-}
 t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 {
 	// Store head node
@@ -183,9 +143,8 @@ int main(int ac,char **av,char **env)
 	char *last_argumet_or_command;
 //
 	current_pipe_line = NULL;
-	t_lines_list *lines_list;
+	
 	//struct termios termios;
-	t_readline *readline;
 	 last_argumet_or_command = NULL;
 
 	//// get terminal window size
@@ -197,7 +156,6 @@ int main(int ac,char **av,char **env)
 	last_env[0] = NULL;
 	last_env[1] = NULL;
 
-	lines_list = NULL;
 	status = 0;
 	tokens_list = NULL;
 	line = NULL;
@@ -209,14 +167,15 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, signal_handler);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
 		//i++;
 		show_prompt();
-		// micro_read_line(&line, &lines_list,&status);
-		read_command_list(&line);
+		micro_read_line(&line,&status);
+		// read_command_list(&line);
 		
 		if (line)
 		{
@@ -224,6 +183,7 @@ int main(int ac,char **av,char **env)
 			free(line);
 			line = NULL;
 		}
+		
 		if (tokens_list)
 		{
 			cmd = ft_parser(tokens_list,&status);
@@ -233,15 +193,30 @@ int main(int ac,char **av,char **env)
 			current_pipe_line = cmd->childs;
 		while (current_pipe_line)
 		{
+			if (last_env[0])
+			{
+				free(last_env[0]);
+				last_env[0] = NULL;
+			}
 			last_env[0] = ft_int_to_string(status); 
 			ft_expanding(current_pipe_line,&head,last_env);
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				// ft_print_pipeline_cmd(current_pipe_line);
-				last_env[1] = get_last_argument_or_command(current_pipe_line);
+				ft_print_pipeline_cmd(current_pipe_line);
+				if (last_env[1])
+				{
+					free(last_env[1]);
+					last_env = NULL;
+					last_env[1] = get_last_argument_or_command(current_pipe_line);
+				}
 				//ft_putchar_fd('\n', 1);
 				status = ft_execute(current_pipe_line, &head);
+				if (last_env[0])
+				{
+					free(last_env[0]);
+					last_env[0] = NULL;
+				}
 			}
 			current_pipe_line = current_pipe_line->next;
 		}
@@ -249,13 +224,8 @@ int main(int ac,char **av,char **env)
 		{
 			ft_destroy_ast(cmd);
 			ft_putstr_fd(RESET,ft_strlen(RESET));
+			cmd = NULL;
 		}
-		
-		cmd = NULL;
-		//readline= ft_destroy_read_line(readline);
-		readline= NULL;
-		//if (lines_list)
-		//			lines_list = ft_destroy_line_list(lines_list);
 	}
 	return 0;
 }

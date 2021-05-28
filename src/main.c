@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 15:04:10 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 19:18:43 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 void read_command_list(char **line)
 {
-//	get_next_line(&(*line));
+	// get_next_line(&(*line));
 }
 
 void show_prompt()
@@ -167,7 +167,8 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	cmd = NULL;
-	
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, signal_handler);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 14:04:35 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 18:54:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -616,8 +616,10 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 			{
 				if (g_vars.history)
 					g_vars.history = ft_destroy_history(g_vars.history);
+				if (g_vars.cmd)
+					ft_destroy_ast(g_vars.cmd);
 				reset_terminal(old_term, readline.term_fd);
-				*status = 0;
+				*status = 127;
 				ft_putstr_fd("exit",1);
 				exit(*status);
 			}
@@ -636,14 +638,6 @@ char	*ft_get_input(t_readline readline,int *status,struct termios old_term)
 		free(readline.line);
 		readline.line = NULL;
 	}
-	//if (current)
-	//{
-	//	
-	//	ft_delete_node_from_list(current);
-	//	current = NULL;
-	//}
-	//if (g_vars.history)
-	//	g_vars.history = ft_destroy_history(g_vars.history);
 	return line;
 }
 

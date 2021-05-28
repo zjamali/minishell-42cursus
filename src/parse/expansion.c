@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 21:22:56 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 22:01:17 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -729,8 +729,8 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			temp = NULL;
 			//*args = (*args)->next;
 		}
-
 		free(temp);
+		temp = NULL;
 	}
 	while (temp)
 	{
@@ -745,15 +745,18 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			//return;
 			return *args;
 		}
-		prev->next = temp->next;
-
+		if (temp->next)
+			prev->next = temp->next;
+		else
+			prev->next = NULL;
 		free(temp); // Free memory
-		
+		temp = NULL;
 		temp = prev->next;
 	}
 
 	return *args;
 }
+
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
 	t_args *args;
@@ -858,9 +861,13 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	args = (*cmd)->args;
 	if (args)
 	{
+		ft_putstr_fd("deleting emty arguments\n",1);
 		*args = *ft_delete_emty_args_nodes(&args);
-		if (!args->value && args->inside_quotes == 0 && args->next == NULL)
+		if ((!args->value || args->value[0] == '\0')&& args->inside_quotes == 0 && args->next == NULL)
+		{
+			ft_putstr_fd("args NULL",1);
 			(*cmd)->args = NULL;
+		}
 	}
 	args = (*cmd)->args;
 	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
@@ -906,7 +913,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		i = 0;
 		if (args->value)
 		{
-			while (args->value[i])
+			while (args->value[i] )
 			{
 				if (args->value[i] == '\t')
 					args->value[i] = ' ';

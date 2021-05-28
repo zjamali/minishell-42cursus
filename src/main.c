@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 21:31:57 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 21:44:17 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 					return ft_strdup(args->value);
 				else
 				{
-					return (ft_strdup(current_pipe_line->child->command));
+					if (current_pipe_line->child->command)
+						return (ft_strdup(current_pipe_line->child->command));
 				}
 			}
 		}

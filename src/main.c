@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 21:21:39 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/28 21:31:57 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,8 @@ int main(int ac,char **av,char **env)
 	int i = 0;
 	//
 	head = NULL;
-	
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, signal_handler);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{

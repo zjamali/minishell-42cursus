@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/25 19:59:20 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/27 19:02:09 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 	else
 	{
 		//parrent process;
+		// signal(SIGINT, )
 		waitpid(pid, &status, 0);
 		f_status = WEXITSTATUS(status);
 		// ft_putnbr_fd(f_status, 1);

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 22:01:17 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/29 20:13:43 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -729,8 +729,8 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			temp = NULL;
 			//*args = (*args)->next;
 		}
+
 		free(temp);
-		temp = NULL;
 	}
 	while (temp)
 	{
@@ -745,18 +745,15 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			//return;
 			return *args;
 		}
-		if (temp->next)
-			prev->next = temp->next;
-		else
-			prev->next = NULL;
+		prev->next = temp->next;
+
 		free(temp); // Free memory
-		temp = NULL;
+
 		temp = prev->next;
 	}
 
 	return *args;
 }
-
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
 	t_args *args;

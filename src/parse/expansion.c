@@ -269,10 +269,10 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env, char **last_env)
 						{
 							if (word[j] == '$')
 								j++;
-							while (ft_isalpha(word[j]) ||ft_isalnum(word[j]))
+							while (ft_isalpha(word[j]) ||ft_isalnum(word[j]) || word[j] == '_')
 								j++;
-							if (word[j] == '_')
-								j++;
+							//if (word[j] == '_')
+							//	j++;
 						}
 						else //// just a 1 dollar sign
 						{
@@ -519,11 +519,10 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 						{
 							if (word[i] == '$')
 								i++;
-							while (ft_isalpha(word[i]) || ft_isalnum(word[i]))
+							while (ft_isalpha(word[i]) || ft_isalnum(word[i]) || word[i] == '_')
 								i++;
-							if (word[i] == '_')
-								i++;
-							
+						//	if (word[i] == '_')
+						//		i++;
 						}
 						else //// just a 1 dollar sign
 						{
@@ -682,6 +681,7 @@ void	ft_delete_emty_args_nodes(t_args **args)
 			return;
 			//return *args;
 		}
+
 		prev->next = temp->next;
 
 		free(temp); // Free memory
@@ -810,7 +810,6 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			if (args->next != NULL)
 			{
 				t_args *to_free;
-				
 				to_free = args;
 				(*cmd)->args = args->next;
 				free(to_free);
@@ -823,6 +822,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			}
 		}
 	}
+	
 	/// replace tab by space
 	int i = 0;
 	if ((*cmd)->command)

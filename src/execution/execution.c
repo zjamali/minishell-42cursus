@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/28 19:49:27 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/30 19:30:06 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ char **ft_args_to_arr(t_simple_cmd *cmd)
 	arg[i++] = cmd->command;
 	while (temp != NULL)
 	{
+		if (temp->value == NULL && temp->inside_quotes == 2)
+			temp->value = ft_strdup("");
 		arg[i] = temp->value;
 		i++;
 		temp = temp->next;
@@ -135,6 +137,8 @@ int ft_file_check(t_simple_cmd *cmd, t_env **head)
 	struct stat *buf;
 
 	buf = malloc(sizeof(struct stat));
+	if (cmd->command[0] != '.' && cmd->command[0] != '/')
+		cmd->command = ft_strjoin("/", cmd->command);
 	if (stat(cmd->command, buf) == -1)
 		return (ft_put_err(cmd->command, ": No such file or directory", 127));
 	else if (buf->st_mode & S_IFDIR)
@@ -151,13 +155,14 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 	char *full_path;
 	struct stat *buf;
 	
-	if (cmd->command[0] == '/' || cmd->command[0] == '.')
+	if (ft_strchr(cmd->command, '/') || cmd->command[0] == '.')
 		return (ft_file_check(cmd, head));
 	else
 	{
 		temp = ft_search_in_list(head, "PATH");
 		if (temp == NULL)
-			return (ft_put_err(cmd->command, ": No such file or directory", 127));
+			return (ft_file_check(cmd, head));
+			// return (ft_put_err(cmd->command, ": No such file or directory", 127));
 		path = ft_split(temp->value, ':');
 		while (*path != NULL)
 		{

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 20:11:24 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/30 19:23:20 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ int main(int ac,char **av,char **env)
 	int i = 0;
 	//
 	head = NULL;
-	cmd = NULL;
+	//cmd = NULL;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
 	init_env(&head, env);   // 24 bytes allocated
@@ -179,8 +179,8 @@ int main(int ac,char **av,char **env)
 	{
 		//i++;
 		show_prompt();
-		micro_read_line(&line,&status);
-		// read_command_list(&line);
+		// micro_read_line(&line,&status);
+		read_command_list(&line);
 		
 		if (line)
 		{
@@ -205,12 +205,12 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				// ft_print_pipeline_cmd(current_pipe_line);
+				 ft_print_pipeline_cmd(current_pipe_line);
 				if (last_env[1])
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				//ft_putchar_fd('\n', 1);
-				///status = ft_execute(current_pipe_line, &head);
+				status = ft_execute(current_pipe_line, &head);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}

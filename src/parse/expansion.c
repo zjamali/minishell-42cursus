@@ -729,9 +729,9 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			temp = NULL;
 			//*args = (*args)->next;
 		}
-
 		free(temp);
 	}
+
 	while (temp)
 	{
 		while (temp && (temp->inside_quotes != 0 || (temp->value && temp->inside_quotes == 0)))
@@ -745,13 +745,14 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 			//return;
 			return *args;
 		}
+
 		prev->next = temp->next;
 
 		free(temp); // Free memory
 
 		temp = prev->next;
 	}
-
+		ft_putstr_fd("wa zabi",1);
 	return *args;
 }
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
@@ -860,9 +861,11 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	{
 		ft_putstr_fd("deleting emty arguments\n",1);
 		*args = *ft_delete_emty_args_nodes(&args);
+			
 		if ((!args->value || args->value[0] == '\0')&& args->inside_quotes == 0 && args->next == NULL)
 		{
 			ft_putstr_fd("args NULL",1);
+			free((*cmd)->args);
 			(*cmd)->args = NULL;
 		}
 	}
@@ -880,7 +883,6 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			if (args->next != NULL)
 			{
 				t_args *to_free;
-				
 				to_free = args;
 				(*cmd)->args = args->next;
 				free(to_free);
@@ -888,10 +890,13 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			}
 			else
 			{
+				if (args)
+					free(args);
 				(*cmd)->args = NULL;
 			}
 		}
 	}
+	
 	/// replace tab by space
 	int i = 0;
 	if ((*cmd)->command)
@@ -910,7 +915,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		i = 0;
 		if (args->value)
 		{
-			while (args->value[i] )
+			while (args->value[i])
 			{
 				if (args->value[i] == '\t')
 					args->value[i] = ' ';

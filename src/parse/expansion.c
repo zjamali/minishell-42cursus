@@ -269,10 +269,10 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env, char **last_env)
 						{
 							if (word[j] == '$')
 								j++;
-							while (ft_isalpha(word[j]) ||ft_isalnum(word[j]))
+							while (ft_isalpha(word[j]) ||ft_isalnum(word[j]) || word[j] == '_')
 								j++;
-							if (word[j] == '_')
-								j++;
+							//if (word[j] == '_')
+							//	j++;
 						}
 						else //// just a 1 dollar sign
 						{
@@ -519,11 +519,10 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 						{
 							if (word[i] == '$')
 								i++;
-							while (ft_isalpha(word[i]) || ft_isalnum(word[i]))
+							while (ft_isalpha(word[i]) || ft_isalnum(word[i]) || word[i] == '_')
 								i++;
-							if (word[i] == '_')
-								i++;
-							
+						//	if (word[i] == '_')
+						//		i++;
 						}
 						else //// just a 1 dollar sign
 						{

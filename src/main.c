@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/29 20:18:04 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/30 21:34:55 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 		args = current_pipe_line->child->args;
 		if (args == NULL)
 		{
-			return (ft_strdup(current_pipe_line->child->command));
+			if (current_pipe_line->child->command)
+				return (ft_strdup(current_pipe_line->child->command));
 		}
 		else{
 			while (args->next != NULL)
@@ -204,12 +205,13 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				ft_print_pipeline_cmd(current_pipe_line);
+				// ft_print_pipeline_cmd(current_pipe_line);
 				if (last_env[1])
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				//ft_putchar_fd('\n', 1);
-			//	status = ft_execute(current_pipe_line, &head);
+				
+				status = ft_execute(current_pipe_line, &head);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}
@@ -227,4 +229,8 @@ echo >      \;
 > f1 bouvle
 echo hello >''>f1 boucle 
 echo helo > $jefh boucle infinie ambigious redirection
+error :: cat ""
+echo $\\$PWD
+echo "$PWD_$PWD"
+echo "$\\$PWD"
 */

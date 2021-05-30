@@ -204,7 +204,7 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				ft_print_pipeline_cmd(current_pipe_line);
+				// ft_print_pipeline_cmd(current_pipe_line);
 				if (last_env[1])
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);

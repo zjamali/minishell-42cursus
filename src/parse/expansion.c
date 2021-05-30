@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/29 20:13:43 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/30 16:25:22 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -709,7 +709,7 @@ t_args *ft_handle_arg_expanding(t_args **args)
 	return (new_args);
 }
 
-t_args *ft_delete_emty_args_nodes(t_args **args)
+void	ft_delete_emty_args_nodes(t_args **args)
 {
 	t_args *temp;
 	t_args *prev;
@@ -717,23 +717,18 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 	prev = NULL;
 	temp = *args;
 	
-	while (temp && (temp->inside_quotes == 0 && !temp->value))
+	while (*args && ((*args)->inside_quotes == 0 && !(*args)->value))
 	{
-		if (temp->next)
-		{
-			*args = temp->next;
 			temp = *args;
-		}
-		else
-		{
-			temp = NULL;
-			//*args = (*args)->next;
-		}
-
-		free(temp);
+			*args = (*args)->next;
+			printf("told ya\n");
+			free(temp);
 	}
+		printf("blah\n");
+	temp = *args;
 	while (temp)
 	{
+		printf("meow\n");
 		while (temp && (temp->inside_quotes != 0 || (temp->value && temp->inside_quotes == 0)))
 		{
 			prev = temp;
@@ -742,8 +737,8 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 
 		if (temp == NULL)
 		{
-			//return;
-			return *args;
+			return;
+			//return *args;
 		}
 		prev->next = temp->next;
 
@@ -751,8 +746,8 @@ t_args *ft_delete_emty_args_nodes(t_args **args)
 
 		temp = prev->next;
 	}
-
-	return *args;
+	printf("mamamaia {}\n");
+	// return *args;
 }
 void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
@@ -855,17 +850,28 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 
 		redis = redis->next;
 	}
+	ft_print_simple_cmd(*cmd);
 	args = (*cmd)->args;
 	if (args)
 	{
-		ft_putstr_fd("deleting emty arguments\n",1);
-		*args = *ft_delete_emty_args_nodes(&args);
-		if ((!args->value || args->value[0] == '\0')&& args->inside_quotes == 0 && args->next == NULL)
-		{
-			ft_putstr_fd("args NULL",1);
-			(*cmd)->args = NULL;
-		}
+		//ft_putstr_fd("deleting emty arguments\n",1);
+		ft_delete_emty_args_nodes(&(*cmd)->args);
+		//if (args == NULL)
+		//{
+		//	printf("hello I am args and I am NULL\n");
+		//	if ((*cmd)->args == NULL)
+		//		printf("wow sorry I am stupid\n");
+		//	else
+		//		printf("zohair is stupid\n");
+		//}
+		//if (args && (!args->value || args->value[0] == '\0')&& args->inside_quotes == 0 && args->next == NULL)
+		//{
+		//	ft_putstr_fd("args NULL",1);
+		//	free((*cmd)->args);
+		//	(*cmd)->args = NULL;
+		//}
 	}
+	ft_print_simple_cmd(*cmd);
 	args = (*cmd)->args;
 	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
 	{
@@ -888,6 +894,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			}
 			else
 			{
+				free((*cmd)->args);
 				(*cmd)->args = NULL;
 			}
 		}
@@ -910,7 +917,7 @@ void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		i = 0;
 		if (args->value)
 		{
-			while (args->value[i] )
+			while (args->value[i])
 			{
 				if (args->value[i] == '\t')
 					args->value[i] = ' ';

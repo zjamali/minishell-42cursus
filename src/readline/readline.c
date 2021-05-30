@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   readline.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
 /*   Updated: 2021/05/30 19:15:48 by mbari            ###   ########.fr       */

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
 /*   Updated: 2021/05/30 19:23:20 by mbari            ###   ########.fr       */
@@ -29,7 +29,6 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 		args = current_pipe_line->child->args;
 		if (args == NULL)
 		{
-		//	ft_putstr_fd(current_pipe_line->child->command,1);
 			return (ft_strdup(current_pipe_line->child->command));
 		}
 		else{
@@ -48,7 +47,8 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 					return ft_strdup(args->value);
 				else
 				{
-					return (ft_strdup(current_pipe_line->child->command));
+					if (current_pipe_line->child->command)
+						return (ft_strdup(current_pipe_line->child->command));
 				}
 			}
 		}
@@ -58,7 +58,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 void read_command_list(char **line)
 {
-	get_next_line(&(*line));
+	//get_next_line(&(*line));
 }
 
 void show_prompt()
@@ -179,8 +179,8 @@ int main(int ac,char **av,char **env)
 	{
 		//i++;
 		show_prompt();
-		// micro_read_line(&line,&status);
-		read_command_list(&line);
+		micro_read_line(&line,&status);
+		//read_command_list(&line);
 		
 		if (line)
 		{

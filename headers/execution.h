@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/02 15:49:05 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/28 18:32:10 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	ft_replaceit(t_env **head, char *name, char *value);
 void	ft_loop(t_env **head, t_args *args);
 int		ft_echo(t_env **head, t_args *args);
 int		ft_cd(t_args *args, t_env **head);
-int		ft_pwd();
+int		ft_pwd(t_env **head);
 int		ft_env(t_env **head);
 int		ft_unset(t_args *args, t_env **head);
 int		ft_export(t_env **head, t_args *args);
@@ -49,4 +49,8 @@ int		ft_less_than(int *fd, t_redirection *redirect);
 int		ft_great_than(int *fd, t_redirection *redirect);
 int 	ft_double_great(int *fd, t_redirection *redirect);
 int		ft_redirection(t_mini *mini, t_redirection *redirect);
+int		ft_file_err(t_redirection *redirect);
+int 	ft_file_check(t_simple_cmd *cmd, t_env **head);
+int		ft_check_exit(char *arg);
+void	signal_handler(int sig);
 #endif

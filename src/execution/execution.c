@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/02 15:49:15 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/30 21:37:29 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,32 +55,38 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 	int		status;
 	int		f_status;
 
-
 	if (!(pid = fork()))
 	{
 		//child_process;
 		//ft_putendl_fd(cmd->command, 1);
 		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
-			ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), 1);
+			exit(ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), errno));
 		// ft_putendl_fd(strerror(errno), 2);
-		// ft_putnbr_fd(f_status, 1);
-			
+		// ft_putnbr_fd(errno, 1);
 			//ft_putstr_fd("Command not found or permission denied.\n", 2);
 	}
 	else if (pid == -1)
 	{
 		//error;
-		ft_putstr_fd("Fork failed.\n", 2);
+		return (ft_put_err("fork", ft_strjoin(": ", "Fork failed"), 2));
 	}
 	else
 	{
 		//parrent process;
+		// signal(SIGINT, )
 		waitpid(pid, &status, 0);
-		f_status = WEXITSTATUS(status);
+		if (WIFEXITED(status))
+			f_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			f_status = 128 + WTERMSIG(status);
+			WTERMSIG(status) == SIGQUIT ? write(1, "Quit: 3\n", 8) : 1;
+		}
+		// f_status = WEXITSTATUS(status);
 		// ft_putnbr_fd(f_status, 1);
 		return (f_status);
 	}
-	return (1);
+	return (77);
 }
 
 void	do_backups(int flag)
@@ -93,9 +99,9 @@ void	do_backups(int flag)
 	if (flag)
 	{
 		//do a backup for all the standars if flag == 1
-		stdin = dup2(0, 1337);
-		stdou = dup2(1, 1338);
-		stdou = dup2(2, 1339);
+		stdin = dup(STDIN_FILENO);
+		stdou = dup(STDOUT_FILENO);
+		stderr = dup(STDERR_FILENO);
 	}
 	else if (!flag)
 	{
@@ -124,6 +130,20 @@ void init_env(t_env **head, char **env)
 	}
 }
 
+int ft_file_check(t_simple_cmd *cmd, t_env **head)
+{
+	struct stat *buf;
+
+	buf = malloc(sizeof(struct stat));
+	if (stat(cmd->command, buf) == -1)
+		return (ft_put_err(cmd->command, ": No such file or directory", 127));
+	else if (buf->st_mode & S_IFDIR)
+		return (ft_put_err(cmd->command, ": Is a directory", 126));
+	else if ((buf->st_mode & S_IXUSR) == 0)
+		return (ft_put_err(cmd->command, ": Permission denied", 126));
+	return (ft_exec(cmd, head));
+}
+
 int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 {
 	t_env *temp;
@@ -132,10 +152,12 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 	struct stat *buf;
 	
 	if (cmd->command[0] == '/' || cmd->command[0] == '.')
-		return (ft_exec(cmd, head));
+		return (ft_file_check(cmd, head));
 	else
 	{
 		temp = ft_search_in_list(head, "PATH");
+		if (temp == NULL)
+			return (ft_put_err(cmd->command, ": No such file or directory", 127));
 		path = ft_split(temp->value, ':');
 		while (*path != NULL)
 		{
@@ -150,11 +172,9 @@ int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 			free(buf);
 			path++;
 		}
-		//zsh: command not found: ubadsia
 		return(ft_put_err(cmd->command, ": command not found", 127));
 	}
 	return (0);
-		//ft_putendl_fd("A blati blati shtk b7al ila zrbti 3lya", 1);
 }
 
 int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
@@ -164,7 +184,7 @@ int		ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));
 	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
-		return (ft_pwd());
+		return (ft_pwd(head));
 	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
 		return (ft_env(head));
 	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))
@@ -237,6 +257,7 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 		}
 		cmd->child = cmd->child->next;
 		command+=2;
+		do_backups(0);
 		k++;
 	}
 	i = 0;
@@ -250,6 +271,18 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 		i++;
 	}
 	return (mini->ret);
+}
+
+void signal_handler(int sig)
+{
+    char child_str[] = "this is ctrl + c in the child prosess\n";
+    if (sig == SIGINT) {
+        write(STDOUT_FILENO, "\n", 1);
+    }
+    // else if (sig == SIGQUIT)
+    // {
+    //     write(STDOUT_FILENO, "this is ctrl + \\ in the child prosess\n", sizeof("this is ctrl + \\ in the child prosess\n") - 1);
+    // }
 }
 
 int		ft_execute(t_pipe_line *cmd, t_env **head)
@@ -304,7 +337,7 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	//ft_putnbr_fd(getpid(), 1); //show the main process id
 	*/
 	ft_putstr_fd(BLUE,1);
-	ft_putendl_fd("------------------------------------------------------------", 1);
+	// ft_putendl_fd("------------------------------------------------------------", 1);
 	// if (cmd->simple_cmd_count != 1)
 	do_backups(1);
 	mini.flag = 0;
@@ -313,15 +346,18 @@ int		ft_execute(t_pipe_line *cmd, t_env **head)
 	if (cmd->child->redirections != NULL)
 	{
 		if (ft_redirection(&mini, cmd->child->redirections))
+		{
+			do_backups(0);
 			return (1);
+		}
 	}
-	if (cmd->child->command == NULL)
+	if (cmd->child->command == NULL && cmd->child->redirections == NULL)
 		return (ft_put_err("\0", ": command not found", 127));
 	if (cmd->simple_cmd_count > 1)
 		mini.ret = ft_pipe(&mini, cmd, head);
-	else
+	else if (cmd->child->command != NULL)
 		mini.ret = ft_is_builtins(cmd->child, head);
 	do_backups(0);
-	ft_putendl_fd("------------------------------------------------------------", 2);
+	//ft_putendl_fd("-------------------------execution finished------------------------------", 1);
 	return (mini.ret);
 }

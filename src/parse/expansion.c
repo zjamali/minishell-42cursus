@@ -6,25 +6,33 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 13:32:19 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/30 21:00:31 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 #include "../../headers/execution.h"
+void ft_replace_tab_with_space(t_simple_cmd **cmd)
+{
+
+}
 
 int check_exiting_of_qoutes(char *str)
 {
-	if (str)
+	int i;
+
+	i = 0;
+	while (str[i])
 	{
-		if (str[0] == '\'')
+		if (str[i] == '\'')
 		{
 			return (1);
 		}
-		else if (str[0] == '\"')
+		else if (str[i] == '\"')
 			return 2;
-		else
-			return (0);
+		//else
+		//	return (0);
+		i++;
 	}
 	return (0);
 }
@@ -81,27 +89,22 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 	if (inside_dq == 1)
 	{
 		j++;
-		if (env_variable[j] == '_')
-			str = ft_strdup("_");
-		else
-		{
-			while (ft_isalpha(env_variable[j]))
+		//if (env_variable[j] == '~' && env_variable[j+1] == '\0')
+		//	str = ft_strdup("HOME");
+		//else
+		//{
+			while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
-		}
-		//ft_putstr_fd(str,1);
+		//}
+		//ft_putstr_fd(str, 1);
 	}
 	if (inside_dq == 0)
 	{
 		j++;
-		if (env_variable[j] == '_')
-			str = ft_strdup("_");
-		else
-		{
-			while (ft_isalpha(env_variable[j]))
+			while (!ft_isalnum(env_variable[0]) && (ft_isalpha(env_variable[j]) || env_variable[j] == '_' || ft_isalnum(env_variable[j])))
 				j++;
 			str = ft_substr(env_variable, 1, j - 1);
-		}
 	}
 	tmp = ft_search_in_list(env, str);
 	if (str)
@@ -112,7 +115,7 @@ char *get_env_value(char *env_variable, t_env **env, int inside_dq)
 		return NULL;
 }
 
-char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
+char *ft_remove_double_quotes(char *word, int *i, t_env **env, char **last_env)
 {
 	int j;
 	char *expand;
@@ -137,8 +140,12 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 			}
 			else
 			{
-				expand = ft_substr(word, j, 2);
+				tmp = expand;
+				tmp1 = ft_substr(word, j, 2);
+				expand = ft_strjoin(expand, tmp1);
 				j += 2;
+				free(tmp);
+				free(tmp1);
 			}
 		}
 		else
@@ -160,6 +167,12 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 					tmp = get_env_value(word + j, env, 1);
 					if (tmp)
 					{
+						if (word[j + 1] == '_' && word[j + 2] == '"')
+						{
+							free(tmp);
+							tmp = NULL;
+							tmp = ft_strdup(last_env[1]);
+						}
 						expand = ft_strjoin(expand, tmp);
 						free(tmp1);
 						free(tmp);
@@ -169,7 +182,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 							j++;
 						else
 						{
-							while (ft_isalpha(word[j]))
+							while (ft_isalpha(word[j]) || ft_isalnum(word[j]) || word[j] == '_')
 								j++;
 							//ft_putstr_fd(&word[j],1);
 						}
@@ -178,88 +191,106 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 					{
 						//if (word[j + 1] != '"')
 						//{
-							//// Special Parameters of $
-							if (ft_isdigit(word[j + 1]) || ft_strchr("!:#%@-*=", word[j + 1]))
+						//// Special Parameters of $
+						if (ft_isdigit(word[j + 1]) || ft_strchr("!:#%@-*=/\\", word[j + 1]))
+						{
+							if (ft_isdigit(word[j + 1]))
 							{
-								if (ft_isdigit(word[j + 1]))
+								if (word[j + 1] == '0')
 								{
-									if (word[j + 1] == '0')
-									{
-										tmp1 = expand;
-										tmp = ft_strdup("minishell");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
-									}
-									j += 2;
+									tmp1 = expand;
+									tmp = ft_strdup("minishell");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
 								}
-								else
+								j += 2;
+							}
+							else
+							{
+								if (word[j + 1] == '#')
 								{
-									if (word[j + 1] == '#')
-									{
-										tmp1 = expand;
-										tmp = ft_strdup("0");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
-									}
-									else if (word[j + 1] == '-')
-									{
-										tmp1 = expand;
-										tmp = ft_strdup("himBH");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
-									}
-									else if (word[j + 1] == '!')
-									{
-										tmp1 = expand;
-										tmp = ft_strdup("$!");
-										expand = ft_strjoin(expand, tmp);
-										free(tmp1);
-										free(tmp);
-									}
-									else if (ft_strchr(":%=", word[j + 1]))
-									{
+									tmp1 = expand;
+									tmp = ft_strdup("0");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (word[j + 1] == '-')
+								{
+									tmp1 = expand;
+									tmp = ft_strdup("himBH");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (word[j + 1] == '!')
+								{
+									tmp1 = expand;
+									tmp = ft_strdup("$!");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (ft_strchr("\\", word[j + 1]))
+								{
+									tmp1 = expand;
+									tmp = ft_strdup("$");
+									expand = ft_strjoin(expand, tmp);
+									free(tmp1);
+									free(tmp);
+								}
+								else if (ft_strchr(":%=/", word[j + 1]))
+								{
+									
+
 										tmp1 = expand;
 										tmp = ft_substr(word, j, 2);
 										expand = ft_strjoin(expand, tmp);
 										free(tmp1);
 										free(tmp);
-									}
-									j += 2;
+									
 								}
-							}
-							else if (word[j + 1] == '?')
-							{
-								char *status_string = ft_int_to_string(status);
-								tmp1 = expand;
-								expand = ft_strjoin(expand, status_string);
-								free(tmp1);
-								free(tmp);
 								j += 2;
 							}
-							else if (word[j + 1] && word[j + 1] != '\"' && word[j + 1] != ' ')
-							{
-								while (ft_isalpha(word[j]) || (word[j] == '$'))
-									j++;
-							}
-							else //// just a 1 dollar sign
-							{
-								tmp1 = expand;
-								tmp = ft_substr(word, j, 1);
-								expand = ft_strjoin(expand, tmp);
-								free(tmp1);
-								free(tmp);
+						}
+						else if (word[j + 1] == '?')
+						{
+							//char *status_string = ft_int_to_string(status);
+							tmp = last_env[0];
+							tmp1 = expand;
+							//expand = ft_strjoin(expand, status_string);
+							expand = ft_strjoin(expand, tmp);
+							free(tmp1);
+							free(tmp);
+							j += 2;
+						}
+						else if (word[j + 1] && word[j + 1] != '\"' && word[j + 1] != ' ')
+						{
+							if (word[j] == '$')
 								j++;
-							}
+							while (ft_isalpha(word[j]) ||ft_isalnum(word[j]) || word[j] == '_')
+								j++;
+							//if (word[j] == '_')
+							//	j++;
+						}
+						else //// just a 1 dollar sign
+						{
+							tmp1 = expand;
+							tmp = ft_substr(word, j, 1);
+							expand = ft_strjoin(expand, tmp);
+							free(tmp1);
+							free(tmp);
+							j++;
+						}
 						//}
 					}
 					else
 					{
+						
 						if (!word[j + 1]) //get last dollar after double dollars sign
 						{
-							
+
 							tmp = expand;
 							tmp1 = ft_substr(word, j, 1);
 							expand = ft_strjoin(expand, tmp1);
@@ -269,7 +300,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 						}
 						else
 						{
-							while (ft_isalpha(word[j]))
+							while (ft_isalpha(word[j]) || word[j] == '$')
 								j++;
 						}
 					}
@@ -291,7 +322,7 @@ char *ft_remove_double_quotes(char *word, int *i, t_env **env,int status)
 	return expand;
 }
 
-void ft_expande_word(char **string, t_env **env_list, int status, int redirection)
+void ft_expande_word(char **string, t_env **env_list, char **last_env, int redirection)
 {
 	char *word;
 	char *expanded;
@@ -310,7 +341,24 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 	j = 0;
 	tmp1 = NULL;
 	tmp = NULL;
-
+	
+	if (word[0] == '~' &&  (word[1] == '\0' || word[1] =='/'))
+	{
+		tmp = word;
+		if (word[1] == '\0')
+			word = ft_strdup("$HOME");
+		else if (word[1] =='/')
+		{
+			int len = ft_strlen(word);
+			tmp1 = ft_substr(word,1,len - 1);
+			free(word);
+			tmp =  ft_strdup("$HOME");
+			word =  ft_strjoin(tmp,tmp1);
+			free(tmp1);
+		}
+		free(tmp);
+		tmp = NULL;
+	}
 	while (word[i])
 	{
 		if (word[i] == '\\')
@@ -343,7 +391,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 		else if (word[i] == '"')
 		{
 			tmp1 = expanded;
-			tmp = ft_remove_double_quotes(word, &i, env_list,status);
+			tmp = ft_remove_double_quotes(word, &i, env_list, last_env);
 			if (tmp)
 			{
 				expanded = ft_strjoin(expanded, tmp);
@@ -366,20 +414,25 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 			{
 				tmp1 = expanded;
 				tmp = get_env_value(word + i, env_list, 0);
-
 				if (tmp) /// env variavle exist
 				{
+					if (word[i + 1] == '_' && word[i + 2] == '\0')
+					{
+						free(tmp);
+						tmp = NULL;
+						tmp = ft_strdup(last_env[1]);
+					}
+					tmp1 = expanded;
 					expanded = ft_strjoin(expanded, tmp);
-					free(tmp1);
 					free(tmp);
-
+					free(tmp1);
 					if (word[i] == '$')
 						i++;
 					if (word[i] == '_')
 						i++;
 					else
 					{
-						while (ft_isalpha(word[i]))
+						while (ft_isalpha(word[i]) || ft_isalnum(word[i]) || word[i] == '_')
 							i++;
 						//ft_putstr_fd(&word[i],1);
 					}
@@ -390,7 +443,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 					if (word[i + 1] != '"')
 					{
 						//// Special Parameters of $
-						if (ft_isdigit(word[i + 1]) || ft_strchr("!:#%@-*=", word[i + 1]))
+						if (ft_isdigit(word[i + 1]) || ft_strchr("!:#%@-*=/\\", word[i + 1]))
 						{
 							if (ft_isdigit(word[i + 1]))
 							{
@@ -403,6 +456,15 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 									free(tmp);
 								}
 								i += 2;
+							}
+							else if (ft_strchr("\\", word[i + 1]))
+							{
+								tmp1 = expanded;
+								tmp = ft_strdup("$");
+								expanded = ft_strjoin(expanded, tmp);
+								free(tmp1);
+								free(tmp);
+								i++;
 							}
 							else
 							{
@@ -430,30 +492,37 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 									free(tmp1);
 									free(tmp);
 								}
-								else if (ft_strchr(":%=", word[i + 1]))
+								else if (ft_strchr(":%=/", word[i + 1]))
 								{
-									tmp1 = expanded;
-									tmp = ft_substr(word, i, 2);
-									expanded = ft_strjoin(expanded, tmp);
-									free(tmp1);
-									free(tmp);
+									
+										tmp1 = expanded;
+										tmp = ft_substr(word, i, 2);
+										expanded = ft_strjoin(expanded, tmp);
+										free(tmp1);
+										free(tmp);
 								}
 								i += 2;
 							}
 						}
 						else if (word[i + 1] == '?')
 						{
-							char *status_string = ft_int_to_string(status);
+							//char *status_string = ft_int_to_string(status);
+							tmp = last_env[0];
 							tmp1 = expanded;
-							expanded = ft_strjoin(expanded, status_string);
+							//expanded = ft_strjoin(expanded, status_string);
+							expanded = ft_strjoin(expanded, tmp);
 							free(tmp1);
-							free(tmp);
+							//free(tmp);
 							i += 2;
 						}
 						else if (word[i + 1])
 						{
-							while (ft_isalpha(word[i]) || (word[i] == '$'))
+							if (word[i] == '$')
 								i++;
+							while (ft_isalpha(word[i]) || ft_isalnum(word[i]) || word[i] == '_')
+								i++;
+						//	if (word[i] == '_')
+						//		i++;
 						}
 						else //// just a 1 dollar sign
 						{
@@ -465,7 +534,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 							i++;
 						}
 					}
-					else 
+					else
 						i++;
 				}
 				else /// env variavle not exist  no multiple sign dollars
@@ -482,7 +551,7 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 					}
 					else
 					{
-						while (ft_isalpha(word[i]))
+						while (ft_isalpha(word[i]) || word[i] == '$')
 							i++;
 					}
 				}
@@ -514,49 +583,289 @@ void ft_expande_word(char **string, t_env **env_list, int status, int redirectio
 	free(word);
 }
 
-void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, int status)
+t_simple_cmd *ft_handle_cmd_expanding(t_simple_cmd **cmd)
+{
+	char **splited = NULL;
+	char *to_free;
+	t_args *new_args;
+	t_args *tmp;
+	int i;
+
+	i = 1;
+	to_free = (*cmd)->command;
+	splited = ft_split((*cmd)->command, ' ');
+	free(to_free);
+	(*cmd)->command = splited[0];
+	new_args = (t_args *)malloc(sizeof(t_args));
+	tmp = new_args;
+	while (splited[i])
+	{
+		new_args->value = splited[i];
+		new_args->inside_quotes = 0;
+		new_args->next = NULL;
+		if (splited[i + 1])
+		{
+			new_args->next = (t_args *)malloc(sizeof(t_args));
+			new_args = new_args->next;
+		}
+		i++;
+	}
+	if (i > 1)
+	{
+		new_args->next = (*cmd)->args;
+		(*cmd)->args = tmp;
+	}
+	free(splited);
+	return (*cmd);
+}
+
+t_args *ft_handle_arg_expanding(t_args **args)
+{
+	char **splited;
+	char *to_free;
+	t_args *tmp;
+	t_args *new_args;
+	t_args *tmp1;
+	int i;
+
+	tmp1 = *args;
+	to_free = tmp1->value;
+	splited = ft_split(tmp1->value, ' ');
+	i = 0;
+	new_args = (t_args *)malloc(sizeof(t_args));
+	tmp = new_args;
+	while (splited[i])
+	{
+		tmp->value = splited[i];
+		tmp->inside_quotes = 0;
+		tmp->next = NULL;
+		//ft_putstr_fd(splited[i], 1);
+		if (splited[i + 1])
+		{
+			tmp->next = (t_args *)malloc(sizeof(t_args));
+			tmp = tmp->next;
+		}
+		i++;
+	}
+	tmp->next = tmp1->next;
+	*args = new_args;
+	free(splited);
+	return (new_args);
+}
+
+void	ft_delete_emty_args_nodes(t_args **args)
+{
+	t_args *temp;
+	t_args *prev;
+
+	prev = NULL;
+	temp = *args;
+	
+	while (*args && ((*args)->inside_quotes == 0 && !(*args)->value))
+	{
+		temp = *args;
+		*args = (*args)->next;
+		free(temp);
+	}
+	temp = *args;
+	while (temp)
+	{
+		while (temp && (temp->inside_quotes != 0 || (temp->value && temp->inside_quotes == 0)))
+		{
+			prev = temp;
+			temp = temp->next;
+		}
+
+		if (temp == NULL)
+		{
+			return;
+			//return *args;
+		}
+
+		prev->next = temp->next;
+
+		free(temp); // Free memory
+
+		temp = prev->next;
+	}
+	// return *args;
+}
+void ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
 	t_args *args;
 	t_redirection *redis;
-	char *tmp;
-
-	tmp = NULL;
+	char *befor_expand_cmd;
+	char *after_expand_cmd;
+	befor_expand_cmd = NULL;
+	after_expand_cmd = NULL;
+	char *befor_expand_arg;
+	char *after_expand_arg;
+	befor_expand_arg = NULL;
+	after_expand_arg = NULL;
+	char *space;
+	space = NULL;
 	redis = NULL;
-	if ((*cmd)->command)
-	{
-		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
-		ft_expande_word(&((*cmd)->command), env, status, 0);
-	}
+
+	
+	args = (*cmd)->args;
+	t_args *next_args = NULL;	
+	/// replace space by tab
+	///
 	args = (*cmd)->args;
 	while (args)
 	{
+		befor_expand_arg = ft_strdup(args->value);
+		int i ;
+		i = 0;
+		/// replace space by tab
+		while (args->value && args->value[i] != '\0')
+		{
+			if (args->value[i] == ' ')
+				args->value[i] = '\t';
+			i++;
+		}
+		///
+		
 		args->inside_quotes = check_exiting_of_qoutes(args->value);
-		ft_expande_word(&args->value, env, status, 0);
-		args = args->next;
+		ft_expande_word(&args->value, env, last_env, 0);
+		if (args->value)
+			after_expand_arg = ft_strdup(args->value);
+		if (args->inside_quotes == 0 && after_expand_arg && ft_strcmp(befor_expand_arg, after_expand_arg) && ft_strchr(after_expand_arg, ' ') && ft_strchr(befor_expand_arg, '$'))
+		{
+			next_args = args->next;
+			space = ft_strchr(after_expand_arg, ' ');
+			if (++space)
+			{
+				*args = *ft_handle_arg_expanding(&args);
+			}
+			args = next_args;
+		}
+		else
+			args = args->next;
+		free(befor_expand_arg);
+		befor_expand_arg = NULL;
+		free(after_expand_arg);
+		after_expand_arg = NULL;
 	}
+	
+	if ((*cmd)->command)
+	{
+		befor_expand_cmd = ft_strdup((*cmd)->command);
+		int i = 0;
+		
+		while ((*cmd)->command[i] != '\0')
+		{
+			if ((*cmd)->command[i] == ' ')
+				(*cmd)->command[i] = '\t';
+			i++;
+		}
+		i = 0;
+		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
+		ft_expande_word(&((*cmd)->command), env, last_env, 0);
+		if ((*cmd)->command)
+			after_expand_cmd = ft_strdup((*cmd)->command);
+		if ((*cmd)->inside_quotes == 0 && after_expand_cmd && ft_strcmp(befor_expand_cmd, after_expand_cmd) && ft_strchr(after_expand_cmd, ' ') && ft_strchr(befor_expand_cmd, '$'))
+		{
+			space = ft_strchr(after_expand_cmd, ' ');
+			if (++space)
+			{
+				*cmd = ft_handle_cmd_expanding(cmd);
+			}
+			//free(space);
+			//space = NULL;
+		}
+		free(befor_expand_cmd);
+		befor_expand_cmd = NULL;
+		free(after_expand_cmd);
+		after_expand_cmd = NULL;
+	}
+	////// here deleting empty args
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
 		redis->inside_quotes = check_exiting_of_qoutes(redis->file_name);
-		ft_expande_word(&redis->file_name, env, status, 1);
+		if (redis->inside_quotes != 0)
+			ft_expande_word(&redis->file_name, env, last_env, 0);
+		else
+			ft_expande_word(&redis->file_name, env, last_env, 1);
+
 		redis = redis->next;
+	}
+	args = (*cmd)->args;
+	if (args)
+	{
+		ft_delete_emty_args_nodes(&(*cmd)->args);
+	}
+	args = (*cmd)->args;
+	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
+	{
+		if (args)
+		{
+			if (args->value)
+			{
+				(*cmd)->command = ft_strdup(args->value);
+				free(args->value);
+			}
+			(*cmd)->inside_quotes = args->inside_quotes;
+			if (args->next != NULL)
+			{
+				t_args *to_free;
+				to_free = args;
+				(*cmd)->args = args->next;
+				free(to_free);
+				to_free = NULL;
+			}
+			else
+			{
+				free((*cmd)->args);
+				(*cmd)->args = NULL;
+			}
+		}
+	}
+	
+	/// replace tab by space
+	int i = 0;
+	if ((*cmd)->command)
+	{
+		while ((*cmd)->command[i] != '\0')
+		{
+			if ((*cmd)->command[i] == '\t')
+				(*cmd)->command[i] = ' ';
+			i++;
+		}
+	}
+	i = 0;
+	args = (*cmd)->args;
+	while (args)
+	{
+		i = 0;
+		if (args->value)
+		{
+			while (args->value[i])
+			{
+				if (args->value[i] == '\t')
+					args->value[i] = ' ';
+				i++;
+			}
+		}
+		args = args->next;
 	}
 }
 
-void ft_expanding(t_pipe_line *pipe_line, t_env **env, int status)
+void ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)
 {
 	t_simple_cmd *current_cmd;
 	t_simple_cmd *head_cmd;
 
-	//head_cmd = (*pipe_line)->child;
 	current_cmd = NULL;
 	head_cmd = NULL;
-	ft_putstr_fd(PURPLE, 1);
+	ft_putstr_fd(RED, 1);
 	head_cmd = pipe_line->child;
 	while (head_cmd)
 	{
 		current_cmd = head_cmd;
-		ft_expande_simple_cmd(&current_cmd, env, status);
+		ft_expande_simple_cmd(&current_cmd, env, last_env);
 		head_cmd = head_cmd->next;
 	}
 }
+/// $klsjgd 4klgjsd %$$$dgskds

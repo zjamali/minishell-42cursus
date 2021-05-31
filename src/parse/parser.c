@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/02 11:01:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 13:27:03 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,24 @@ void ft_destroy_redirection(t_redirection *redis)
 
 void ft_destroy_simple(t_simple_cmd *cmd)
 {
-	int i;
 	t_args *head;
 	t_args *current_arg;
 
-	i = 0;
+
 	head = NULL;
+	current_arg = NULL;
 	if (cmd->command)
 		free(cmd->command);
 	head = cmd->args;
-	while (head != 0)
+	while (head != NULL)
 	{
 		current_arg = head;
 		head = head->next;
-
-		free(current_arg->value);
+		
+		if (current_arg->value)
+			free(current_arg->value);
 		free(current_arg);
-		current_arg = NULL;
-		i++;
+		//current_arg = NULL;
 	}
 	current_arg = NULL;
 	if (cmd->redirections)

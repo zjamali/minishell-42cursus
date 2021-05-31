@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/30 21:37:29 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 12:48:36 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,29 +38,49 @@ char **ft_args_to_arr(t_simple_cmd *cmd)
 	i = ft_count_args(&temp) + 1;
 	arg = (char **)malloc(sizeof(char *) * i + 1);
 	i = 0;
-	arg[i++] = cmd->command;
+	arg[i++] = ft_strdup(cmd->command);
 	while (temp != NULL)
 	{
-		arg[i] = temp->value;
+		if (temp->value == NULL && temp->inside_quotes == 2)
+			temp->value = ft_strdup("");
+		arg[i] = ft_strdup(temp->value);
 		i++;
 		temp = temp->next;
 	}
 	arg[i] = NULL;
 	return (arg);
 }
-
+void	ft_free_list(char **list)
+{
+	int i;
+	
+	i = 0;
+	while (list[i])
+		free(list[i++]);
+	free(list);
+}
 int		ft_exec(t_simple_cmd *cmd, t_env **head)
 {
 	int		pid;
 	int		status;
 	int		f_status;
+	char	*error;
+	char 	**args;
+	char	**list;
 
+	args = ft_args_to_arr(cmd);
+	list = ft_list_to_arr(head);
 	if (!(pid = fork()))
 	{
 		//child_process;
 		//ft_putendl_fd(cmd->command, 1);
-		if (execve(cmd->command, ft_args_to_arr(cmd), ft_list_to_arr(head)) == -1)
-			exit(ft_put_err(cmd->command, ft_strjoin(": ", strerror(errno)), errno));
+		if (execve(cmd->command, args, list) == -1)
+		{
+			error = ft_strjoin(": ", strerror(errno));
+			ft_put_err(cmd->command, error, errno);
+			free(error);
+			exit(errno);
+		}
 		// ft_putendl_fd(strerror(errno), 2);
 		// ft_putnbr_fd(errno, 1);
 			//ft_putstr_fd("Command not found or permission denied.\n", 2);
@@ -68,7 +88,7 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 	else if (pid == -1)
 	{
 		//error;
-		return (ft_put_err("fork", ft_strjoin(": ", "Fork failed"), 2));
+		return (ft_put_err("fork: ", "Fork failed", errno));
 	}
 	else
 	{
@@ -82,6 +102,8 @@ int		ft_exec(t_simple_cmd *cmd, t_env **head)
 			f_status = 128 + WTERMSIG(status);
 			WTERMSIG(status) == SIGQUIT ? write(1, "Quit: 3\n", 8) : 1;
 		}
+		ft_free_list(args);
+		ft_free_list(list);
 		// f_status = WEXITSTATUS(status);
 		// ft_putnbr_fd(f_status, 1);
 		return (f_status);
@@ -125,6 +147,8 @@ void init_env(t_env **head, char **env)
 		
 		newnode = ft_create_node(var[0], var[1]);
 		ft_add_to_list(head, newnode);
+		free(var[0]);
+		free(var[1]);
 		free(var);
 		i++;
 	}
@@ -135,43 +159,76 @@ int ft_file_check(t_simple_cmd *cmd, t_env **head)
 	struct stat *buf;
 
 	buf = malloc(sizeof(struct stat));
+	if (cmd->command[0] != '.' && cmd->command[0] != '/')
+		cmd->command = ft_strjoin("/", cmd->command);
 	if (stat(cmd->command, buf) == -1)
+	{
+		free(buf);
 		return (ft_put_err(cmd->command, ": No such file or directory", 127));
+	}
 	else if (buf->st_mode & S_IFDIR)
+	{
+		free(buf);
 		return (ft_put_err(cmd->command, ": Is a directory", 126));
+	}
 	else if ((buf->st_mode & S_IXUSR) == 0)
+	{
+		free(buf);
 		return (ft_put_err(cmd->command, ": Permission denied", 126));
+	}
+	free(buf);
 	return (ft_exec(cmd, head));
 }
+char	*ft_join_path(char *path, char *cmd)
+{
+	char	*path_tmp;
+	char	*full_path;
 
+	path_tmp = ft_strjoin(path, "/");
+	full_path = ft_strjoin(path_tmp, cmd);
+	free(path_tmp);
+	return (full_path);
+}
 int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 {
 	t_env *temp;
 	char **path = NULL;
 	char *full_path;
 	struct stat *buf;
+	int	status;
+	int i;
 	
-	if (cmd->command[0] == '/' || cmd->command[0] == '.')
+	i = 0;
+	status = -77;
+	if (ft_strchr(cmd->command, '/') || cmd->command[0] == '.')
 		return (ft_file_check(cmd, head));
 	else
 	{
 		temp = ft_search_in_list(head, "PATH");
 		if (temp == NULL)
-			return (ft_put_err(cmd->command, ": No such file or directory", 127));
+			return (ft_file_check(cmd, head));
+			// return (ft_put_err(cmd->command, ": No such file or directory", 127));
 		path = ft_split(temp->value, ':');
-		while (*path != NULL)
+		while (path[i] != NULL)
 		{
 			buf = malloc(sizeof(struct stat));
-			full_path = ft_strjoin(*path, ft_strjoin("/", cmd->command));
+			full_path = ft_join_path(path[i], cmd->command);
 			stat(full_path, buf);
-			if ((buf->st_mode & S_IXUSR) > 0 && (buf->st_mode & S_IFREG) > 0)
+			if (((buf->st_mode & S_IXUSR) > 0 && (buf->st_mode & S_IFREG) > 0) && status == -77)
 			{
-				cmd->command = full_path;
-				return (ft_exec(cmd, head));
+				free(cmd->command);
+				cmd->command = ft_strdup(full_path);
+				status = ft_exec(cmd, head);
+				// return (ft_exec(cmd, head));
 			}
 			free(buf);
-			path++;
+			free(full_path);
+			free(path[i]);
+			i++;
 		}
+		free(path);
+		if (status != -77)
+			return (status);
 		return(ft_put_err(cmd->command, ": command not found", 127));
 	}
 	return (0);
@@ -270,6 +327,8 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 		mini->ret = WEXITSTATUS(status);
 		i++;
 	}
+	free(mini->fd);
+	free(mini->pid);
 	return (mini->ret);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   readline.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 21:31:15 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 13:31:56 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_lines_list *ft_destory_node(t_lines_list *node)
 	node->origin_char_list = NULL;
 	node->next = NULL;
 	node->prev = NULL;
-	free(node);  //////////////
+	free(node);
 	node = NULL;
 	return NULL;
 }

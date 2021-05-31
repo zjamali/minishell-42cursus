@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:35 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/25 17:57:37 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 12:10:24 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	ft_checkargs(t_args **args)
 {
 	t_args	*temp;
+	char	*error;
 	int		ret;
 
 	temp = *args;
@@ -24,9 +25,12 @@ int	ft_checkargs(t_args **args)
 		if (temp->value == NULL)
 			ret = ft_put_err("export:", " `': not a valid identifier", 1);
 		else if (!(ft_isalpha(temp->value[0]) || temp->value[0] == '_'))
-			ret = ft_put_err("export:", ft_strjoin(" `",
+		{
+			error = ft_strjoin(" `",
 						ft_strjoin(temp->value,
-							"': not a valid identifier")), 1);
+							"': not a valid identifier"));
+			ret = ft_put_err("export:", error, 1);
+		}
 		temp = temp->next;
 	}
 	return (ret);
@@ -52,6 +56,7 @@ int	ft_print_export(t_env **head)
 		ft_putchar_fd('\n', 1);
 		newnode = newnode->next;
 	}
+	ft_destroy_list(sort_list);
 	return (0);
 }
 
@@ -59,6 +64,7 @@ void	ft_add_var(t_env **head, t_args *args)
 {
 	char	**split;
 	t_env	*newnode;
+	char	*join_them;
 	int		join;
 
 	join = NO;
@@ -72,21 +78,26 @@ void	ft_add_var(t_env **head, t_args *args)
 	if (newnode != NULL)
 	{
 		if (join == YES)
-			split[1] = ft_strjoin(newnode->value, split[1]);
+		{
+			join_them = ft_strjoin(newnode->value, split[1]);
+			free(split[1]);
+			split[1] = join_them;
+		}
 		ft_replaceit(head, split[0], split[1]);
-		args = args->next;
 	}
 	else
 	{
 		newnode = ft_create_node(split[0], split[1]);
 		ft_add_to_list(head, newnode);
-		args = args->next;
 	}
+	args = args->next;
+	free(split[0]);
+	free(split[1]);
+	free(split);
 }
 
 int	ft_export(t_env **head, t_args *args)
 {
-	char	**split;
 	t_env	*newnode;
 	int		ret;
 	int		join;

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/31 12:37:08 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 13:27:03 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,17 @@ void ft_destroy_redirection(t_redirection *redis)
 {
 	t_redirection *current_redi;
 	t_redirection *parent_redi;
-	
+
 	parent_redi = redis;
 	while (parent_redi)
 	{
 		current_redi = parent_redi;
 		parent_redi = parent_redi->next;
-		
+
 		free(current_redi->file_name);
 		free(current_redi);
 	}
 }
-
 
 void ft_destroy_simple(t_simple_cmd *cmd)
 {
@@ -62,7 +61,7 @@ void ft_destroy_pipe_line(t_pipe_line *pipe_line)
 {
 	t_simple_cmd *current_cmd;
 	t_simple_cmd *parent_cmd;
-	
+
 	parent_cmd = pipe_line->child;
 	while (parent_cmd)
 	{
@@ -79,10 +78,10 @@ void ft_destroy_ast(t_command_list *cmd_list)
 	t_pipe_line *current_pipe;
 	t_pipe_line *parent_pipe;
 
-	ft_putstr_fd(RED,1);
-	// ft_putstr_fd("destroy ast\n",1);
+	ft_putstr_fd(RED, 1);
+	//ft_putstr_fd("destroy ast\n",1);
 	parent_pipe = cmd_list->childs;
-	while(parent_pipe)
+	while (parent_pipe)
 	{
 		current_pipe = parent_pipe;
 		parent_pipe = parent_pipe->next;
@@ -94,11 +93,10 @@ void ft_destroy_ast(t_command_list *cmd_list)
 
 void ft_print_systax_error(t_token *token)
 {
-	ft_putstr_fd("minishell: syntax error near unexpected token `",1);
-	ft_putstr_fd(token->value,1);
-	ft_putstr_fd("'\n",1);
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 1);
+	ft_putstr_fd(token->value, 1);
+	ft_putstr_fd("'\n", 1);
 }
-
 
 void ft_print_simple_cmd(t_simple_cmd *cmd)
 {
@@ -107,49 +105,49 @@ void ft_print_simple_cmd(t_simple_cmd *cmd)
 
 	tmp1 = cmd->args;
 	tmp = cmd->redirections;
-	ft_putstr_fd(YELLOW,1);
-	ft_putstr_fd("(",1);
-	ft_putstr_fd("cmd -> ",1);
-	ft_putstr_fd("{",1);
+	ft_putstr_fd(YELLOW, 1);
+	ft_putstr_fd("(", 1);
+	ft_putstr_fd("cmd -> ", 1);
+	ft_putstr_fd("{", 1);
 	if (cmd->command)
-		write(1,cmd->command,ft_strlen(cmd->command));
-	ft_putstr_fd("}",1);
-	ft_putstr_fd("\t",1);
-	ft_putstr_fd("inside quotes  -> ",1);
-	ft_putnbr_fd(cmd->inside_quotes,1);
-	ft_putstr_fd(")",1);
-	ft_putstr_fd("\n",1); 
-	ft_putstr_fd("args -> ",1);
+		write(1, cmd->command, ft_strlen(cmd->command));
+	ft_putstr_fd("}", 1);
+	ft_putstr_fd("\t", 1);
+	ft_putstr_fd("inside quotes  -> ", 1);
+	ft_putnbr_fd(cmd->inside_quotes, 1);
+	ft_putstr_fd(")", 1);
+	ft_putstr_fd("\n", 1);
+	ft_putstr_fd("args -> ", 1);
 	while (tmp1)
 	{
-		ft_putstr_fd("[",1);
-		ft_putstr_fd("{",1);
-		ft_putstr_fd(tmp1->value,1);
-		ft_putstr_fd("}",1);
-		ft_putstr_fd("\t",1);
-		ft_putstr_fd("inside quotes -> ",1);
-		ft_putnbr_fd(tmp1->inside_quotes,1);
-		ft_putstr_fd("] ",1);
+		ft_putstr_fd("[", 1);
+		ft_putstr_fd("{", 1);
+		ft_putstr_fd(tmp1->value, 1);
+		ft_putstr_fd("}", 1);
+		ft_putstr_fd("\t", 1);
+		ft_putstr_fd("inside quotes -> ", 1);
+		ft_putnbr_fd(tmp1->inside_quotes, 1);
+		ft_putstr_fd("] ", 1);
 		tmp1 = tmp1->next;
 	}
-	ft_putstr_fd("\n",1);
+	ft_putstr_fd("\n", 1);
 
-	ft_putstr_fd("redirs ->",1);
+	ft_putstr_fd("redirs ->", 1);
 	while (tmp != NULL)
 	{
-		ft_putstr_fd("(",1);
-		ft_putnbr_fd(tmp->type,1);
-		ft_putstr_fd(" ",1);
-		ft_putstr_fd("{",1);
-		ft_putstr_fd(tmp->file_name,1);
-		ft_putstr_fd("}",1);
-		ft_putstr_fd("\t",1);
-		ft_putstr_fd("inside quotes -> ",1);
-		ft_putnbr_fd(tmp->inside_quotes,1);
-		ft_putstr_fd(") ",1);
-		tmp= tmp->next;
+		ft_putstr_fd("(", 1);
+		ft_putnbr_fd(tmp->type, 1);
+		ft_putstr_fd(" ", 1);
+		ft_putstr_fd("{", 1);
+		ft_putstr_fd(tmp->file_name, 1);
+		ft_putstr_fd("}", 1);
+		ft_putstr_fd("\t", 1);
+		ft_putstr_fd("inside quotes -> ", 1);
+		ft_putnbr_fd(tmp->inside_quotes, 1);
+		ft_putstr_fd(") ", 1);
+		tmp = tmp->next;
 	}
-	ft_putstr_fd("\n",1);
+	ft_putstr_fd("\n", 1);
 }
 
 void ft_print_pipeline_cmd(t_pipe_line *pipe_line)
@@ -157,17 +155,17 @@ void ft_print_pipeline_cmd(t_pipe_line *pipe_line)
 	t_simple_cmd *tmp;
 	int i;
 
-	i  = 0;
-	ft_putstr_fd("simple_cmd :",1);
-	ft_putnbr_fd(pipe_line->simple_cmd_count,1);
-	ft_putstr_fd("\n",1);
+	i = 0;
+	ft_putstr_fd("simple_cmd :", 1);
+	ft_putnbr_fd(pipe_line->simple_cmd_count, 1);
+	ft_putstr_fd("\n", 1);
 	tmp = pipe_line->child;
 	while (tmp != NULL)
 	{
-		ft_putstr_fd(PURPLE,1);
-		ft_putstr_fd("pipe : ",1);
-		ft_putnbr_fd(i,1);
-		ft_putstr_fd("\n",1);
+		ft_putstr_fd(PURPLE, 1);
+		ft_putstr_fd("pipe : ", 1);
+		ft_putnbr_fd(i, 1);
+		ft_putstr_fd("\n", 1);
 		ft_print_simple_cmd(tmp);
 		tmp = tmp->next;
 		i++;
@@ -176,55 +174,30 @@ void ft_print_pipeline_cmd(t_pipe_line *pipe_line)
 
 void ft_print_cmd_list(t_command_list *cmd_list)
 {
-	t_pipe_line *tmp ;
+	t_pipe_line *tmp;
 
 	tmp = cmd_list->childs;
 	int i = 0;
-	ft_putstr_fd("\n",1);
-	ft_putstr_fd("pipeline_count :",1);
-	ft_putnbr_fd(cmd_list->pipe_line_count,1);
+	ft_putstr_fd("\n", 1);
+	ft_putstr_fd("pipeline_count :", 1);
+	ft_putnbr_fd(cmd_list->pipe_line_count, 1);
 	while (tmp)
 	{
-		ft_putstr_fd("\n",1);
-		ft_putstr_fd(BLUE,1);
-		ft_putstr_fd("pipeline  : ",1);
-		ft_putnbr_fd(i,1);
-		ft_putstr_fd("\n",1);
+		ft_putstr_fd("\n", 1);
+		ft_putstr_fd(BLUE, 1);
+		ft_putstr_fd("pipeline  : ", 1);
+		ft_putnbr_fd(i, 1);
+		ft_putstr_fd("\n", 1);
 		ft_print_pipeline_cmd(tmp);
-		ft_putstr_fd("\n",1);
+		ft_putstr_fd("\n", 1);
 		tmp = tmp->next;
 		i++;
 	}
 }
 
-void ft_destoy_token_list(t_token *tokens_list)
-{
-	t_token *tmp;
-
-	tmp = NULL;
-	while (tokens_list->type != NEWLINE)
-	{
-		tmp = tokens_list;
-		tokens_list = tokens_list->next;
-		free(tmp->value);
-		tmp->value = NULL;
-		free(tmp);
-		tmp = NULL;
-	}
-	if (tokens_list->type == NEWLINE)
-	{
-		free(tokens_list->value);
-		tokens_list->value = NULL;
-		free(tokens_list);
-		tokens_list = NULL;
-		write(1,CYAN,ft_strlen(CYAN));
-		//ft_putstr_fd("token_list freed\n",1);
-	}
-}
-
 int ft_check_closing_quotes(char *word)
 {
-	int i ;
+	int i;
 	int quote;
 	int back_slash;
 
@@ -238,7 +211,7 @@ int ft_check_closing_quotes(char *word)
 			back_slash++;
 			i++;
 		}
-		if (quote == 0 && word[i] == 34/* && word[i - 1] != 92*/)
+		if (quote == 0 && word[i] == 34 /* && word[i - 1] != 92*/)
 		{
 			if (word[i - 1] != 92)
 				quote += 2;
@@ -250,7 +223,7 @@ int ft_check_closing_quotes(char *word)
 			i++;
 			back_slash = 0;
 		}
-		else if (quote == 0 && word[i] == '\''/*  && word[i - 1] != 92*/)
+		else if (quote == 0 && word[i] == '\'' /*  && word[i - 1] != 92*/)
 		{
 			if (word[i - 1] != 92)
 			{
@@ -260,13 +233,13 @@ int ft_check_closing_quotes(char *word)
 			{
 				if (back_slash % 2 == 0)
 				{
-					quote += 1 ;
+					quote += 1;
 				}
 			}
 			i++;
 			back_slash = 0;
 		}
-		else if (quote == 2 && word[i] == 34  /*&& back_slash % 2 == 0 && word[i - 1] != 92*/)
+		else if (quote == 2 && word[i] == 34 /*&& back_slash % 2 == 0 && word[i - 1] != 92*/)
 		{
 			if (word[i - 1] != 92)
 				quote -= 2;
@@ -284,7 +257,7 @@ int ft_check_closing_quotes(char *word)
 			quote -= 1;
 			back_slash = 0;
 		}
-		else if (quote == 2 && word[i] == '`') // check ' case 
+		else if (quote == 2 && word[i] == '`') // check ' case
 		{
 			if (word[i - 1] != 92)
 				quote -= 2;
@@ -296,7 +269,7 @@ int ft_check_closing_quotes(char *word)
 					quote -= 2;
 				}
 			}
-			i++;				
+			i++;
 		}
 		else
 		{
@@ -314,7 +287,7 @@ int ft_check_backslash(char *word)
 {
 	int i;
 	int cont;
-	
+
 	i = 0;
 	cont = 0;
 	while (word[i])
@@ -322,7 +295,7 @@ int ft_check_backslash(char *word)
 	if (word[i - 1] == '\\')
 	{
 		i--;
-		while(word[i] == '\\')
+		while (word[i] == '\\')
 		{
 			cont++;
 			i--;
@@ -336,14 +309,14 @@ int ft_check_backslash(char *word)
 		return (0);
 }
 
-int ft_check_syntax(t_token *tokens_list,int *status)
+int ft_check_syntax(t_token *tokens_list, int *status)
 {
 	int result;
 	t_token *tmp;
-	
+
 	result = 0;
 	tmp = tokens_list;
-	while(tmp->type != NEWLINE)
+	while (tmp->type != NEWLINE)
 	{
 		/*** check the first token must be word or redierction ***/
 		if (tmp->type == NONE)
@@ -359,7 +332,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 			else if (tmp->next->type == NEWLINE)
 			{
 				ft_destoy_token_list(tokens_list);
-				*status = 258;
+				//*status = 258;
 				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
@@ -393,13 +366,13 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				*status = 258;
 				result = 1;
 				break; // for segfqult
-			}	
+			}
 		}
 		else if (tmp->type == WORD && tmp->next->type == NEWLINE)
 		{
 			if (ft_check_backslash(tmp->value))
 			{
-				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
+				ft_putstr_fd("minishell: syntax error multiple line not allowed\n", 1);
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
@@ -407,7 +380,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 			}
 			if (ft_check_closing_quotes(tmp->value))
 			{
-				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
+				ft_putstr_fd("minishell: syntax error multiple line not allowed\n", 1);
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
@@ -418,7 +391,7 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 		{
 			if (ft_check_closing_quotes(tmp->value))
 			{
-				ft_putstr_fd("minishell: syntax error multiple line not allowed\n",1);
+				ft_putstr_fd("minishell: syntax error multiple line not allowed\n", 1);
 				ft_destoy_token_list(tokens_list);
 				*status = 258;
 				result = 1;
@@ -435,21 +408,13 @@ int ft_check_syntax(t_token *tokens_list,int *status)
 				result = 1;
 				break; //// for dont get segfault  in tmp = tmp->next;
 			}
-			//else if (tmp->next->type == NEWLINE)
-			//{
-			//	ft_destoy_token_list(tokens_list);
-			//	result = 1;
-			//	break; //// for dont get segfault  in tmp = tmp->next;
-			//}
 		}
 		tmp = tmp->next;
 	}
 	return (result);
 }
 
-
-
-t_token *ft_begin_token(int token_index,t_token *begin_token)
+t_token *ft_begin_token(int token_index, t_token *begin_token)
 {
 	while (begin_token->index < token_index)
 	{
@@ -464,17 +429,17 @@ t_command_list *init_cmd_list(void)
 {
 	t_command_list *cmd_list;
 
-	if (!(cmd_list = (t_command_list*)malloc(sizeof(t_command_list))))
+	if (!(cmd_list = (t_command_list *)malloc(sizeof(t_command_list))))
 		return NULL;
 	cmd_list->childs = NULL;
 	cmd_list->pipe_line_count = 0;
 	return cmd_list;
 }
 
-t_redirection *ft_create_redirection(t_token **tokens,int index)
+t_redirection *ft_create_redirection(t_token **tokens, int index)
 {
-	t_redirection *redirection ;
-	if (!(redirection = (t_redirection*)malloc(sizeof(t_redirection))))
+	t_redirection *redirection;
+	if (!(redirection = (t_redirection *)malloc(sizeof(t_redirection))))
 		return NULL;
 	redirection->index = index;
 	redirection->next = NULL;
@@ -490,28 +455,28 @@ t_redirection *ft_create_redirection(t_token **tokens,int index)
 	return redirection;
 }
 
-t_redirection *ft_insert_redirection(t_redirection *redirection,t_token **tokens,int index)
+t_redirection *ft_insert_redirection(t_redirection *redirection, t_token **tokens, int index)
 {
 	t_redirection *tmp;
 
 	tmp = NULL;
 	if (redirection == NULL)
 	{
-		
-		redirection = ft_create_redirection(tokens,index);
+
+		redirection = ft_create_redirection(tokens, index);
 	}
 	else
 	{
 		tmp = redirection;
 		while (tmp->next != NULL)
 			tmp = tmp->next;
-		tmp->next = ft_create_redirection(tokens,index);
+		tmp->next = ft_create_redirection(tokens, index);
 	}
-	
+
 	return (redirection);
 }
 
-void ft_insert_arg(t_args *head,t_args *current_args)
+void ft_insert_arg(t_args *head, t_args *current_args)
 {
 	t_args *tmp;
 	tmp = head;
@@ -523,8 +488,8 @@ void ft_insert_arg(t_args *head,t_args *current_args)
 t_args *ft_create_arg(char *value)
 {
 	t_args *arg;
-	
-	arg = (t_args*)malloc(sizeof(t_args));
+
+	arg = (t_args *)malloc(sizeof(t_args));
 	arg->value = ft_strdup(value);
 	arg->next = NULL;
 	arg->inside_quotes = 0;
@@ -538,13 +503,12 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 	int r;
 	int j;
 	t_args *tmp;
-	
 
 	j = 0;
 	i = 0;
 	r = 0;
 	tmp = NULL;
-	if (!(cmd = (t_simple_cmd*)malloc(sizeof(t_simple_cmd))))
+	if (!(cmd = (t_simple_cmd *)malloc(sizeof(t_simple_cmd))))
 		return NULL;
 	cmd->args = NULL;
 	cmd->command = NULL;
@@ -555,7 +519,7 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 	{
 		if ((*tokens)->type == GREAT || (*tokens)->type == DOUBLE_GREAT || (*tokens)->type == LESS)
 		{
-			cmd->redirections = ft_insert_redirection(cmd->redirections,tokens,r);
+			cmd->redirections = ft_insert_redirection(cmd->redirections, tokens, r);
 			r++;
 		}
 		else if ((*tokens)->type == WORD)
@@ -573,7 +537,7 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 				else
 				{
 					tmp = ft_create_arg((*tokens)->value);
-					ft_insert_arg(cmd->args,tmp);
+					ft_insert_arg(cmd->args, tmp);
 				}
 			}
 			(*tokens) = (*tokens)->next;
@@ -584,7 +548,7 @@ t_simple_cmd *ft_create_simple_cmd(t_token **tokens)
 	return cmd;
 }
 
-void ft_insert_simple_cmd(t_simple_cmd *head,t_simple_cmd *current_cmd)
+void ft_insert_simple_cmd(t_simple_cmd *head, t_simple_cmd *current_cmd)
 {
 	t_simple_cmd *tmp;
 	tmp = head;
@@ -599,7 +563,7 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 	t_simple_cmd *head;
 	t_simple_cmd *current_cmd;
 
-	if (!(pipe_line = (t_pipe_line*)malloc(sizeof(t_pipe_line))))
+	if (!(pipe_line = (t_pipe_line *)malloc(sizeof(t_pipe_line))))
 		return NULL;
 	pipe_line->next = NULL;
 	pipe_line->child = NULL;
@@ -610,8 +574,8 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 	{
 		if (head == NULL)
 		{
-			head =  ft_create_simple_cmd(tokens);
-			pipe_line->simple_cmd_count+=1;
+			head = ft_create_simple_cmd(tokens);
+			pipe_line->simple_cmd_count += 1;
 		}
 		else
 		{
@@ -619,8 +583,8 @@ t_pipe_line *ft_create_pieline(t_token **tokens)
 				break;
 			(*tokens) = (*tokens)->next;
 			current_cmd = ft_create_simple_cmd(tokens);
-			ft_insert_simple_cmd(head,current_cmd);
-			pipe_line->simple_cmd_count+=1;
+			ft_insert_simple_cmd(head, current_cmd);
+			pipe_line->simple_cmd_count += 1;
 		}
 	}
 	pipe_line->child = head;
@@ -655,19 +619,19 @@ t_command_list *ft_create_ast(t_token *tokens_list)
 			}
 		}
 		else
-				tokens_list = tokens_list->next;
+			tokens_list = tokens_list->next;
 	}
 	return (head);
 }
 
 /***************************************/
 
-t_command_list *ft_parser(t_token *tokens_list,int *status)
+t_command_list *ft_parser(t_token *tokens_list, int *status)
 {
 	t_command_list *command_list;
 	command_list = NULL;
-	write(1,RED,ft_strlen(RED));
-	if (!ft_check_syntax(tokens_list,status))
+	write(1, RED, ft_strlen(RED));
+	if (!ft_check_syntax(tokens_list, status))
 	{
 		command_list = ft_create_ast(tokens_list);
 		ft_destoy_token_list(tokens_list);

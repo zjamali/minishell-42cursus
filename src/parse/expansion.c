@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/30 21:00:31 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 15:19:27 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -579,7 +579,7 @@ void ft_expande_word(char **string, t_env **env_list, char **last_env, int redir
 	}
 	else
 		*string = expanded;
-
+	
 	free(word);
 }
 

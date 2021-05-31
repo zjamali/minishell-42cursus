@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 12:00:00 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 12:48:36 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,11 +162,20 @@ int ft_file_check(t_simple_cmd *cmd, t_env **head)
 	if (cmd->command[0] != '.' && cmd->command[0] != '/')
 		cmd->command = ft_strjoin("/", cmd->command);
 	if (stat(cmd->command, buf) == -1)
+	{
+		free(buf);
 		return (ft_put_err(cmd->command, ": No such file or directory", 127));
+	}
 	else if (buf->st_mode & S_IFDIR)
+	{
+		free(buf);
 		return (ft_put_err(cmd->command, ": Is a directory", 126));
+	}
 	else if ((buf->st_mode & S_IXUSR) == 0)
+	{
+		free(buf);
 		return (ft_put_err(cmd->command, ": Permission denied", 126));
+	}
 	free(buf);
 	return (ft_exec(cmd, head));
 }

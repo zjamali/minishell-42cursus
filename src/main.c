@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/31 13:30:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 15:31:33 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ int main(int ac,char **av,char **env)
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{
-		// i++;
+		i++;
 		show_prompt();
 		//micro_read_line(&line,&status);
 		read_command_list(&line);
@@ -227,7 +227,7 @@ int main(int ac,char **av,char **env)
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				//ft_putchar_fd('\n', 1);
-				status = ft_execute(current_pipe_line, &head);
+			//	status = ft_execute(current_pipe_line, &head);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}

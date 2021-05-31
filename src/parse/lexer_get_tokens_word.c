@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 10:51:03 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/02 10:55:46 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 13:24:14 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,43 @@ static char	*get_no_quoting_word(char *line, int *i)
 	return (word);
 }
 
+static int	ft_count_backslashes(char *line, int j)
+{
+	int		k;
+	int		back_slash_count;
+
+	k = j - 1;
+	back_slash_count = 0;
+	while (line[k] == '\\')
+	{
+		back_slash_count++;
+		k--;
+	}
+	return (back_slash_count);
+}
+
 static char	*get_double_quotes_word(char *line, int *i, int j)
 {
 	char	*word;
+	int		back_slash_count;
 
-	j++;
+	back_slash_count = 0;
+	word = NULL;
 	while (line[j])
 	{
 		if (line[j] == '"' && line[j - 1] != '\\')
 			break ;
+		else if (line[j] == '"' && line[j - 1] == '\\')
+		{
+			back_slash_count = ft_count_backslashes(line, j);
+			if (back_slash_count % 2 == 0)
+			{
+				back_slash_count = 0;
+				break ;
+			}
+			else
+				back_slash_count = 0;
+		}
 		j++;
 	}
 	word = ft_substr(line, *i, j - *i + 1);
@@ -64,7 +92,7 @@ static char	*get_quoting_word(char *line, int *i, int quoting)
 		return (word);
 	}
 	else if (quoting == 3)
-		return (get_double_quotes_word(line, i, j));
+		return (get_double_quotes_word(line, i, ++j));
 	return (word);
 }
 

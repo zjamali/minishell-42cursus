@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/02 15:48:50 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 13:25:10 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,8 +119,8 @@ int main(int ac,char **av,char **env)
 	{
 		//i++;
 		show_prompt();
-		micro_read_line(&line, readline, &lines_list,&status);
-		//read_command_list(&line);
+		//micro_read_line(&line, readline, &lines_list,&status);
+		read_command_list(&line);
 		if (line)
 		{
 			tokens_list = ft_lexer(line);

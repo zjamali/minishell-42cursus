@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 11:56:17 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 17:30:19 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,20 +28,15 @@ int	ft_replace_pwd(t_env **head, t_env *temp, char *dir)
 	return (0);
 }
 
-int	ft_change_dir(t_args *args, t_env **head, char *dir)
+int	ft_check_errors(char *dir)
 {
-	char	*buff;
 	char	*error;
 	char	*join;
-	t_env	*temp;
+	char	*buff;
 
 	buff = NULL;
-	temp = ft_search_in_list(head, "PWD");
-	if (temp == NULL)
-		ft_add_to_list(head, ft_create_node("PWD", ""));
-	temp = ft_search_in_list(head, "OLDPWD");
-	if (temp == NULL)
-		ft_add_to_list(head, ft_create_node("OLDPWD", ""));
+	join = NULL;
+	error = NULL;
 	if (chdir(dir) == -1)
 	{
 		join = ft_strjoin(": ", strerror(errno));
@@ -61,6 +56,23 @@ int	ft_change_dir(t_args *args, t_env **head, char *dir)
 		free(error);
 	}
 	free(buff);
+	return (0);
+}
+
+int	ft_change_dir(t_args *args, t_env **head, char *dir)
+{
+	char	*error;
+	char	*join;
+	t_env	*temp;
+
+	temp = ft_search_in_list(head, "PWD");
+	if (temp == NULL)
+		ft_add_to_list(head, ft_create_node("PWD", ""));
+	temp = ft_search_in_list(head, "OLDPWD");
+	if (temp == NULL)
+		ft_add_to_list(head, ft_create_node("OLDPWD", ""));
+	if (ft_check_errors(dir))
+		return (1);
 	temp = ft_search_in_list(head, "PWD");
 	ft_replaceit(head, "OLDPWD", temp->value);
 	return (ft_replace_pwd(head, temp, dir));
@@ -93,6 +105,28 @@ int	ft_cd(t_args *args, t_env **head)
 	return (ft_change_dir(args, head, dir));
 }
 
+void	ft_check_digit(char	*arg)
+{
+	char	*error;
+	int		estatus;
+	int		i;
+
+	i = 0;
+	while (arg[i])
+	{
+		if (!ft_isdigit(arg[i]))
+		{
+			if (g_vars.history)
+				g_vars.history = ft_destroy_history(g_vars.history);
+			error = ft_strjoin(arg, ": numeric argument required");
+			estatus = ft_put_err("exit: ", error, 255);
+			free(error);
+			exit(estatus);
+		}
+		i++;
+	}
+}
+
 int	ft_check_exit(char *arg)
 {
 	int			i;
@@ -102,26 +136,14 @@ int	ft_check_exit(char *arg)
 	i = 0;
 	if (arg[i] == '-')
 		i++;
-	while (arg[i])
-	{
-		if (!ft_isdigit(arg[i]))
-		{
-			if (g_vars.history)
-				g_vars.history = ft_destroy_history(g_vars.history);
-			error = ft_strjoin(arg, ": numeric argument required");
-			estatus = ft_put_err("exit: ",error, 255);
-			free(error);
-			exit(estatus);
-		}
-		i++;
-	}
+	ft_check_digit(arg);
 	estatus = ft_atoi(arg);
 	if (estatus < -9223372036854775807)
 	{
 		if (g_vars.history)
-				g_vars.history = ft_destroy_history(g_vars.history);
+			g_vars.history = ft_destroy_history(g_vars.history);
 		error = ft_strjoin(arg, ": numeric argument required");
-		estatus = ft_put_err("exit: ",error, 255);
+		estatus = ft_put_err("exit: ", error, 255);
 		free(error);
 		exit(estatus);
 	}

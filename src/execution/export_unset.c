@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:35 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 12:10:24 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 17:43:04 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ int	ft_checkargs(t_args **args)
 		else if (!(ft_isalpha(temp->value[0]) || temp->value[0] == '_'))
 		{
 			error = ft_strjoin(" `",
-						ft_strjoin(temp->value,
-							"': not a valid identifier"));
+					ft_strjoin(temp->value,
+						"': not a valid identifier"));
 			ret = ft_put_err("export:", error, 1);
 		}
 		temp = temp->next;
@@ -60,6 +60,30 @@ int	ft_print_export(t_env **head)
 	return (0);
 }
 
+void	ft_add_or_replace(t_env **head, char **split, int join)
+{
+	t_env	*newnode;
+	char	*join_them;
+
+	newnode = ft_search_in_list(head, split[0]);
+	if (newnode != NULL)
+	{
+		if (join == YES)
+		{
+			join_them = ft_strjoin(newnode->value, split[1]);
+			free(split[1]);
+			split[1] = join_them;
+		}
+		if (split[1] != NULL)
+			ft_replaceit(head, split[0], split[1]);
+	}
+	else
+	{
+		newnode = ft_create_node(split[0], split[1]);
+		ft_add_to_list(head, newnode);
+	}
+}
+
 void	ft_add_var(t_env **head, t_args *args)
 {
 	char	**split;
@@ -74,22 +98,7 @@ void	ft_add_var(t_env **head, t_args *args)
 		split[0][ft_strlen(split[0]) - 1] = '\0';
 		join = YES;
 	}
-	newnode = ft_search_in_list(head, split[0]);
-	if (newnode != NULL)
-	{
-		if (join == YES)
-		{
-			join_them = ft_strjoin(newnode->value, split[1]);
-			free(split[1]);
-			split[1] = join_them;
-		}
-		ft_replaceit(head, split[0], split[1]);
-	}
-	else
-	{
-		newnode = ft_create_node(split[0], split[1]);
-		ft_add_to_list(head, newnode);
-	}
+	ft_add_or_replace(head, split, join);
 	args = args->next;
 	free(split[0]);
 	free(split[1]);
@@ -100,16 +109,15 @@ int	ft_export(t_env **head, t_args *args)
 {
 	t_env	*newnode;
 	int		ret;
-	int		join;
 
-	join = NO;
 	ret = 0;
 	if (args == NULL)
 		ret = ft_print_export(head);
 	ret = ft_checkargs(&args);
 	while (args != NULL)
 	{
-		if (args->value != NULL && (ft_isalpha(args->value[0]) || args->value[0] == '_'))
+		if (args->value != NULL && (ft_isalpha(args->value[0])
+				|| args->value[0] == '_'))
 			ft_add_var(head, args);
 		args = args->next;
 	}

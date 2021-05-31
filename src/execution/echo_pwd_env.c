@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 10:56:07 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 17:31:54 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,7 @@ void	ft_loop(t_env **head, t_args *args)
 	while (args != NULL)
 	{
 		if (args->value != NULL)
-		{
-			// if (args->value[0] == '~' && args->value[1] == '\0')
-			// {
-			// 	temp = ft_search_in_list(head, "HOME");
-			// 	ft_putstr_fd(temp->value, 1);
-			// }
-			// else
 			ft_putstr_fd(args->value, 1);
-		}
-		//else
-		//	ft_putchar_fd(' ', 1);
 		if (args->next != NULL)
 			ft_putchar_fd(' ', 1);
 		args = args->next;

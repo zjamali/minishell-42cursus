@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/25 19:36:24 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 10:56:07 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ int	ft_pwd(t_env **head)
 		if (temp)
 			ft_putendl_fd(temp->value, 1);
 	}
+	free(pwd);
 	return (0);
 }
 

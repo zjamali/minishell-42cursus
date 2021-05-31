@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/30 19:15:48 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/30 19:38:46 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_lines_list *ft_destory_node(t_lines_list *node)
 	node->origin_char_list = NULL;
 	node->next = NULL;
 	node->prev = NULL;
-	free(node);  //////////////
+	free(node);
 	node = NULL;
 	return NULL;
 }

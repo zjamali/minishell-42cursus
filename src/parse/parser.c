@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/28 19:29:47 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 12:29:17 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void ft_destroy_ast(t_command_list *cmd_list)
 	t_pipe_line *parent_pipe;
 
 	ft_putstr_fd(RED,1);
-	//ft_putstr_fd("destroy ast\n",1);
+	ft_putstr_fd("destroy ast\n",1);
 	parent_pipe = cmd_list->childs;
 	while(parent_pipe)
 	{

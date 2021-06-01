@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/01 18:10:07 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/01 18:18:26 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,8 @@ void	ft_init_readline(t_readline *readline)
 	int	load_term;
 
 	readline->term_type = getenv("TERM");
+	if (readline->term_type == NULL)
+		readline->term_type = "xterm-256color";
 	load_term = tgetent(NULL, readline->term_type);
 	if (!load_term)
 	{

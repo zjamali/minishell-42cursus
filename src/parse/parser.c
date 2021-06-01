@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:37:37 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/01 17:05:19 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/01 17:39:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,7 +327,7 @@ t_command_list	*ft_parser(t_token *tokens_list, int *status)
 	t_command_list	*command_list;
 
 	command_list = NULL;
-	print_tokens(tokens_list);
+	//print_tokens(tokens_list);
 	write(1, RED, ft_strlen(RED));
 	if (!ft_check_syntax(tokens_list, status))
 	{

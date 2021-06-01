@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/31 18:45:13 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/01 13:40:16 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/01 13:43:53 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,7 @@ int	check_tokn_next_semi(t_token *tokens_list, t_token *token, int *status)
 	return (result);
 }
 
-int	ft_check_semi_pipe_redir(t_token *tokens_list, t_token *token,
+int	ft_check_word_semi_pipe_redir(t_token *tokens_list, t_token *token,
 																	int *status)
 {
 	int	result;
@@ -299,7 +299,7 @@ int	ft_check_syntax(t_token *tokens_list, int *status)
 		}
 		else
 		{
-			result = ft_check_semi_pipe_redir(tokens_list, tmp, status);
+			result = ft_check_word_semi_pipe_redir(tokens_list, tmp, status);
 			if (result)
 				break ;
 		}

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 20:34:46 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 17:43:17 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,13 +143,25 @@ void	init_env(t_env **head, char **env)
 	}
 }
 
+char 	*ft_join_slash(char 	*cmd)
+{
+	char	*tmp;
+
+	if ((ft_strchr(cmd, '/') && cmd[0] != '/'))
+	{
+		tmp = ft_strjoin("/", cmd);
+		free(cmd);
+		cmd = tmp;
+	}
+	return (cmd);
+}
+
 int	ft_file_check(t_simple_cmd *cmd, t_env **head)
 {
 	struct stat		*buf;
 
 	buf = malloc(sizeof(struct stat));
-	if (ft_strchr(cmd->command, '/') || cmd->command[0] == '.')
-		cmd->command = ft_strjoin("/", cmd->command);
+	cmd->command = ft_join_slash(cmd->command);
 	if (stat(cmd->command, buf) == -1)
 	{
 		free(buf);
@@ -179,16 +191,17 @@ char	*ft_join_path(char *path, char *cmd)
 	free(path_tmp);
 	return (full_path);
 }
-/**********************************/
-void ft_exec_file(t_simple_cmd *cmd , t_env **head, char *path, int *status)
+
+void	ft_exec_file(t_simple_cmd *cmd, t_env **head, char *path, int *status)
 {
 	struct stat		*buf;
 	char			*full_path;
-	
+
 	buf = malloc(sizeof(struct stat));
 	full_path = ft_join_path(path, cmd->command);
 	stat(full_path, buf);
-	if (((buf->st_mode & S_IXUSR) > 0 && (buf->st_mode & S_IFREG) > 0) && *status == -77)
+	if (((buf->st_mode & S_IXUSR) > 0
+			&& (buf->st_mode & S_IFREG) > 0) && *status == -77)
 	{
 		free(cmd->command);
 		cmd->command = ft_strdup(full_path);
@@ -198,72 +211,74 @@ void ft_exec_file(t_simple_cmd *cmd , t_env **head, char *path, int *status)
 	free(full_path);
 }
 
-int	ft_find_file(t_simple_cmd *cmd, t_env **head, int *status)
+int	ft_find_file(t_simple_cmd *cmd, t_env **head)
 {
 	t_env			*temp;
 	char			**path;
+	int				status;
 	int				i;
-	
+
 	i = 0;
+	status = -77;
 	temp = ft_search_in_list(head, "PATH");
 	if (temp == NULL)
 		return (ft_file_check(cmd, head));
 	path = ft_split(temp->value, ':');
 	while (path[i] != NULL)
 	{
-		ft_exec_file(cmd, head, path[i], status);
+		ft_exec_file(cmd, head, path[i], &status);
 		free(path[i]);
 		i++;
 	}
 	free(path);
+	return (status);
 }
 
 int	ft_chech_path(t_simple_cmd *cmd, t_env **head)
 {
 	t_env			*temp;
-	char			**path;
-	char			*full_path;
-	struct stat		*buf;
 	int				status;
-	int 			i;
-	
-	i = 0;
-	status = -77;
-	path = NULL;
+
 	if (ft_strchr(cmd->command, '/') || cmd->command[0] == '.')
 		return (ft_file_check(cmd, head));
 	else
 	{
-		ft_find_file(cmd, head, &status);
+		status = ft_find_file(cmd, head);
 		if (status != -77)
 			return (status);
-		return(ft_put_err(cmd->command, ": command not found", 127));
+		return (ft_put_err(cmd->command, ": command not found", 127));
 	}
 	return (0);
 }
-/************************************/
 
 int	ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
-	if (!(ft_strcmp(cmd->command, "echo")) || !(ft_strcmp(cmd->command, "ECHO")))
+	if (!(ft_strcmp(cmd->command, "echo"))
+		|| !(ft_strcmp(cmd->command, "ECHO")))
 		return (ft_echo(head, cmd->args));
-	else if (!(ft_strcmp(cmd->command, "cd")) || !(ft_strcmp(cmd->command, "CD")))
+	else if (!(ft_strcmp(cmd->command, "cd"))
+		| !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));
-	else if (!(ft_strcmp(cmd->command, "pwd")) || !(ft_strcmp(cmd->command, "PWD")))
+	else if (!(ft_strcmp(cmd->command, "pwd"))
+		|| !(ft_strcmp(cmd->command, "PWD")))
 		return (ft_pwd(head));
-	else if (!(ft_strcmp(cmd->command, "env")) || !(ft_strcmp(cmd->command, "ENV")))
+	else if (!(ft_strcmp(cmd->command, "env"))
+		|| !(ft_strcmp(cmd->command, "ENV")))
 		return (ft_env(head));
-	else if (!(ft_strcmp(cmd->command, "export")) || !(ft_strcmp(cmd->command, "EXPORT")))
+	else if (!(ft_strcmp(cmd->command, "export"))
+		|| !(ft_strcmp(cmd->command, "EXPORT")))
 		return (ft_export(head, cmd->args));
-	else if (!(ft_strcmp(cmd->command, "unset")) || !(ft_strcmp(cmd->command, "UNSET")))
+	else if (!(ft_strcmp(cmd->command, "unset"))
+		|| !(ft_strcmp(cmd->command, "UNSET")))
 		return (ft_unset(cmd->args, head));
-	else if (!(ft_strcmp(cmd->command, "exit")) || !(ft_strcmp(cmd->command, "EXIT")))
+	else if (!(ft_strcmp(cmd->command, "exit"))
+		|| !(ft_strcmp(cmd->command, "EXIT")))
 		return (ft_exit(cmd->args));
 	else
 		return (ft_chech_path(cmd, head));
 }
 
-int ft_put_err(char *input, char *message, int ret)
+int	ft_put_err(char *input, char *message, int ret)
 {
 	ft_putstr_fd("minishell: ", 2);
 	if (input != NULL)
@@ -272,56 +287,53 @@ int ft_put_err(char *input, char *message, int ret)
 	return (ret);
 }
 
-int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
+int	ft_create_fd_pipe(t_pipe_line *cmd, t_mini *mini)
 {
-	int i;
-	int command;
-	int status;
-	
+	int	i;
+
 	i = 0;
-	cmd->simple_cmd_count--;
 	mini->fd = (int *)malloc(sizeof(int) * (cmd->simple_cmd_count * 2));
 	mini->pid = (int *)malloc(sizeof(int) * (cmd->simple_cmd_count + 1));
 	if (!mini->fd)
 		return (ft_put_err("malloc", ": malloc faild", 1));
 	while (i < cmd->simple_cmd_count)
 	{
-		if(pipe(mini->fd + i * 2) < 0)
-			return(ft_put_err("pipe", ": couldn't create pipe", errno));
+		if (pipe(mini->fd + i * 2) < 0)
+			return (ft_put_err("pipe", ": couldn't create pipe", 1));
 		i++;
 	}
-	command = 0;
+	return (0);
+}
+
+void	ft_pipe_fork(t_simple_cmd *cmd, t_env **head,
+	t_mini *mini, int *command)
+{
+	int	i;
+
 	i = 0;
-	int k = 0;
-	(void)head;
-	while (cmd->child)
+	g_vars.infork = YES;
+	if (cmd->next)
+		if (dup2(mini->fd[*command + 1], STDOUT_FILENO) < 0)
+			exit(ft_put_err("dup2", ": couldn't clone the fd", 1));
+	if (*command != 0)
+		if (dup2(mini->fd[*command - 2], STDIN_FILENO) < 0)
+			exit(ft_put_err("dup2", ": couldn't clone the fd1", 1));
+	if (cmd->redirections != NULL)
 	{
-		mini->pid[k] = fork();
-		if (mini->pid[k] == -1)
-			return (ft_put_err("fork", ": coudn't fork properly\n", errno));
-		else if (mini->pid[k] == 0)
-		{
-			if (cmd->child->next)
-				if (dup2(mini->fd[command + 1], STDOUT_FILENO) < 0)
-					return(ft_put_err("dup2", ": couldn't clone the fd", 1));
-			if (command != 0)
-				if (dup2(mini->fd[command - 2], STDIN_FILENO) < 0)
-					return(ft_put_err("dup2", ": couldn't clone the fd1", 1));
-			if (cmd->child->redirections != NULL)
-			{
-				if (ft_redirection(mini, cmd->child->redirections))
-					return (1);
-			}
-			while (i < (cmd->simple_cmd_count * 2))
-				close(mini->fd[i++]);
-			mini->ret = ft_is_builtins(cmd->child, head);
-			exit (mini->ret);
-		}
-		cmd->child = cmd->child->next;
-		command+=2;
-		do_backups(0);
-		k++;
+		if (ft_redirection(mini, cmd->redirections))
+			exit(1);
 	}
+	while (i < (mini->simple_cmd_count * 2))
+		close(mini->fd[i++]);
+	mini->ret = ft_is_builtins(cmd, head);
+	exit(mini->ret);
+}
+
+int	ft_close_fd(t_pipe_line *cmd, t_mini *mini)
+{
+	int	i;
+	int	status;
+
 	i = 0;
 	while (i < (cmd->simple_cmd_count * 2))
 		close(mini->fd[i++]);
@@ -337,23 +349,50 @@ int ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 	return (mini->ret);
 }
 
-void signal_handler(int sig)
+int	ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 {
-    char child_str[] = "this is ctrl + c in the child prosess\n";
-    if (sig == SIGINT) {
-        write(STDOUT_FILENO, "\n", 1);
-    }
+	t_simple_cmd	*tmp;
+	int				command;
+	int				status;
+	int				k;
+
+	k = 0;
+	command = 0;
+	tmp = cmd->child;
+	cmd->simple_cmd_count--;
+	mini->simple_cmd_count = cmd->simple_cmd_count;
+	if (ft_create_fd_pipe(cmd, mini))
+		return (1);
+	while (tmp)
+	{
+		mini->pid[k] = fork();
+		if (mini->pid[k] == -1)
+			return (ft_put_err("fork", ": coudn't fork properly\n", errno));
+		else if (mini->pid[k] == 0)
+			ft_pipe_fork(tmp, head, mini, &command);
+		tmp = tmp->next;
+		command += 2;
+		do_backups(0);
+		k++;
+	}
+	return (ft_close_fd(cmd, mini));
 }
 
-int		ft_execute(t_pipe_line *cmd, t_env **head)
+void	signal_handler(int sig)
 {
-	t_mini mini;
+	if (sig == SIGINT)
+		write(STDOUT_FILENO, "\n", 1);
+}
 
-	ft_putstr_fd(BLUE,1);
-	do_backups(1);
+int	ft_execute(t_pipe_line *cmd, t_env **head)
+{
+	t_mini	mini;
+
 	mini.flag = 0;
 	mini.red_fd[0] = 0;
 	mini.red_fd[1] = 0;
+	ft_putstr_fd(BLUE, 1);
+	do_backups(1);
 	if (cmd->child->redirections != NULL)
 	{
 		if (ft_redirection(&mini, cmd->child->redirections))

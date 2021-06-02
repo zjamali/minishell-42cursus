@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export_unset.c                                     :+:      :+:    :+:   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:35 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 17:43:04 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 19:46:21 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	ft_checkargs(t_args **args)
 {
 	t_args	*temp;
 	char	*error;
+	char	*join;
 	int		ret;
 
 	temp = *args;
@@ -26,10 +27,11 @@ int	ft_checkargs(t_args **args)
 			ret = ft_put_err("export:", " `': not a valid identifier", 1);
 		else if (!(ft_isalpha(temp->value[0]) || temp->value[0] == '_'))
 		{
-			error = ft_strjoin(" `",
-					ft_strjoin(temp->value,
-						"': not a valid identifier"));
+			join = ft_strjoin(temp->value, "': not a valid identifier");
+			error = ft_strjoin(" `", join);
+			free (join);
 			ret = ft_put_err("export:", error, 1);
+			free (error);
 		}
 		temp = temp->next;
 	}
@@ -119,22 +121,6 @@ int	ft_export(t_env **head, t_args *args)
 		if (args->value != NULL && (ft_isalpha(args->value[0])
 				|| args->value[0] == '_'))
 			ft_add_var(head, args);
-		args = args->next;
-	}
-	return (ret);
-}
-
-int	ft_unset(t_args *args, t_env **head)
-{
-	int		ret;
-
-	ret = 0;
-	while (args != NULL)
-	{
-		if (args->value == NULL)
-			ret = ft_put_err("`'", ": not a valid identifier", 1);
-		else
-			ft_delete_from_list(head, args->value);
 		args = args->next;
 	}
 	return (ret);

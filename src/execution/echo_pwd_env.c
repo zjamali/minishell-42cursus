@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 17:31:54 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 17:14:43 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,24 @@ int	ft_isitn(char *arg)
 
 int	ft_echo(t_env **head, t_args *args)
 {
+	int	new_line;
+
+	new_line = YES;
 	if (args == NULL)
 	{
 		ft_putchar_fd('\n', 1);
 		return (0);
 	}
-	if (args->value != NULL && args->value[0] == '-' && args->value[1] == 'n')
+	while (args->value != NULL && args->value[0] == '-'
+		&& args->value[1] == 'n')
 	{
-		while (args && ft_isitn(args->value + 1))
+		new_line = NO;
+		if (args && ft_isitn(args->value + 1))
 			args = args->next;
-		ft_loop(head, args);
 	}
-	else
-	{
-		ft_loop(head, args);
+	ft_loop(head, args);
+	if (new_line == YES)
 		write(1, "\n", 1);
-	}
 	return (0);
 }
 

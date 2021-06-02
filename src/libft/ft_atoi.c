@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 13:05:06 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/23 17:11:03 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 17:03:23 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,26 @@ long long	ft_atoi(const char *str)
 		if (result < 0 && r == -1)
 			return (0);
 		if (result < 0 && r == 1)
+			return (-1);
+		result *= 10;
+		result += str[i] - '0';
+		i++;
+	}
+	return (r * result);
+}
+
+long long	my_atoi(const char *str)
+{
+	int					i;
+	int					r;
+	long long			result;
+
+	i = 0;
+	r = 1;
+	result = 0;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		if (result < 0)
 			return (-1);
 		result *= 10;
 		result += str[i] - '0';

@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/11/18 16:43:22 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/01 17:42:10 by mbari            ###   ########.fr       */
+/*   Created: 2021/06/02 19:45:39 by mbari             #+#    #+#             */
+/*   Updated: 2021/06/02 19:45:52 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../headers/execution.h"
 
-char	*ft_strchr(const char *s, int c)
+int	ft_unset(t_args *args, t_env **head)
 {
-	char	*str;
+	int		ret;
 
-	str = (char *)s;
-	while (*str != (char)c && *str)
-		str++;
-	if (*str == (char)c)
-		return (str);
-	return (0);
+	ret = 0;
+	while (args != NULL)
+	{
+		if (args->value == NULL)
+			ret = ft_put_err("`'", ": not a valid identifier", 1);
+		else
+			ft_delete_from_list(head, args->value);
+		args = args->next;
+	}
+	return (ret);
 }

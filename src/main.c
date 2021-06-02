@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/31 13:30:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/02 18:50:44 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ int main(int ac,char **av,char **env)
 	{
 		// i++;
 		show_prompt();
-		//micro_read_line(&line,&status);
+		// micro_read_line(&line,&status);
 		read_command_list(&line);
 		
 		if (line)
@@ -222,12 +222,13 @@ int main(int ac,char **av,char **env)
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				//  ft_print_pipeline_cmd(current_pipe_line);
+				// ft_print_pipeline_cmd(current_pipe_line);
 				if (last_env[1])
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
 				//ft_putchar_fd('\n', 1);
-				status = ft_execute(current_pipe_line, &head);
+				t_pipe_line *current_pipe_line1 = current_pipe_line;
+				status = ft_execute(current_pipe_line1, &head);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd_exit.c                                          :+:      :+:    :+:   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 17:30:19 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 19:46:14 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,67 +103,4 @@ int	ft_cd(t_args *args, t_env **head)
 	else
 		dir = args->value;
 	return (ft_change_dir(args, head, dir));
-}
-
-void	ft_check_digit(char	*arg)
-{
-	char	*error;
-	int		estatus;
-	int		i;
-
-	i = 0;
-	while (arg[i])
-	{
-		if (!ft_isdigit(arg[i]))
-		{
-			if (g_vars.history)
-				g_vars.history = ft_destroy_history(g_vars.history);
-			error = ft_strjoin(arg, ": numeric argument required");
-			estatus = ft_put_err("exit: ", error, 255);
-			free(error);
-			exit(estatus);
-		}
-		i++;
-	}
-}
-
-int	ft_check_exit(char *arg)
-{
-	int			i;
-	char		*error;
-	long long	estatus;
-
-	i = 0;
-	if (arg[i] == '-')
-		i++;
-	ft_check_digit(arg);
-	estatus = ft_atoi(arg);
-	if (estatus < -9223372036854775807)
-	{
-		if (g_vars.history)
-			g_vars.history = ft_destroy_history(g_vars.history);
-		error = ft_strjoin(arg, ": numeric argument required");
-		estatus = ft_put_err("exit: ", error, 255);
-		free(error);
-		exit(estatus);
-	}
-	return (estatus);
-}
-
-int	ft_exit(t_args *args)
-{
-	int		i;
-
-	if (args == NULL)
-	{
-		ft_putendl_fd("exit", 1);
-		exit(0);
-	}
-	ft_putendl_fd("exit", 1);
-	i = ft_check_exit(args->value);
-	if (args->next != NULL)
-		return (ft_put_err("exit", ": too many arguments", 1));
-	if (g_vars.history)
-		g_vars.history = ft_destroy_history(g_vars.history);
-	exit(i);
 }

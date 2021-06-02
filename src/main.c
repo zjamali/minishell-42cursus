@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 20:33:42 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 20:34:49 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,8 +199,8 @@ int main(int ac,char **av,char **env)
 	//
 	head = NULL;
 	//cmd = NULL;
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, signal_handler);
+	signal(SIGINT, ft_signal_handler);
+	signal(SIGQUIT, ft_signal_handler);
 	init_env(&head, env);   // 24 bytes allocated
 	while (i == 0)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/04/24 15:24:25 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/05/31 11:33:39 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ t_env     *ft_create_node(char *name, char *value)
     new = malloc(sizeof(t_env));
     if (new)
     {
-        new->name = name;
-        new->value = value;
+        new->name = ft_strdup(name);
+        new->value = ft_strdup(value);
         new->next = NULL;
     }
     return (new);
@@ -56,6 +56,8 @@ void	ft_delete_from_list(t_env **head, char *name)
 	if (!(ft_strcmp(temp->name, name)))
 	{
 		*head = temp->next;
+		free(temp->name);
+		free(temp->value);
 		free(temp);
 		return ;
 	}
@@ -70,6 +72,8 @@ void	ft_delete_from_list(t_env **head, char *name)
 	else
 	{
 		prev->next = temp->next;
+		free(temp->name);
+		free(temp->value);
 		free(temp);
 	}
 	
@@ -93,7 +97,10 @@ void	ft_replaceit(t_env **head, char *name, char *value)
 	
 	temp = ft_search_in_list(head, name);
 	if (temp != NULL)
-		temp->value = value;
+	{
+		free(temp->value);
+		temp->value = ft_strdup(value);
+	}
 }
 
 int		ft_count_list(t_env **head)
@@ -115,6 +122,7 @@ char **ft_list_to_arr(t_env **head)
 {
 	t_env *temp;
 	char **env;
+	char *tmp_name;
 	int i;
 
 	temp = *head;
@@ -123,7 +131,9 @@ char **ft_list_to_arr(t_env **head)
 	i = 0;
 	while (temp != NULL)
 	{
-		env[i] = ft_strjoin(ft_strjoin(temp->name, "="), temp->value);
+		tmp_name = ft_strjoin(temp->name, "=");
+		env[i] = ft_strjoin(tmp_name, temp->value);
+		free(tmp_name);
 		i++;
 		temp = temp->next;
 	}
@@ -181,14 +191,14 @@ t_env	*ft_sort_list(t_env **head)
 					ft_strcpy(temp->next->value,tmp);
 				*/
 				tmp = ft_strdup(temp->next->name);
-				//free(temp->next->name);
+				free(temp->next->name);
 				temp->next->name = ft_strdup(temp->name);
-				//free(temp->name);
+				free(temp->name);
 				temp->name = tmp;
 				tmp = ft_strdup(temp->next->value);
-				//free(temp->next->value);
+				free(temp->next->value);
 				temp->next->value = ft_strdup(temp->value);
-				//free(temp->value);
+				free(temp->value);
 				temp->value = tmp;
 			}
 			temp = temp->next;

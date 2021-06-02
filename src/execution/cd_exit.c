@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/28 18:24:51 by mbari            ###   ########.fr       */
+/*   Updated: 2021/05/31 11:56:17 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,15 @@ int	ft_replace_pwd(t_env **head, t_env *temp, char *dir)
 	else
 		ft_replaceit(head, "PWD", ft_strjoin(temp->value,
 				ft_strjoin("/", dir)));
+	free(new_pwd);
 	return (0);
 }
 
 int	ft_change_dir(t_args *args, t_env **head, char *dir)
 {
 	char	*buff;
+	char	*error;
+	char	*join;
 	t_env	*temp;
 
 	buff = NULL;
@@ -40,13 +43,24 @@ int	ft_change_dir(t_args *args, t_env **head, char *dir)
 	if (temp == NULL)
 		ft_add_to_list(head, ft_create_node("OLDPWD", ""));
 	if (chdir(dir) == -1)
-		return (ft_put_err("cd: ", ft_strjoin(dir,
-					ft_strjoin(": ", strerror(errno))), 1));
-	if (!getcwd(0, 100))
-		ft_put_err(ft_strjoin("cd: ", "error \
+	{
+		join = ft_strjoin(": ", strerror(errno));
+		error = ft_strjoin(dir, join);
+		free(join);
+		ft_put_err("cd: ", error, 1);
+		free(error);
+		return (1);
+	}
+	buff = getcwd(buff, 100);
+	if (!buff)
+	{
+		error = ft_strjoin("cd: ", "error \
 					retrieving current directory: getcwd: \
-					cannot access parent directories: "),
-			strerror(errno), 1);
+					cannot access parent directories: ");
+		ft_put_err(error, strerror(errno), 1);
+		free(error);
+	}
+	free(buff);
 	temp = ft_search_in_list(head, "PWD");
 	ft_replaceit(head, "OLDPWD", temp->value);
 	return (ft_replace_pwd(head, temp, dir));
@@ -71,6 +85,7 @@ int	ft_cd(t_args *args, t_env **head)
 		temp = ft_search_in_list(head, "OLDPWD");
 		if (temp == NULL)
 			return (ft_put_err("cd:", " OLDPWD not set", 1));
+		ft_putendl_fd(temp->value, 1);
 		dir = temp->value;
 	}
 	else
@@ -81,6 +96,7 @@ int	ft_cd(t_args *args, t_env **head)
 int	ft_check_exit(char *arg)
 {
 	int			i;
+	char		*error;
 	long long	estatus;
 
 	i = 0;
@@ -92,8 +108,10 @@ int	ft_check_exit(char *arg)
 		{
 			if (g_vars.history)
 				g_vars.history = ft_destroy_history(g_vars.history);
-			exit(ft_put_err("exit: ",
-					ft_strjoin(arg, ": numeric argument required"), 255));
+			error = ft_strjoin(arg, ": numeric argument required");
+			estatus = ft_put_err("exit: ",error, 255);
+			free(error);
+			exit(estatus);
 		}
 		i++;
 	}
@@ -102,8 +120,10 @@ int	ft_check_exit(char *arg)
 	{
 		if (g_vars.history)
 				g_vars.history = ft_destroy_history(g_vars.history);
-		exit(ft_put_err("exit: ", ft_strjoin(arg,
-					": numeric argument required"), 255));
+		error = ft_strjoin(arg, ": numeric argument required");
+		estatus = ft_put_err("exit: ",error, 255);
+		free(error);
+		exit(estatus);
 	}
 	return (estatus);
 }

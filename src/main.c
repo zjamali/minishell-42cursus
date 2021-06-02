@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/30 21:59:44 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/02 18:09:15 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,18 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 			if (current_pipe_line->child->command && !ft_strcmp(current_pipe_line->child->command,"export"))
 			{
 				split = ft_split(args->value,'=');
+				if (split[0] == NULL)
+					split[0] = ft_strdup("=");
+				else
+				{
+					if (split[0][0] != args->value[0])
+					{
+						free(split[0]);
+						split[0] = ft_strdup(args->value);
+					}
+				}
 				free(split[1]);
+				free(split);
 				return (split[0]);
 			}
 			else {
@@ -59,7 +70,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 void read_command_list(char **line)
 {
-	get_next_line(&(*line));
+//	get_next_line(&(*line));
 }
 
 void show_prompt()
@@ -133,6 +144,21 @@ t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 	return head;
 }
 
+void ft_destroy_list(t_env *head)
+{
+	t_env *temp;
+
+	temp = head;
+	if (head == NULL)
+		return ;
+	while (temp != NULL)
+	{
+		free(temp->name);
+		free(temp->value);
+		free(temp);
+		temp = temp->next;
+	}
+}
 
 int main(int ac,char **av,char **env)
 {
@@ -172,6 +198,7 @@ int main(int ac,char **av,char **env)
 	int i = 0;
 	//
 	head = NULL;
+	//cmd = NULL;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
 	init_env(&head, env);   // 24 bytes allocated
@@ -203,14 +230,12 @@ int main(int ac,char **av,char **env)
 			last_env[0] = ft_int_to_string(status);
 			ft_expanding(current_pipe_line,&head,last_env);
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
+			ft_print_pipeline_cmd(current_pipe_line);
 			if (current_pipe_line->child)
 			{
-				// ft_print_pipeline_cmd(current_pipe_line);
 				if (last_env[1])
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
-				//ft_putchar_fd('\n', 1);
-				
 				status = ft_execute(current_pipe_line, &head);
 			}
 			current_pipe_line = current_pipe_line->next;
@@ -222,6 +247,7 @@ int main(int ac,char **av,char **env)
 			g_vars.cmd = NULL;
 		}
 	}
+	ft_destroy_list(head);
 	return 0;
 }
 /*

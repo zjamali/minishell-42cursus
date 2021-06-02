@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/01 17:39:46 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/02 15:06:35 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,16 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 			if (current_pipe_line->child->command && !ft_strcmp(current_pipe_line->child->command,"export"))
 			{
 				split = ft_split(args->value,'=');
+				if (split[0] == NULL)
+					split[0] = ft_strdup("=");
+				else
+				{
+					if (split[0][0] != args->value[0])
+					{
+						free(split[0]);
+						split[0] = ft_strdup(args->value);
+					}
+				}
 				free(split[1]);
 				free(split);
 				return (split[0]);
@@ -60,7 +70,7 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 void read_command_list(char **line)
 {
-	get_next_line(&(*line));
+//	get_next_line(&(*line));
 }
 
 void show_prompt()
@@ -220,6 +230,7 @@ int main(int ac,char **av,char **env)
 			last_env[0] = ft_int_to_string(status);
 			ft_expanding(current_pipe_line,&head,last_env);
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
+			ft_print_pipeline_cmd(current_pipe_line);
 			if (current_pipe_line->child)
 			{
 				if (last_env[1])

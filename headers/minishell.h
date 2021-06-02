@@ -172,7 +172,10 @@ t_g_vars	g_vars;
 
 
 
-int		get_next_line(char **line);
+/* ************************************************************************** */
+/*                                 LEXER                                      */
+/* ************************************************************************** */
+
 t_token	*ft_lexer(char *line);
 void	ft_get_word(t_token *tokens_list, char *line, int *table);
 void	get_space_pipe_semi_redir(t_token *tokens_list,
@@ -182,24 +185,38 @@ void	print_tokens(t_token *tokens_list);
 void	add_token(t_token *token_list, t_token_type type,
 		char *content, int index);
 char	*ft_get_words(char *line, int *j, char *word, int *quoting);
-/* 
-* parser functions 
-*/
+
+
+
+/* ************************************************************************** */
+/*                                 PARSER                                     */
+/* ************************************************************************** */
 
 t_command_list *ft_parser(t_token *tokens_list,int *status);
 void ft_destroy_ast(t_command_list *cmd_list);
 int ft_check_syntax(t_token *tokens_list,int *status);
-
-void ft_expanding(t_pipe_line *pipe_line,t_env **env,char **last_env);
 void ft_print_pipeline_cmd(t_pipe_line *pipe_line);
 void ft_print_cmd_list(t_command_list *cmd_list);
 void ft_print_simple_cmd(t_simple_cmd *cmd);
 char *ft_int_to_string(int n);
 void ft_destroy_simple(t_simple_cmd *cmd);
 
-// t_readline *ft_init_readline(struct termios *termios);
-int micro_read_line(char **line,int *status);
-void ft_delete_char_list(t_char_list *char_list);
-t_lines_list *ft_destory_node(t_lines_list *node);
-t_lines_list *ft_destroy_history(t_lines_list *lines_list);
+
+/* ************************************************************************** */
+/*                                 EXPANSION                                  */
+/* ************************************************************************** */
+
+void ft_expanding(t_pipe_line *pipe_line,t_env **env,char **last_env);
+
+
+/* ************************************************************************** */
+/*                                 READLINE                                   */
+/* ************************************************************************** */
+
+int	get_next_line(char **line);
+int	micro_read_line(char **line,int *status);
+void	ft_delete_char_list(t_char_list *char_list);
+t_lines_list	*ft_destory_node(t_lines_list *node);
+t_lines_list	*ft_destroy_history(t_lines_list *lines_list);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 20:39:32 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 20:50:29 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,22 +113,6 @@ t_simple_cmd	*ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 	return (head);
 }
 
-void ft_destroy_list(t_env *head)
-{
-	t_env *temp;
-
-	temp = head;
-	if (head == NULL)
-		return ;
-	while (temp != NULL)
-	{
-		free(temp->name);
-		free(temp->value);
-		free(temp);
-		temp = temp->next;
-	}
-}
-
 int main(int ac,char **av,char **env)
 {
 	t_token *tokens_list;
@@ -155,7 +139,7 @@ int main(int ac,char **av,char **env)
 	//cmd = NULL;
 	signal(SIGINT, ft_signal_handler);
 	signal(SIGQUIT, ft_signal_handler);
-	init_env(&head, env);   // 24 bytes allocated
+	ft_init_env(&head, env);   // 24 bytes allocated
 	while (1337)
 	{
 		show_prompt();
@@ -180,7 +164,7 @@ int main(int ac,char **av,char **env)
 			last_env[0] = ft_int_to_string(status);
 			ft_expanding(current_pipe_line,&head,last_env);
 			current_pipe_line->child = ft_delete_emty_simple_cmds(&current_pipe_line);
-			ft_print_pipeline_cmd(current_pipe_line);
+			// ft_print_pipeline_cmd(current_pipe_line);
 			if (current_pipe_line->child)
 			{
 				if (last_env[1])

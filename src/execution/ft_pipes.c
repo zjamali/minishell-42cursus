@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 19:54:37 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 19:55:10 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 20:49:57 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 			ft_pipe_fork(tmp, head, mini, &command);
 		tmp = tmp->next;
 		command += 2;
-		do_backups(0);
+		ft_do_backups(0);
 		k++;
 	}
 	return (ft_close_fd(cmd, mini));

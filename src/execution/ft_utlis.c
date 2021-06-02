@@ -6,11 +6,27 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:00:11 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:00:59 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 20:49:17 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/execution.h"
+
+void ft_destroy_list(t_env *head)
+{
+	t_env *temp;
+
+	temp = head;
+	if (head == NULL)
+		return ;
+	while (temp != NULL)
+	{
+		free(temp->name);
+		free(temp->value);
+		free(temp);
+		temp = temp->next;
+	}
+}
 
 int	ft_count_args(t_args **args)
 {

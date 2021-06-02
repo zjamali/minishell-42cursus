@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 18:09:15 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/02 18:10:49 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,8 +206,8 @@ int main(int ac,char **av,char **env)
 	{
 		//i++;
 		show_prompt();
-	//	micro_read_line(&line,&status);
-		read_command_list(&line);
+		micro_read_line(&line,&status);
+	//	read_command_list(&line);
 		
 		if (line)
 		{

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:04:20 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 20:50:04 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,12 +108,12 @@ int	ft_execute(t_pipe_line *cmd, t_env **head)
 	mini.red_fd[0] = 0;
 	mini.red_fd[1] = 0;
 	ft_putstr_fd(BLUE, 1);
-	do_backups(1);
+	ft_do_backups(1);
 	if (cmd->child->redirections != NULL)
 	{
 		if (ft_redirection(&mini, cmd->child->redirections))
 		{
-			do_backups(0);
+			ft_do_backups(0);
 			return (1);
 		}
 	}
@@ -123,6 +123,6 @@ int	ft_execute(t_pipe_line *cmd, t_env **head)
 		mini.ret = ft_pipe(&mini, cmd, head);
 	else if (cmd->child->command != NULL)
 		mini.ret = ft_is_builtins(cmd->child, head);
-	do_backups(0);
+	ft_do_backups(0);
 	return (mini.ret);
 }

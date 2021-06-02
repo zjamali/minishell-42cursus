@@ -6,13 +6,13 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/23 22:12:29 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 12:13:36 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/01 17:38:23 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int		words(char *str, char c)
+static int	words(char *str, char c)
 {
 	int			i;
 	int			j;
@@ -34,7 +34,7 @@ static int		words(char *str, char c)
 	return (j);
 }
 
-static void		*leak(char **spl, int j)
+static void	*leak(char **spl, int j)
 {
 	j = j - 1;
 	while (spl[j])
@@ -46,7 +46,7 @@ static void		*leak(char **spl, int j)
 	return (NULL);
 }
 
-static int		carcts(char *str, char c)
+static int	carcts(char *str, char c)
 {
 	int			i;
 
@@ -58,7 +58,7 @@ static int		carcts(char *str, char c)
 	return (i);
 }
 
-static char		*allocandfill(char **tab, char *src, char c)
+static char	*allocandfill(char **tab, char *src, char c)
 {
 	int			i;
 	int			j;
@@ -71,7 +71,8 @@ static char		*allocandfill(char **tab, char *src, char c)
 	while (j < words(src, c))
 	{
 		i = 0;
-		if (!(tab[j] = malloc(sizeof(char) * (carcts(&src[k], c) + 1))))
+		tab[j] = malloc(sizeof(char) * (carcts(&src[k], c) + 1));
+		if (!tab[j])
 			return (leak(tab, j));
 		while (src[k] != c && src[k])
 			tab[j][i++] = src[k++];
@@ -84,7 +85,7 @@ static char		*allocandfill(char **tab, char *src, char c)
 	return (*tab);
 }
 
-char			**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c)
 {
 	int			j;
 	char		**tab;
@@ -99,37 +100,4 @@ char			**ft_split(char const *s, char c)
 		return (NULL);
 	tab[j] = allocandfill(tab, str, c);
 	return (tab);
-}
-
-char **my_split(char *str)
-{
-	int i;
-	int j;
-	char **s;
-	
-	i = 0;
-	j = 0;
-	s = (char **)malloc(sizeof(char) * 2);
-	s[0] = (char *)malloc(sizeof(char) * carcts(str, '=') + 1);
-	s[1] = (char *)malloc(sizeof(char) * (ft_strlen(str) - carcts(str, '=')) + 1);
-	while (str[i] != '=' && str[i])
-	{
-		s[0][i] = str[i];
-		i++;
-	}
-	s[0][i] = '\0';
-	if (str[i] == '=' && str[i + 1] == '\0')
-		s[1][0] = '\0';
-	else if (str[i] == '\0')
-	{
-		free(s[1]);
-		s[1] = NULL;
-	}
-	else
-	{
-		while (str[++i] != '\0')
-			s[1][j++] = str[i];
-		s[1][j] = '\0';
-	}
-	return (s);
 }

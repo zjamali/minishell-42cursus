@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 18:53:41 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/02 20:39:32 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,9 +151,11 @@ int main(int ac,char **av,char **env)
 	(void)env;
 
 	head = NULL;
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, signal_handler);
-	init_env(&head, env);
+
+	//cmd = NULL;
+	signal(SIGINT, ft_signal_handler);
+	signal(SIGQUIT, ft_signal_handler);
+	init_env(&head, env);   // 24 bytes allocated
 	while (1337)
 	{
 		show_prompt();
@@ -198,14 +200,3 @@ int main(int ac,char **av,char **env)
 	ft_destroy_list(head);
 	return 0;
 }
-
-/*
-echo >      \;
-> f1 bouvle
-echo hello >''>f1 boucle 
-echo helo > $jefh boucle infinie ambigious redirection
-error :: cat ""
-echo $\\$PWD
-echo "$PWD_$PWD"
-echo "$\\$PWD"
-*/

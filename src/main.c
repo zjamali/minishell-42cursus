@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 18:10:49 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/02 18:53:41 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,80 +68,49 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 	return NULL;
 }
 
-void read_command_list(char **line)
-{
-//	get_next_line(&(*line));
-}
-
 void show_prompt()
 {
 	write(1,GREEN,ft_strlen(GREEN));
 	write(1,"minishell$ ",strlen("minishell$ "));
 	write(1,RESET,ft_strlen(RESET));
 }
-/*
-t_readline *ft_destroy_read_line(t_readline *read_line)
-{
-	read_line->term_type = NULL;
-	read_line->path = NULL;
-	read_line->old_termios = NULL;
-	free(read_line->line);
-	read_line->line = NULL;
-	free(read_line);
-	read_line = NULL;
 
-	return read_line;
-}
-*/
-
-t_simple_cmd *ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
+t_simple_cmd	*ft_delete_emty_simple_cmds(t_pipe_line **pipe_line)
 {
-	// Store head node
-    t_simple_cmd *head;
-	t_simple_cmd *prev;
+    t_simple_cmd	*head;
+	t_simple_cmd	*prev;
+	t_simple_cmd	*temp;
+
 	prev = NULL;
-
 	head = (*pipe_line)->child;
-
-	
-	t_simple_cmd *temp;
 	temp = head;
-    while (temp != NULL && (!temp->command && temp->inside_quotes == 0) && temp->args == NULL && temp->redirections == NULL)
+    while (temp != NULL && (!temp->command && temp->inside_quotes == 0)
+			&& temp->args == NULL && temp->redirections == NULL)
     {
-        head = temp->next; // Changed head
-        //free(temp); // free old head
+        head = temp->next;
 		ft_destroy_simple(temp);
-        temp = head; // Change Temp
+        temp = head;
     }
-	
-    // Delete occurrences other than head
     while (temp != NULL)
     {
-        while (temp != NULL && (temp->inside_quotes != 0 || ( temp->command && temp->inside_quotes == 0)))
+        while (temp != NULL && (temp->inside_quotes != 0 
+				|| ( temp->command && temp->inside_quotes == 0)))
         {
             prev = temp;
             temp = temp->next;
         }
- 
-        // If key was not present in linked list
         if (temp == NULL)
-            return head;
- 
-        // Unlink the node from linked list
+            return (head);
 		if (prev)
 		{
         	prev->next = temp->next;
 			ft_destroy_simple(temp);
-			//free(temp); // Free memory
 			temp = prev->next;
-        	// Update Temp for next iteration of outer loop
 		}
 		else
-		{
-			temp = temp->next;
-		}        
+			temp = temp->next;     
     }
-	return head;
+	return (head);
 }
 
 void ft_destroy_list(t_env *head)
@@ -163,59 +132,38 @@ void ft_destroy_list(t_env *head)
 int main(int ac,char **av,char **env)
 {
 	t_token *tokens_list;
-	//t_command_list *cmd;
 	t_pipe_line *current_pipe_line;
 	t_env *head;
 	char *line;
 	int status;
 	char *last_argumet_or_command;
-//
+	static char *last_env[2];
+
 	current_pipe_line = NULL;
 	g_vars.cmd = NULL;
-	//struct termios termios;
-	 last_argumet_or_command = NULL;
-
-	//// get terminal window size
-	
-	//struct winsize window;
-	
-	//char **last_env;
-	static char *last_env[2];
-	
-	//last_env = (char **)malloc(sizeof(char) * 3);
-	//ft_bzero(last_env,sizeof(sizeof(char) * 3));
+	last_argumet_or_command = NULL;
 	last_env[0] = ft_strdup("0");
-	//last_env[1] = NULL;
-	//last_env[2] = NULL;
-
 	status = 0;
 	tokens_list = NULL;
 	line = NULL;
 	(void)ac;
 	(void)av;
 	(void)env;
-	
-	int i = 0;
-	//
+
 	head = NULL;
-	//cmd = NULL;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
-	init_env(&head, env);   // 24 bytes allocated
-	while (i == 0)
+	init_env(&head, env);
+	while (1337)
 	{
-		//i++;
 		show_prompt();
 		micro_read_line(&line,&status);
-	//	read_command_list(&line);
-		
 		if (line)
 		{
 			tokens_list = ft_lexer(line);
 			free(line);
 			line = NULL;
 		}
-		
 		if (tokens_list)
 		{
 			g_vars.cmd = ft_parser(tokens_list,&status);
@@ -250,6 +198,7 @@ int main(int ac,char **av,char **env)
 	ft_destroy_list(head);
 	return 0;
 }
+
 /*
 echo >      \;
 > f1 bouvle

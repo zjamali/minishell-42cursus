@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd_exit.c                                          :+:      :+:    :+:   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/05/31 11:56:17 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 19:46:14 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,20 +28,15 @@ int	ft_replace_pwd(t_env **head, t_env *temp, char *dir)
 	return (0);
 }
 
-int	ft_change_dir(t_args *args, t_env **head, char *dir)
+int	ft_check_errors(char *dir)
 {
-	char	*buff;
 	char	*error;
 	char	*join;
-	t_env	*temp;
+	char	*buff;
 
 	buff = NULL;
-	temp = ft_search_in_list(head, "PWD");
-	if (temp == NULL)
-		ft_add_to_list(head, ft_create_node("PWD", ""));
-	temp = ft_search_in_list(head, "OLDPWD");
-	if (temp == NULL)
-		ft_add_to_list(head, ft_create_node("OLDPWD", ""));
+	join = NULL;
+	error = NULL;
 	if (chdir(dir) == -1)
 	{
 		join = ft_strjoin(": ", strerror(errno));
@@ -61,6 +56,23 @@ int	ft_change_dir(t_args *args, t_env **head, char *dir)
 		free(error);
 	}
 	free(buff);
+	return (0);
+}
+
+int	ft_change_dir(t_args *args, t_env **head, char *dir)
+{
+	char	*error;
+	char	*join;
+	t_env	*temp;
+
+	temp = ft_search_in_list(head, "PWD");
+	if (temp == NULL)
+		ft_add_to_list(head, ft_create_node("PWD", ""));
+	temp = ft_search_in_list(head, "OLDPWD");
+	if (temp == NULL)
+		ft_add_to_list(head, ft_create_node("OLDPWD", ""));
+	if (ft_check_errors(dir))
+		return (1);
 	temp = ft_search_in_list(head, "PWD");
 	ft_replaceit(head, "OLDPWD", temp->value);
 	return (ft_replace_pwd(head, temp, dir));
@@ -91,57 +103,4 @@ int	ft_cd(t_args *args, t_env **head)
 	else
 		dir = args->value;
 	return (ft_change_dir(args, head, dir));
-}
-
-int	ft_check_exit(char *arg)
-{
-	int			i;
-	char		*error;
-	long long	estatus;
-
-	i = 0;
-	if (arg[i] == '-')
-		i++;
-	while (arg[i])
-	{
-		if (!ft_isdigit(arg[i]))
-		{
-			if (g_vars.history)
-				g_vars.history = ft_destroy_history(g_vars.history);
-			error = ft_strjoin(arg, ": numeric argument required");
-			estatus = ft_put_err("exit: ",error, 255);
-			free(error);
-			exit(estatus);
-		}
-		i++;
-	}
-	estatus = ft_atoi(arg);
-	if (estatus < -9223372036854775807)
-	{
-		if (g_vars.history)
-				g_vars.history = ft_destroy_history(g_vars.history);
-		error = ft_strjoin(arg, ": numeric argument required");
-		estatus = ft_put_err("exit: ",error, 255);
-		free(error);
-		exit(estatus);
-	}
-	return (estatus);
-}
-
-int	ft_exit(t_args *args)
-{
-	int		i;
-
-	if (args == NULL)
-	{
-		ft_putendl_fd("exit", 1);
-		exit(0);
-	}
-	ft_putendl_fd("exit", 1);
-	i = ft_check_exit(args->value);
-	if (args->next != NULL)
-		return (ft_put_err("exit", ": too many arguments", 1));
-	if (g_vars.history)
-		g_vars.history = ft_destroy_history(g_vars.history);
-	exit(i);
 }

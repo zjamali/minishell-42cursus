@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:55:58 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 19:51:23 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 20:10:12 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	ft_add_to_list(t_env **head, t_env *newnode)
 		*head = newnode;
 }
 
-int	ft_delete_first_node(t_env **head, t_env	*temp, char *name)
+int	ft_delete_first_node(t_env **head, t_env *temp, char *name)
 {
 	if (!(ft_strcmp(temp->name, name)))
 	{

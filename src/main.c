@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 20:34:49 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 20:39:32 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,13 +250,3 @@ int main(int ac,char **av,char **env)
 	ft_destroy_list(head);
 	return 0;
 }
-/*
-echo >      \;
-> f1 bouvle
-echo hello >''>f1 boucle 
-echo helo > $jefh boucle infinie ambigious redirection
-error :: cat ""
-echo $\\$PWD
-echo "$PWD_$PWD"
-echo "$\\$PWD"
-*/

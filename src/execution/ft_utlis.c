@@ -6,15 +6,15 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:00:11 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:49:17 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:18:06 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/execution.h"
 
-void ft_destroy_list(t_env *head)
+void	ft_destroy_list(t_env *head)
 {
-	t_env *temp;
+	t_env	*temp;
 
 	temp = head;
 	if (head == NULL)

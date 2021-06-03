@@ -6,7 +6,7 @@
 #    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2021/06/02 20:48:07 by mbari            ###   ########.fr        #
+#    Updated: 2021/06/03 16:10:28 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ LIBFT= src/libft/libft.a
 # *****     flags     ***** #
 
 COM= gcc
-CFLAGE= #-Wall -Wextra -Werror
+CFLAGE= -Wall -Wextra -Werror
 
 all: libft $(NAME)
 

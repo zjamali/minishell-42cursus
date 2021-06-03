@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:50:04 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:16:48 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,9 @@ int	ft_exec(t_simple_cmd *cmd, t_env **head)
 	int		f_status;
 
 	pid = fork();
+	f_status = 0;
 	if (!pid)
-	{
 		ft_execve(cmd, ft_args_to_arr(cmd), ft_list_to_arr(head));
-	}
 	else if (pid == -1)
 		return (ft_put_err("fork: ", "Fork failed", errno));
 	else
@@ -77,7 +76,7 @@ int	ft_is_builtins(t_simple_cmd *cmd, t_env **head)
 {
 	if (!(ft_strcmp(cmd->command, "echo"))
 		|| !(ft_strcmp(cmd->command, "ECHO")))
-		return (ft_echo(head, cmd->args));
+		return (ft_echo(cmd->args));
 	else if (!(ft_strcmp(cmd->command, "cd"))
 		| !(ft_strcmp(cmd->command, "CD")))
 		return (ft_cd(cmd->args, head));

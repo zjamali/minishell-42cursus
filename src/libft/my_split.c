@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:34:44 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/01 17:41:24 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 21:30:33 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static int	carcts(char *str, char c)
 	{
 		i++;
 	}
+	return (i);
 }
 
 void	ft_after_equal(char *str, char **s, int i)

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:24 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 19:46:14 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:11:46 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,8 @@ int	ft_check_errors(char *dir)
 	return (0);
 }
 
-int	ft_change_dir(t_args *args, t_env **head, char *dir)
+int	ft_change_dir(t_env **head, char *dir)
 {
-	char	*error;
-	char	*join;
 	t_env	*temp;
 
 	temp = ft_search_in_list(head, "PWD");
@@ -102,5 +100,5 @@ int	ft_cd(t_args *args, t_env **head)
 	}
 	else
 		dir = args->value;
-	return (ft_change_dir(args, head, dir));
+	return (ft_change_dir(head, dir));
 }

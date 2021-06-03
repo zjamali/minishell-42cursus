@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 19:54:37 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:49:57 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:17:22 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ int	ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head)
 {
 	t_simple_cmd	*tmp;
 	int				command;
-	int				status;
 	int				k;
 
 	k = 0;

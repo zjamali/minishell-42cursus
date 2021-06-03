@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 19:58:33 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 19:59:01 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:12:32 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ int	ft_find_file(t_simple_cmd *cmd, t_env **head)
 
 int	ft_check_path(t_simple_cmd *cmd, t_env **head)
 {
-	t_env			*temp;
 	int				status;
 
 	if (ft_strchr(cmd->command, '/') || cmd->command[0] == '.')

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:35 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:37:41 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:17:12 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,6 @@ void	ft_add_or_replace(t_env **head, char **split, int join)
 void	ft_add_var(t_env **head, t_args *args)
 {
 	char	**split;
-	t_env	*newnode;
-	char	*join_them;
 	int		join;
 
 	join = NO;
@@ -109,7 +107,6 @@ void	ft_add_var(t_env **head, t_args *args)
 
 int	ft_export(t_env **head, t_args *args)
 {
-	t_env	*newnode;
 	int		ret;
 
 	ret = 0;

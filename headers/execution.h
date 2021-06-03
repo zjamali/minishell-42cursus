@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:49:35 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:15:01 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ typedef struct s_mini
 int		ft_isitn(char *arg);
 int		ft_pwd(t_env **head);
 int		ft_env(t_env **head);
+void	ft_loop(t_args *args);
 int		ft_exit(t_args *args);
+int		ft_echo(t_args *args);
 void	ft_do_backups(int flag);
 int		ft_check_exit(char *arg);
 void	ft_check_digit(char	*arg);
@@ -46,15 +48,14 @@ int		ft_print_export(t_env **head);
 char	*ft_join_slash(char 	*cmd);
 char	**ft_list_to_arr(t_env **head);
 int		ft_cd(t_args *args, t_env **head);
-int		ft_echo(t_env **head, t_args *args);
 char	**ft_args_to_arr(t_simple_cmd *cmd);
-void	ft_loop(t_env **head, t_args *args);
 int		ft_file_err(t_redirection *redirect);
 int		ft_unset(t_args *args, t_env **head);
 char	*ft_join_path(char *path, char *cmd);
 int		ft_export(t_env **head, t_args *args);
 void	ft_init_env(t_env **head, char **env);
 void	ft_add_var(t_env **head, t_args *args);
+int		ft_change_dir(t_env **head, char *dir);
 t_env	*ft_create_node(char *name, char *value);
 int		ft_exec(t_simple_cmd *cmd, t_env **head);
 int		ft_execute(t_pipe_line *cmd, t_env **head);
@@ -73,7 +74,6 @@ int		ft_double_great(int *fd, t_redirection *redirect);
 int		ft_create_fd_pipe(t_pipe_line *cmd, t_mini *mini);
 void	ft_replaceit(t_env **head, char *name, char *value);
 int		ft_replace_pwd(t_env **head, t_env *temp, char *dir);
-int		ft_change_dir(t_args *args, t_env **head, char *dir);
 int		ft_pipe(t_mini *mini, t_pipe_line *cmd, t_env **head);
 int		ft_redirection(t_mini *mini, t_redirection *redirect);
 void	ft_execve(t_simple_cmd *cmd, char **args, char **list);

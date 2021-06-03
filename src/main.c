@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 21:49:10 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/03 18:59:16 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ int main(int ac,char **av,char **env)
 				if (last_env[1])
 					free(last_env[1]);
 				last_env[1] = get_last_argument_or_command(current_pipe_line);
-				status = ft_execute(current_pipe_line, &head);
+				//status = ft_execute(current_pipe_line, &head);
 			}
 			current_pipe_line = current_pipe_line->next;
 		}

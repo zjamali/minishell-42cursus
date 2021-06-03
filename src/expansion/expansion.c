@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/03 16:16:38 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/03 19:04:40 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -597,7 +597,7 @@ t_args	*ft_handle_arg_expanding(t_args **args)
 	to_free = tmp1->value;
 	splited = ft_split(tmp1->value, ' ');
 	i = 0;
-	new_args = (t_args *)malloc(sizeof(t_args));
+   	new_args = (t_args *)malloc(sizeof(t_args));
 	tmp = new_args;
 	while (splited[i])
 	{
@@ -622,7 +622,6 @@ void	ft_delete_emty_args_nodes(t_args **args)
 	t_args	*temp;
 	t_args	*prev;
 
-	prev = NULL;
 	temp = *args;
 	while (*args && ((*args)->inside_quotes == 0 && !(*args)->value))
 	{
@@ -646,153 +645,115 @@ void	ft_delete_emty_args_nodes(t_args **args)
 		temp = prev->next;
 	}
 }
-void	ft_expand_arguments(t_simple_cmd **cmd, t_env **env, char **last_env)
+
+void	ft_repalce_space_by_tab(t_simple_cmd **cmd, int args_or_cmd)
 {
-	t_args			*args;
-	char			*befor_expand_arg;
-	char			*after_expand_arg;
-	t_args			*next_args;
-	int				i;
-	char			*space;
-	
+	t_args	*args;
+	int		i;
+
+	args = NULL;
 	i = 0;
-	befor_expand_arg = NULL;
-	after_expand_arg = NULL;
-	space = NULL;
-	args = (*cmd)->args;
-	while (args)
+	if (args_or_cmd)
 	{
-		befor_expand_arg = ft_strdup(args->value);
-		i = 0;
-		/// replace space by tab
-		while (args->value && args->value[i] != '\0')
-		{
-			if (args->value[i] == ' ')
-				args->value[i] = '\t';
-			i++;
-		}
-		///
-		args->inside_quotes = check_exiting_of_qoutes(args->value);
-		ft_expande_word(&args->value, env, last_env, 0);
-		if (args->value)
-			after_expand_arg = ft_strdup(args->value);
-		if (args->inside_quotes == 0 && after_expand_arg
-			&& ft_strcmp(befor_expand_arg, after_expand_arg)
-			&& ft_strchr(after_expand_arg, ' ')
-			&& ft_strchr(befor_expand_arg, '$'))
-		{
-			next_args = args->next;
-			space = ft_strchr(after_expand_arg, ' ');
-			if (++space)
-				*args = *ft_handle_arg_expanding(&args);
-			args = next_args;
-		}
-		else
-			args = args->next;
-		free(befor_expand_arg);
-		befor_expand_arg = NULL;
-		free(after_expand_arg);
-		after_expand_arg = NULL;
-	}
-	
-}
-
-void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
-{
-	t_redirection	*redis;
-	t_args			*args;
-	char			*befor_expand_cmd;
-	char			*after_expand_cmd;
-	char			*befor_expand_arg;
-	char			*after_expand_arg;
-	char			*space;
-	t_args			*next_args;
-	int				i;
-	t_args			*to_free;
-
-	to_free = NULL;
-	next_args = NULL;
-	befor_expand_cmd = NULL;
-	after_expand_cmd = NULL;
-	befor_expand_arg = NULL;
-	after_expand_arg = NULL;
-	space = NULL;
-	redis = NULL;
-	/*
-	args = (*cmd)->args;
-	/// replace space by tab
-	args = (*cmd)->args;
-	
-	while (args)
-	{
-		befor_expand_arg = ft_strdup(args->value);
-		i = 0;
-		/// replace space by tab
-		while (args->value && args->value[i] != '\0')
-		{
-			if (args->value[i] == ' ')
-				args->value[i] = '\t';
-			i++;
-		}
-		///
-		args->inside_quotes = check_exiting_of_qoutes(args->value);
-		ft_expande_word(&args->value, env, last_env, 0);
-		if (args->value)
-			after_expand_arg = ft_strdup(args->value);
-		if (args->inside_quotes == 0 && after_expand_arg
-			&& ft_strcmp(befor_expand_arg, after_expand_arg)
-			&& ft_strchr(after_expand_arg, ' ')
-			&& ft_strchr(befor_expand_arg, '$'))
-		{
-			next_args = args->next;
-			space = ft_strchr(after_expand_arg, ' ');
-			if (++space)
-			{
-				*args = *ft_handle_arg_expanding(&args);
-			}
-			args = next_args;
-		}
-		else
-			args = args->next;
-		free(befor_expand_arg);
-		befor_expand_arg = NULL;
-		free(after_expand_arg);
-		after_expand_arg = NULL;
-	}
-	*/
-	ft_expand_arguments(cmd,env,last_env);
-	
-	if ((*cmd)->command)
-	{
-		befor_expand_cmd = ft_strdup((*cmd)->command);
-		i = 0;
 		while ((*cmd)->command[i] != '\0')
 		{
 			if ((*cmd)->command[i] == ' ')
 				(*cmd)->command[i] = '\t';
 			i++;
 		}
-		i = 0;
-		(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
-		ft_expande_word(&((*cmd)->command), env, last_env, 0);
-		if ((*cmd)->command)
-			after_expand_cmd = ft_strdup((*cmd)->command);
-		if ((*cmd)->inside_quotes == 0 && after_expand_cmd
-			&& ft_strcmp(befor_expand_cmd, after_expand_cmd)
-			&& ft_strchr(after_expand_cmd, ' ')
-			&& ft_strchr(befor_expand_cmd, '$'))
-		{
-			space = ft_strchr(after_expand_cmd, ' ');
-			if (++space)
-			{
-				*cmd = ft_handle_cmd_expanding(cmd);
-			}
-		}
-		free(befor_expand_cmd);
-		befor_expand_cmd = NULL;
-		free(after_expand_cmd);
-		after_expand_cmd = NULL;
 	}
+	else
+	{
+		args = (*cmd)->args;
+		while (args->value && args->value[i] != '\0')
+		{
+			if (args->value[i] == ' ')
+				args->value[i] = '\t';
+			i++;
+		}
+	}
+}
+
+t_args	*ft_expand_argument(char *befor_expand_arg, char	*after_expand_arg,
+		t_args *args)
+{
+	t_args	*next_args;
+	char	*space;
+
+	if (args->value)
+		after_expand_arg = ft_strdup(args->value);
+	if (args->inside_quotes == 0 && after_expand_arg
+		&& ft_strcmp(befor_expand_arg, after_expand_arg)
+		&& ft_strchr(after_expand_arg, ' ')
+		&& ft_strchr(befor_expand_arg, '$'))
+	{
+		next_args = args->next;
+		space = ft_strchr(after_expand_arg, ' ');
+		if (++space)
+			*args = *ft_handle_arg_expanding(&args);
+		args = next_args;
+	}
+	else
+		args = args->next;
+	free(after_expand_arg);
+	return (args);
+}
+
+void	ft_expand_arguments(t_simple_cmd **cmd, t_env **env, char **last_env)
+{
+	t_args			*args;
+	char			*befor_expand_arg;
+	char			*after_expand_arg;
+
+	args = (*cmd)->args;
+	befor_expand_arg = NULL;
+	after_expand_arg = NULL;
+	while (args)
+	{
+		befor_expand_arg = ft_strdup(args->value);
+		ft_repalce_space_by_tab(cmd, 0);
+		args->inside_quotes = check_exiting_of_qoutes(args->value);
+		ft_expande_word(&args->value, env, last_env, 0);
+		args = ft_expand_argument(befor_expand_arg, after_expand_arg, args);
+		free(befor_expand_arg);
+		befor_expand_arg = NULL;
+		after_expand_arg = NULL;
+	}
+}
+
+void	ft_expand_command(t_simple_cmd **cmd, t_env **env, char **last_env)
+{
+	char	*befor_expand_cmd;
+	char	*after_expand_cmd;
+	char	*space;
+
+	space = NULL;
+	befor_expand_cmd = NULL;
+	after_expand_cmd = NULL;
+	befor_expand_cmd = ft_strdup((*cmd)->command);
+	ft_repalce_space_by_tab(cmd, 1);
+	(*cmd)->inside_quotes = check_exiting_of_qoutes(((*cmd)->command));
+	ft_expande_word(&((*cmd)->command), env, last_env, 0);
+	if ((*cmd)->command)
+		after_expand_cmd = ft_strdup((*cmd)->command);
+	if ((*cmd)->inside_quotes == 0 && after_expand_cmd
+		&& ft_strcmp(befor_expand_cmd, after_expand_cmd)
+		&& ft_strchr(after_expand_cmd, ' ')
+		&& ft_strchr(befor_expand_cmd, '$'))
+	{
+		space = ft_strchr(after_expand_cmd, ' ');
+		if (++space)
+			*cmd = ft_handle_cmd_expanding(cmd);
+	}
+	free(befor_expand_cmd);
+	free(after_expand_cmd);
+}
+
+void	ft_expande_redirection(t_simple_cmd **cmd, t_env **env, char **last_env)
+{
+	t_redirection	*redis;
+
+	redis = NULL;
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
@@ -803,48 +764,42 @@ void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			ft_expande_word(&redis->file_name, env, last_env, 1);
 		redis = redis->next;
 	}
+}
+
+void	ft_handle_empty_command(t_simple_cmd **cmd)
+{
+	t_args	*args;
+	t_args	*to_free;
+
 	args = (*cmd)->args;
-	////// here deleting empty args
 	if (args)
 	{
-		ft_delete_emty_args_nodes(&(*cmd)->args);
-	}
-	args = (*cmd)->args;
-	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
-	{
-		if (args)
+		if (args->value)
 		{
-			if (args->value)
-			{
-				(*cmd)->command = ft_strdup(args->value);
-				free(args->value);
-			}
-			(*cmd)->inside_quotes = args->inside_quotes;
-			if (args->next != NULL)
-			{
-				to_free = args;
-				(*cmd)->args = args->next;
-				free(to_free);
-				to_free = NULL;
-			}
-			else
-			{
-				free((*cmd)->args);
-				(*cmd)->args = NULL;
-			}
+			(*cmd)->command = ft_strdup(args->value);
+			free(args->value);
+		}
+		(*cmd)->inside_quotes = args->inside_quotes;
+		if (args->next != NULL)
+		{
+			to_free = args;
+			(*cmd)->args = args->next;
+			free(to_free);
+			to_free = NULL;
+		}
+		else
+		{
+			free((*cmd)->args);
+			(*cmd)->args = NULL;
 		}
 	}
-	/// replace tab by space
-	i = 0;
-	if ((*cmd)->command)
-	{
-		while ((*cmd)->command[i] != '\0')
-		{
-			if ((*cmd)->command[i] == '\t')
-				(*cmd)->command[i] = ' ';
-			i++;
-		}
-	}
+}
+
+void	ft_return_spaces_to_arguments(t_simple_cmd **cmd)
+{
+	t_args	*args;
+	int		i;
+
 	i = 0;
 	args = (*cmd)->args;
 	while (args)
@@ -861,6 +816,42 @@ void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		}
 		args = args->next;
 	}
+}
+
+void	ft_return_spaces(t_simple_cmd **cmd)
+{
+	int		i;
+
+	i = 0;
+	if ((*cmd)->command)
+	{
+		while ((*cmd)->command[i] != '\0')
+		{
+			if ((*cmd)->command[i] == '\t')
+				(*cmd)->command[i] = ' ';
+			i++;
+		}
+	}
+	ft_return_spaces_to_arguments(cmd);
+}
+
+void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
+{
+	t_args			*args;
+	t_args			*to_free;
+
+	to_free = NULL;
+	args = NULL;
+	ft_expand_arguments(cmd, env, last_env);
+	if ((*cmd)->command)
+		ft_expand_command(cmd, env, last_env);
+	ft_expande_redirection(cmd, env, last_env);
+	args = (*cmd)->args;
+	if (args)
+		ft_delete_emty_args_nodes(&(*cmd)->args);
+	if (!(*cmd)->command && (*cmd)->inside_quotes == 0)
+		ft_handle_empty_command(cmd);
+	ft_return_spaces(cmd);
 }
 
 void	ft_expanding(t_pipe_line *pipe_line, t_env **env, char **last_env)

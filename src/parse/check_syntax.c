@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/31 18:45:13 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/01 13:43:53 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/02 21:46:19 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_get_first_double_quotes(char *word, int *index, int *back_slash)
 	int	quote;
 
 	quote = 0;
-	if (word[*index - 1] != 92)
+	if (*index != 0 && word[*index - 1] != 92)
 		quote += 2;
 	else
 	{

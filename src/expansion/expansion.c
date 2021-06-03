@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/03 16:05:03 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/03 16:16:38 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -646,6 +646,56 @@ void	ft_delete_emty_args_nodes(t_args **args)
 		temp = prev->next;
 	}
 }
+void	ft_expand_arguments(t_simple_cmd **cmd, t_env **env, char **last_env)
+{
+	t_args			*args;
+	char			*befor_expand_arg;
+	char			*after_expand_arg;
+	t_args			*next_args;
+	int				i;
+	char			*space;
+	
+	i = 0;
+	befor_expand_arg = NULL;
+	after_expand_arg = NULL;
+	space = NULL;
+	args = (*cmd)->args;
+	while (args)
+	{
+		befor_expand_arg = ft_strdup(args->value);
+		i = 0;
+		/// replace space by tab
+		while (args->value && args->value[i] != '\0')
+		{
+			if (args->value[i] == ' ')
+				args->value[i] = '\t';
+			i++;
+		}
+		///
+		args->inside_quotes = check_exiting_of_qoutes(args->value);
+		ft_expande_word(&args->value, env, last_env, 0);
+		if (args->value)
+			after_expand_arg = ft_strdup(args->value);
+		if (args->inside_quotes == 0 && after_expand_arg
+			&& ft_strcmp(befor_expand_arg, after_expand_arg)
+			&& ft_strchr(after_expand_arg, ' ')
+			&& ft_strchr(befor_expand_arg, '$'))
+		{
+			next_args = args->next;
+			space = ft_strchr(after_expand_arg, ' ');
+			if (++space)
+				*args = *ft_handle_arg_expanding(&args);
+			args = next_args;
+		}
+		else
+			args = args->next;
+		free(befor_expand_arg);
+		befor_expand_arg = NULL;
+		free(after_expand_arg);
+		after_expand_arg = NULL;
+	}
+	
+}
 
 void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 {
@@ -668,9 +718,11 @@ void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 	after_expand_arg = NULL;
 	space = NULL;
 	redis = NULL;
+	/*
 	args = (*cmd)->args;
 	/// replace space by tab
 	args = (*cmd)->args;
+	
 	while (args)
 	{
 		befor_expand_arg = ft_strdup(args->value);
@@ -707,6 +759,9 @@ void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		free(after_expand_arg);
 		after_expand_arg = NULL;
 	}
+	*/
+	ft_expand_arguments(cmd,env,last_env);
+	
 	if ((*cmd)->command)
 	{
 		befor_expand_cmd = ft_strdup((*cmd)->command);
@@ -732,8 +787,6 @@ void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 			{
 				*cmd = ft_handle_cmd_expanding(cmd);
 			}
-			//free(space);
-			//space = NULL;
 		}
 		free(befor_expand_cmd);
 		befor_expand_cmd = NULL;

@@ -6,16 +6,14 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:04:26 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 16:14:51 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/execution.h"
 
-void	ft_loop(t_env **head, t_args *args)
+void	ft_loop(t_args *args)
 {
-	t_env	*temp;
-
 	while (args != NULL)
 	{
 		if (args->value != NULL)
@@ -38,7 +36,7 @@ int	ft_isitn(char *arg)
 	return (1);
 }
 
-int	ft_echo(t_env **head, t_args *args)
+int	ft_echo(t_args *args)
 {
 	int	new_line;
 
@@ -55,7 +53,7 @@ int	ft_echo(t_env **head, t_args *args)
 		if (args && ft_isitn(args->value + 1))
 			args = args->next;
 	}
-	ft_loop(head, args);
+	ft_loop(args);
 	if (new_line == YES)
 		write(1, "\n", 1);
 	return (0);

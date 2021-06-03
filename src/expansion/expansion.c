@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 19:55:32 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/03 16:05:03 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ char	*ft_int_to_string(int n)
 	}
 }
 
-char	*get_env_value(char *env_variable, t_env **env, int inside_dq)
+char	*get_env_value(char *env_variable, t_env **env)
 {
 	t_env	*tmp;
 	int		j;
@@ -144,7 +144,7 @@ char	*ft_remove_double_quotes(char *word, int *i, t_env **env,
 				else
 				{
 					tmp1 = expand;
-					tmp = get_env_value(word + j, env, 1);
+					tmp = get_env_value(word + j, env);
 					if (tmp)
 					{
 						if (word[j + 1] == '_' && word[j + 2] == '"')
@@ -385,7 +385,7 @@ void	ft_expande_word(char **string, t_env **env_list, char **last_env,
 			else
 			{
 				tmp1 = expanded;
-				tmp = get_env_value(word + i, env_list, 0);
+				tmp = get_env_value(word + i, env_list);
 				if (tmp) /// env variavle exist
 				{
 					if (word[i + 1] == '_' && word[i + 2] == '\0')
@@ -740,7 +740,6 @@ void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		free(after_expand_cmd);
 		after_expand_cmd = NULL;
 	}
-	////// here deleting empty args
 	redis = (*cmd)->redirections;
 	while (redis)
 	{
@@ -752,6 +751,7 @@ void	ft_expande_simple_cmd(t_simple_cmd **cmd, t_env **env, char **last_env)
 		redis = redis->next;
 	}
 	args = (*cmd)->args;
+	////// here deleting empty args
 	if (args)
 	{
 		ft_delete_emty_args_nodes(&(*cmd)->args);

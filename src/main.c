@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 20:50:29 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/02 21:49:10 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,10 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 				}
 				free(split[1]);
 				free(split);
-				return (split[0]);
+				if (split[0])
+					return (split[0]);
+				else
+					return (NULL);
 			}
 			else {
 				if (args->value)

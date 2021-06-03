@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/31 18:45:13 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/01 13:43:53 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/03 16:03:28 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_get_first_double_quotes(char *word, int *index, int *back_slash)
 	int	quote;
 
 	quote = 0;
-	if (word[*index - 1] != 92)
+	if (*index != 0 && word[*index - 1] != 92)
 		quote += 2;
 	else
 	{
@@ -81,7 +81,7 @@ void	ft_get_close_double_quotes(char *word, int *index, int *back_slash,
 	(*index)++;
 }
 
-void	ft_get_close_single_quotes(char *word, int *index, int *back_slash,
+void	ft_get_close_single_quotes(int *index, int *back_slash,
 																	int *quote)
 {
 	(*index)++;
@@ -116,7 +116,7 @@ int	ft_check_closing_quotes(char *word)
 		else if (quote == 2 && word[i] == 34)
 			ft_get_close_double_quotes(word, &i, &back_slash, &quote);
 		else if (quote == 1 && word[i] == '\'')
-			ft_get_close_single_quotes(word, &i, &back_slash, &quote);
+			ft_get_close_single_quotes(&i, &back_slash, &quote);
 		else
 		{
 			i++;

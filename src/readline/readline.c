@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/24 12:45:20 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 18:06:04 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/03 16:05:44 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,9 +341,6 @@ t_lines_list	*ft_create_line_node(void)
 
 t_lines_list	*ft_delete_node_from_list(t_lines_list *current)
 {
-	t_char_list		*tmp;
-	t_char_list		*tmp1;
-	t_char_list		*tmp_char_list;
 	t_lines_list	*next_line;
 
 	next_line = NULL;
@@ -357,7 +354,7 @@ t_lines_list	*ft_delete_node_from_list(t_lines_list *current)
 	return (next_line);
 }
 
-int	add_curr_node_to_history(t_readline *readline, long c,
+int	add_curr_node_to_history(t_readline *readline,
 				  t_lines_list *current, t_lines_list **history)
 {
 	t_lines_list	*new_line_node;
@@ -569,7 +566,7 @@ char	*ft_get_input(t_readline readline, int *status, struct termios old_term)
 		if (current && (character == D_KEY_DOWN || character == D_KEY_UP))
 			current = ft_handle_history_buttons(character, readline, current);
 		else if (character == D_KEY_ENTER)
-			newline_break = add_curr_node_to_history(&readline, character,
+			newline_break = add_curr_node_to_history(&readline,
 					current, &g_vars.history);
 		else if (character == D_KEY_BACKSPACE)
 			ft_delete_last_charactere_from_line(&current, &readline);

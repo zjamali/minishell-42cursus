@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/02 20:39:15 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/03 17:24:59 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,5 +218,6 @@ int	micro_read_line(char **line,int *status);
 void	ft_delete_char_list(t_char_list *char_list);
 t_lines_list	*ft_destory_node(t_lines_list *node);
 t_lines_list	*ft_destroy_history(t_lines_list *lines_list);
+void	ft_print_char_list(t_char_list *chars_list);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/03 19:04:40 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/03 22:03:22 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -584,20 +584,18 @@ t_simple_cmd	*ft_handle_cmd_expanding(t_simple_cmd **cmd)
 	return (*cmd);
 }
 
-t_args	*ft_handle_arg_expanding(t_args **args)
+void	ft_handle_arg_expanding(t_args **args)
 {
 	char	**splited;
-	char	*to_free;
 	t_args	*tmp;
 	t_args	*new_args;
 	t_args	*tmp1;
 	int		i;
 
-	tmp1 = *args;
-	to_free = tmp1->value;
-	splited = ft_split(tmp1->value, ' ');
 	i = 0;
-   	new_args = (t_args *)malloc(sizeof(t_args));
+	tmp1 = *args;
+	splited = ft_split(tmp1->value, ' ');
+	new_args = (t_args *)malloc(sizeof(t_args));
 	tmp = new_args;
 	while (splited[i])
 	{
@@ -612,9 +610,12 @@ t_args	*ft_handle_arg_expanding(t_args **args)
 		i++;
 	}
 	tmp->next = tmp1->next;
-	*args = new_args;
+	free(tmp1->value);
+	tmp1->value = NULL;
+	**args = *new_args;
 	free(splited);
-	return (new_args);
+	//free(new_args);
+	// return (*args);
 }
 
 void	ft_delete_emty_args_nodes(t_args **args)
@@ -690,7 +691,8 @@ t_args	*ft_expand_argument(char *befor_expand_arg, char	*after_expand_arg,
 		next_args = args->next;
 		space = ft_strchr(after_expand_arg, ' ');
 		if (++space)
-			*args = *ft_handle_arg_expanding(&args);
+			ft_handle_arg_expanding(&args);
+			/* *args = */
 		args = next_args;
 	}
 	else

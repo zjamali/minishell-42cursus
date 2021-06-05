@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/03 22:03:22 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/05 21:53:52 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -547,32 +547,34 @@ void	ft_expande_word(char **string, t_env **env_list, char **last_env,
 	free(word);
 }
 
+void	ft_assign_value(char	**splited, int i, t_args **new_args)
+{
+	(*new_args)->value = splited[i];
+	(*new_args)->inside_quotes = 0;
+	(*new_args)->next = NULL;
+	if (splited[i + 1])
+	{
+		(*new_args)->next = (t_args *)malloc(sizeof(t_args));
+		*new_args = (*new_args)->next;
+	}
+}
+
 t_simple_cmd	*ft_handle_cmd_expanding(t_simple_cmd **cmd)
 {
 	char	**splited;
-	char	*to_free;
 	int		i;
 	t_args	*new_args;
 	t_args	*tmp;
 
-	splited = NULL;
 	i = 1;
-	to_free = (*cmd)->command;
 	splited = ft_split((*cmd)->command, ' ');
-	free(to_free);
+	free((*cmd)->command);
 	(*cmd)->command = splited[0];
 	new_args = (t_args *)malloc(sizeof(t_args));
 	tmp = new_args;
 	while (splited[i])
 	{
-		new_args->value = splited[i];
-		new_args->inside_quotes = 0;
-		new_args->next = NULL;
-		if (splited[i + 1])
-		{
-			new_args->next = (t_args *)malloc(sizeof(t_args));
-			new_args = new_args->next;
-		}
+		ft_assign_value(splited, i, &new_args);
 		i++;
 	}
 	if (i > 1)
@@ -580,6 +582,8 @@ t_simple_cmd	*ft_handle_cmd_expanding(t_simple_cmd **cmd)
 		new_args->next = (*cmd)->args;
 		(*cmd)->args = tmp;
 	}
+	else
+		free(new_args);
 	free(splited);
 	return (*cmd);
 }
@@ -588,15 +592,14 @@ void	ft_handle_arg_expanding(t_args **args)
 {
 	char	**splited;
 	t_args	*tmp;
-	t_args	*new_args;
-	t_args	*tmp1;
+	t_args	*next;
 	int		i;
 
 	i = 0;
-	tmp1 = *args;
-	splited = ft_split(tmp1->value, ' ');
-	new_args = (t_args *)malloc(sizeof(t_args));
-	tmp = new_args;
+	splited = ft_split((*args)->value, ' ');
+	tmp = *args;
+	next = (*args)->next;
+	free((*args)->value);
 	while (splited[i])
 	{
 		tmp->value = splited[i];
@@ -609,13 +612,8 @@ void	ft_handle_arg_expanding(t_args **args)
 		}
 		i++;
 	}
-	tmp->next = tmp1->next;
-	free(tmp1->value);
-	tmp1->value = NULL;
-	**args = *new_args;
+	tmp->next = next;
 	free(splited);
-	//free(new_args);
-	// return (*args);
 }
 
 void	ft_delete_emty_args_nodes(t_args **args)
@@ -692,7 +690,6 @@ t_args	*ft_expand_argument(char *befor_expand_arg, char	*after_expand_arg,
 		space = ft_strchr(after_expand_arg, ' ');
 		if (++space)
 			ft_handle_arg_expanding(&args);
-			/* *args = */
 		args = next_args;
 	}
 	else

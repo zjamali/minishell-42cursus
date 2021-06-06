@@ -6,7 +6,7 @@
 #    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2021/06/06 10:01:41 by mbari            ###   ########.fr        #
+#    Updated: 2021/06/06 20:01:24 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,10 +29,10 @@ LIBFT_FOLDER = $(SOURCEDIR)/libft
 LIBFT_LIB = libft.a
 LIBS = -lncurses
 FLAGS = -Wall -Wextra -Werror
-RED = \033[0;31m
-GREEN = \033[0;32m
-YELLOW = \033[0;33m
-BLUE = \033[0;34m
+RED = \033[1;31m
+GREEN = \033[1;32m
+YELLOW = \033[1;33m
+BLUE = \033[1;34m
 RESET = \033[0m
 
 # Execution files variable
@@ -122,6 +122,7 @@ libft:
 $(NAME): libft $(OBJS)
 	$(HIDE)$(CC) -I $(HEADERSDIR) -I $(LIBFT_FOLDER) $(OBJS) $(LIBFT_FOLDER)/$(LIBFT_LIB) $(LIBS) -o $@
 	$(HIDE)echo "$(BLUE)███████████████████████ Compiling is DONE ██████████████████████$(RESET)"
+	$(HIDE)echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
 
 $(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c
 	$(HIDE)$(MKDIR) $(dir $@)
@@ -129,6 +130,7 @@ $(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c
 	$(HIDE)$(CC) $(FLAGS) -I $(HEADERSDIR) -I $(LIBFT_HEADER) -o $@ -c $<
 
 # Remove all objects, dependencies and executable files generated during the build
+
 clean:
 	$(HIDE)echo "$(RED)deleting$(RESET): " $(OBJECTSDIR)
 	$(HIDE)$(RMDIR) $(OBJECTSDIR) $(ERRIGNORE)
@@ -144,10 +146,10 @@ fclean: clean
 re: fclean $(NAME)
 
 credit:
-	@echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
 	@echo "███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     "
 	@echo "████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║     "
 	@echo "██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║     "
 	@echo "██║╚██╔╝██║██║██║╚█f█╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║     "
 	@echo "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗"
 	@echo "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝"
+	@echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"

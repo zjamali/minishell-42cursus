@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 17:34:44 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 21:30:33 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/06 09:22:52 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,9 @@ char	**my_split(char *str)
 
 	i = 0;
 	j = 0;
-	s = (char **)malloc(sizeof(char) * 2);
-	s[0] = (char *)malloc(sizeof(char) * carcts(str, '=') + 1);
-	s[1] = (char *)malloc(sizeof(char)
-			* (ft_strlen(str) - carcts(str, '=')) + 1);
+	s = (char **)malloc(sizeof(char **) * 2);
+	s[0] = (char *)malloc(sizeof(char) * (carcts(str, '=') + 1));
+	s[1] = (char *)malloc(sizeof(char) * ((ft_strlen(str) - carcts(str, '=')) + 1));
 	while (str[i] != '=' && str[i])
 	{
 		s[0][i] = str[i];

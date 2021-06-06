@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:01:59 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:02:53 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/05 21:00:12 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	**ft_args_to_arr(t_simple_cmd *cmd)
 
 	temp = cmd->args;
 	i = ft_count_args(&temp) + 1;
-	arg = (char **)malloc(sizeof(char *) * i + 1);
+	arg = (char **)malloc(sizeof(char *) * (i + 1));
 	i = 0;
 	arg[i++] = ft_strdup(cmd->command);
 	while (temp != NULL)
@@ -72,7 +72,10 @@ void	ft_init_env(t_env **head, char **env)
 	{
 		var = ft_split(env[i], '=');
 		newnode = ft_create_node(var[0], var[1]);
-		ft_add_to_list(head, newnode);
+		if (!head)
+			head = &newnode;
+		else
+			ft_add_to_list(head, newnode);
 		free(var[0]);
 		free(var[1]);
 		free(var);

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/05 21:53:52 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/06 21:30:56 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ char	*ft_int_to_string(int n)
 	}
 }
 
-char	*get_env_value(char *env_variable, t_env **env)
+char	*get_env_variable_value(char *env_variable, t_env **env)
 {
 	t_env	*tmp;
 	int		j;
@@ -144,7 +144,7 @@ char	*ft_remove_double_quotes(char *word, int *i, t_env **env,
 				else
 				{
 					tmp1 = expand;
-					tmp = get_env_value(word + j, env);
+					tmp = get_env_variable_value(word + j, env);
 					if (tmp)
 					{
 						if (word[j + 1] == '_' && word[j + 2] == '"')
@@ -292,28 +292,18 @@ char	*ft_remove_double_quotes(char *word, int *i, t_env **env,
 	return (expand);
 }
 
-void	ft_expande_word(char **string, t_env **env_list, char **last_env,
-		int redirection)
+void	ft_replace_tilde(char **string)
 {
-	char	*word;
-	char	*expanded;
-	int		i;
-	int		j;
-	int		k;
-	char	*tmp1;
-	int		back_slash;
 	char	*tmp;
 	int		len;
+	char	*tmp1;
+	char	*word;
 
-	word = *string;
-	i = 0;
-	k = 0;
-	len = 0;
-	expanded = NULL;
-	back_slash = 0;
-	j = 0;
-	tmp1 = NULL;
+	word = NULL;
 	tmp = NULL;
+	tmp1 = NULL;
+	len = 0;
+	word = *string;
 	if (word[0] == '~' && (word[1] == '\0' || word[1] == '/'))
 	{
 		tmp = word;
@@ -331,35 +321,274 @@ void	ft_expande_word(char **string, t_env **env_list, char **last_env,
 		free(tmp);
 		tmp = NULL;
 	}
+	*string = word;
+}
+
+void	check_word_to_expand_is_redirection(int redirection,char **expanded,char **word,char **string)
+{
+	if (redirection == 1)
+	{
+		if (*expanded != NULL && (*expanded)[0] != '\0')
+		{
+			*string = *expanded;
+		}
+		else
+		{
+			*string = ft_strdup(*word);
+		}
+	}
+	else
+	{
+		*string = *expanded;
+	}
+	free(*word);
+}
+
+void	ft_expand_backslashes(char *str, int *i, char **expanded)
+{
+	int		j;
+	char	*tmp1;
+	char	*tmp;
+
+	tmp = NULL;
+	tmp1 = NULL;
+	j = *i;
+	while (str[j] == '\\')
+	{
+		tmp1 = *expanded;
+		tmp = ft_substr(str, j + 1, 1);// get_character_after back_slash
+		*expanded = ft_strjoin(*expanded, tmp);
+		free(tmp1);
+		free(tmp);
+		j += 2;
+	}
+	*i = j;
+}
+
+void	ft_remove_single_quotes(char *str, int *i, char **expanded)
+{
+	int		j;
+	char	*tmp1;
+	char	*tmp;
+
+	(*i)++;
+	j = *i;
+	while (str[j] != '\'')
+		j++;
+	tmp1 = *expanded;
+	tmp = ft_substr(str, *i, j - *i);
+	*expanded = ft_strjoin(*expanded, tmp);
+	free(tmp);
+	free(tmp1);
+	*i = j + 1;
+}
+
+void	ft_expand_squence_of_dollar_sign(char *str, int *i, char **expanded)
+{
+	char	*tmp1;
+	char	*tmp;
+
+	tmp1 = *expanded;
+	tmp = ft_substr(str, *i, 2);
+	*expanded = ft_strjoin(*expanded, tmp);
+	free(tmp1);
+	free(tmp);
+	*i += 2;
+}
+
+void	ft_get_charachter(char *str, int *i, char **expanded)
+{
+	char	*tmp1;
+	char	*tmp;
+
+	tmp1 = *expanded;
+	tmp = ft_substr(str, *i, 1);
+	*expanded = ft_strjoin(*expanded, tmp);
+	free(tmp1);
+	free(tmp);
+	(*i)++;
+}
+
+void	ft_expand_underscore_if_exist(char *str, int i, char **env_value,
+		char *last_argmnt)
+{
+	if (str[i + 1] == '_' && str[i + 2] == '\0' && last_argmnt)
+	{
+		free(*env_value);
+		*env_value = NULL;
+		*env_value = ft_strdup(last_argmnt);
+	}
+}
+
+void	ft_replace_env_by_value(char *str, int *i, char **expanded,
+		char **env_value)
+{
+	char	*tmp;
+
+	tmp = *expanded;
+	*expanded = ft_strjoin(*expanded, *env_value);
+	free(*env_value);
+	free(tmp);
+	if (str[*i] == '$')
+		(*i)++;
+	if (str[*i] == '_')
+		(*i)++;
+	else
+	{
+		while (ft_isalpha(str[*i]) || ft_isalnum(str[*i])
+			|| str[*i] == '_')
+			(*i)++;
+	}	
+}
+
+void	get_dollar_sign(char *str, int *i, char **expanded)
+{
+	char	*tmp1;
+	char	*tmp;
+
+	tmp1 = *expanded;
+	tmp = ft_substr(str, *i, 1);
+	*expanded = ft_strjoin(*expanded, tmp);
+	free(tmp1);
+	free(tmp);
+	(*i)++;
+}
+
+void	ft_expande_special_params(char *str, int *i, char **expanded,
+		char *exit_status)
+{
+	char	*tmp1;
+	char	*tmp;
+
+	if (str[*i + 1] != '"')
+	{
+		//// Special Parameters of $
+		if (str[*i + 1] && (ft_isdigit(str[*i + 1])
+			|| ft_strchr("!:#%@-*=/\\", str[*i + 1])))
+		{
+			if (ft_isdigit(str[*i + 1]))
+			{
+				if (str[*i + 1] == '0')
+				{
+					tmp1 = *expanded;
+					tmp = ft_strdup("minishell");
+					*expanded = ft_strjoin(*expanded, tmp);
+					free(tmp1);
+					free(tmp);
+				}
+				*i += 2;
+			}
+			else if (ft_strchr("\\", str[*i + 1]))
+			{
+				tmp1 = *expanded;
+				tmp = ft_strdup("$");
+				*expanded = ft_strjoin(*expanded, tmp);
+				free(tmp1);
+				free(tmp);
+				(*i)++;
+			}
+			else
+			{
+				if (str[*i + 1] == '#')
+				{
+					tmp1 = *expanded;
+					tmp = ft_strdup("0");
+					*expanded = ft_strjoin(*expanded, tmp);
+					free(tmp1);
+					free(tmp);
+				}
+				else if (str[*i + 1] == '-')
+				{
+					tmp1 = *expanded;
+					tmp = ft_strdup("himBH");
+					*expanded = ft_strjoin(*expanded, tmp);
+					free(tmp1);
+					free(tmp);
+				}
+				else if (str[*i + 1] == '!')
+				{
+					tmp1 = *expanded;
+					tmp = ft_strdup("$!");
+					*expanded = ft_strjoin(*expanded, tmp);
+					free(tmp1);
+					free(tmp);
+				}
+				else if (ft_strchr(":%=/", str[*i + 1]))
+				{
+					tmp1 = *expanded;
+					tmp = ft_substr(str, *i, 2);
+					*expanded = ft_strjoin(*expanded, tmp);
+					free(tmp1);
+					free(tmp);
+				}
+				*i += 2;
+			}
+		}
+		else if (str[*i + 1] == '?')
+		{
+			tmp = exit_status;
+			tmp1 = *expanded;
+			*expanded = ft_strjoin(*expanded, tmp);
+			free(tmp1);
+			*i += 2;
+		}
+		else if (str[*i + 1])
+		{
+			if (str[*i] == '$')
+				(*i)++;
+			while (ft_isalpha(str[*i]) || ft_isalnum(str[*i])
+				|| str[*i] == '_')
+				(*i)++;
+		}
+		else
+			get_dollar_sign(str,i,expanded);
+	}
+	else
+		(*i)++;
+}
+
+void	ft_skip_characters_non_env_variable(char *str, int *i, char **expanded)
+{
+	char	*tmp1;
+	char	*tmp;
+	
+	tmp = NULL;
+	tmp1 = NULL;
+	if (!str[*i + 1]) //get last dollar after double dollarssign
+	{
+		tmp = *expanded;
+		tmp1 = ft_substr(str, *i, 1);
+		*expanded = ft_strjoin(*expanded, tmp1);
+		free(tmp);
+		free(tmp1);
+		(*i)++;
+	}
+	else
+		while (ft_isalpha(str[*i]) || str[*i] == '$')
+			(*i)++;
+}
+
+void	ft_expande_word(char **string, t_env **env_list, char **last_env,
+		int redirection)
+{
+	char	*word;
+	char	*expanded;
+	int		i;
+	char	*tmp1;
+	char	*tmp;
+
+	word = *string;
+	i = 0;
+	expanded = NULL;
+	tmp1 = NULL;
+	tmp = NULL;
+	ft_replace_tilde(&word);
 	while (word[i])
 	{
 		if (word[i] == '\\')
-		{
-			j = i;
-			while (word[j] == '\\')
-			{
-				tmp1 = expanded;
-				tmp = ft_substr(word, j + 1, 1);
-				expanded = ft_strjoin(expanded, tmp);
-				free(tmp1);
-				free(tmp);
-				j += 2;
-			}
-			i = j;
-		}
+			ft_expand_backslashes(word, &i, &expanded);
 		else if (word[i] == '\'')
-		{
-			i++;
-			j = i;
-			while (word[j] != '\'')
-				j++;
-			tmp1 = expanded;
-			tmp = ft_substr(word, i, j - i);
-			expanded = ft_strjoin(expanded, tmp);
-			free(tmp);
-			free(tmp1);
-			i = j + 1;
-		}
+			ft_remove_single_quotes(word, &i, &expanded);
 		else if (word[i] == '"')
 		{
 			tmp1 = expanded;
@@ -374,177 +603,25 @@ void	ft_expande_word(char **string, t_env **env_list, char **last_env,
 		else if (word[i] == '$')
 		{
 			if (word[i + 1] == '$') //// sequence of dollars sign
-			{
-				tmp1 = expanded;
-				tmp = ft_substr(word, i, 2);
-				expanded = ft_strjoin(expanded, tmp);
-				free(tmp1);
-				free(tmp);
-				i += 2;
-			}
+				ft_expand_squence_of_dollar_sign(word,&i,&expanded);
 			else
 			{
-				tmp1 = expanded;
-				tmp = get_env_value(word + i, env_list);
+				tmp = get_env_variable_value(word + i, env_list);
 				if (tmp) /// env variavle exist
 				{
-					if (word[i + 1] == '_' && word[i + 2] == '\0')
-					{
-						free(tmp);
-						tmp = NULL;
-						tmp = ft_strdup(last_env[1]);
-					}
-					tmp1 = expanded;
-					expanded = ft_strjoin(expanded, tmp);
-					free(tmp);
-					free(tmp1);
-					if (word[i] == '$')
-						i++;
-					if (word[i] == '_')
-						i++;
-					else
-					{
-						while (ft_isalpha(word[i]) || ft_isalnum(word[i])
-							|| word[i] == '_')
-							i++;
-					}
+					ft_expand_underscore_if_exist(word,i,&tmp,last_env[1]);
+					ft_replace_env_by_value(word, &i, &expanded, &tmp);
 				}
-				else if (word[i - 1] != '$') /// not exit $$hdj vs $kfjh
-				{
-					if (word[i + 1] != '"')
-					{
-						//// Special Parameters of $
-						if (ft_isdigit(word[i + 1])
-							|| ft_strchr("!:#%@-*=/\\", word[i + 1]))
-						{
-							if (ft_isdigit(word[i + 1]))
-							{
-								if (word[i + 1] == '0')
-								{
-									tmp1 = expanded;
-									tmp = ft_strdup("minishell");
-									expanded = ft_strjoin(expanded, tmp);
-									free(tmp1);
-									free(tmp);
-								}
-								i += 2;
-							}
-							else if (ft_strchr("\\", word[i + 1]))
-							{
-								tmp1 = expanded;
-								tmp = ft_strdup("$");
-								expanded = ft_strjoin(expanded, tmp);
-								free(tmp1);
-								free(tmp);
-								i++;
-							}
-							else
-							{
-								if (word[i + 1] == '#')
-								{
-									tmp1 = expanded;
-									tmp = ft_strdup("0");
-									expanded = ft_strjoin(expanded, tmp);
-									free(tmp1);
-									free(tmp);
-								}
-								else if (word[i + 1] == '-')
-								{
-									tmp1 = expanded;
-									tmp = ft_strdup("himBH");
-									expanded = ft_strjoin(expanded, tmp);
-									free(tmp1);
-									free(tmp);
-								}
-								else if (word[i + 1] == '!')
-								{
-									tmp1 = expanded;
-									tmp = ft_strdup("$!");
-									expanded = ft_strjoin(expanded, tmp);
-									free(tmp1);
-									free(tmp);
-								}
-								else if (ft_strchr(":%=/", word[i + 1]))
-								{
-									tmp1 = expanded;
-									tmp = ft_substr(word, i, 2);
-									expanded = ft_strjoin(expanded, tmp);
-									free(tmp1);
-									free(tmp);
-								}
-								i += 2;
-							}
-						}
-						else if (word[i + 1] == '?')
-						{
-							tmp = last_env[0];
-							tmp1 = expanded;
-							expanded = ft_strjoin(expanded, tmp);
-							free(tmp1);
-							i += 2;
-						}
-						else if (word[i + 1])
-						{
-							if (word[i] == '$')
-								i++;
-							while (ft_isalpha(word[i]) || ft_isalnum(word[i])
-								|| word[i] == '_')
-								i++;
-						}
-						else //// just a 1 dollar sign
-						{
-							tmp1 = expanded;
-							tmp = ft_substr(word, i, 1);
-							expanded = ft_strjoin(expanded, tmp);
-							free(tmp1);
-							free(tmp);
-							i++;
-						}
-					}
-					else
-						i++;
-				}
+				else if (i == 0 || word[i - 1] != '$') /// not exit $$hdj vs $kfjh
+					ft_expande_special_params(word,&i,&expanded,last_env[0]);
 				else /// env variavle not exist  no multiple sign dollars
-				{
-					if (!word[i + 1]) //get last dollar after double dollarssign
-					{
-						tmp = expanded;
-						tmp1 = ft_substr(word, i, 1);
-						expanded = ft_strjoin(expanded, tmp1);
-						free(tmp);
-						free(tmp1);
-						i++;
-					}
-					else
-					{
-						while (ft_isalpha(word[i]) || word[i] == '$')
-							i++;
-					}
-				}
+					ft_skip_characters_non_env_variable(word, &i, &expanded);
 			}
 		}
 		else /// not dollars sign no quote just join characters
-		{
-			tmp1 = expanded;
-			tmp = ft_substr(word, i, 1);
-			expanded = ft_strjoin(expanded, tmp);
-			free(tmp1);
-			free(tmp);
-			i++;
-		}
+			ft_get_charachter(word, &i, &expanded);
 	}
-	if (redirection == 1)
-	{
-		if (expanded != NULL && expanded[0] != '\0')
-			*string = expanded;
-		else
-		{
-			*string = ft_strdup(word);
-		}
-	}
-	else
-		*string = expanded;
-	free(word);
+	check_word_to_expand_is_redirection(redirection,&expanded,&word,string);
 }
 
 void	ft_assign_value(char	**splited, int i, t_args **new_args)

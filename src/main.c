@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 15:07:04 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/03 20:42:48 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/06 13:46:22 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 
 	t_args *args;
 	char **split;
-
+	char *last_args;
+	
+	last_args = NULL;
 	split = NULL;
 	args = NULL;
 	if (current_pipe_line->child->next != NULL)
-	{
 		return (NULL);
-	}
 	else {
 		args = current_pipe_line->child->args;
 		if (args == NULL)
@@ -51,11 +51,18 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 					}
 				}
 				free(split[1]);
-				free(split);
 				if (split[0])
-					return (split[0]);
+				{
+					last_args = ft_strdup(split[0]);
+					free(split[0]);
+					free(split);
+					return (last_args);
+				}
 				else
+				{
+					free(split);
 					return (NULL);
+				}
 			}
 			else {
 				if (args->value)
@@ -70,7 +77,6 @@ char *get_last_argument_or_command(t_pipe_line *current_pipe_line){
 	}
 	return NULL;
 }
-
 void show_prompt()
 {
 	write(1,GREEN,ft_strlen(GREEN));

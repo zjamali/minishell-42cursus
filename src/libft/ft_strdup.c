@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 16:47:05 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/01 17:42:34 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/06 09:29:26 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*ft_strdup(const char *s1)
 
 	str = (char *)malloc(sizeof(char) * (ft_strlen(s1) + 1));
 	if (!str)
+		return (NULL);
+	if (!s1)
 		return (NULL);
 	i = -1;
 	while (s1[++i])

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 16:58:00 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/03 16:16:48 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/06 09:58:50 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,20 +55,19 @@ int	ft_exec(t_simple_cmd *cmd, t_env **head)
 
 void	ft_exec_file(t_simple_cmd *cmd, t_env **head, char *path, int *status)
 {
-	struct stat		*buf;
+	struct stat		buf;
 	char			*full_path;
 
-	buf = malloc(sizeof(struct stat));
+	buf.st_mode = 0;
 	full_path = ft_join_path(path, cmd->command);
-	stat(full_path, buf);
-	if (((buf->st_mode & S_IXUSR) > 0
-			&& (buf->st_mode & S_IFREG) > 0) && *status == -77)
+	stat(full_path, &buf);
+	if (((buf.st_mode & S_IXUSR) > 0
+			&& (buf.st_mode & S_IFREG) > 0) && *status == -77)
 	{
 		free(cmd->command);
 		cmd->command = ft_strdup(full_path);
 		*status = ft_exec(cmd, head);
 	}
-	free(buf);
 	free(full_path);
 }
 

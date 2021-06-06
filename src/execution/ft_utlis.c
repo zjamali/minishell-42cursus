@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:00:11 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/03 16:18:06 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/06 10:06:02 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	ft_destroy_list(t_env *head)
 {
 	t_env	*temp;
+	t_env	*change;
 
 	temp = head;
 	if (head == NULL)
@@ -23,8 +24,9 @@ void	ft_destroy_list(t_env *head)
 	{
 		free(temp->name);
 		free(temp->value);
+		change = temp->next;
 		free(temp);
-		temp = temp->next;
+		temp = change;
 	}
 }
 

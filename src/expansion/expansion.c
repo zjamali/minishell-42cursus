@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 14:41:59 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/07 21:53:23 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/07 21:58:52 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -355,7 +355,6 @@ void	ft_expande_special_params(char *str, int *i, char **expanded,
 void	ft_expande_special_param_in_dble_g(char *str, int *i, char **expanded,
 		char *exit_status)
 {
-
 	if (ft_isdigit(str[*i + 1])
 		|| ft_strchr("!:#%@-*=/\\", str[*i + 1]))
 	{
@@ -370,13 +369,12 @@ void	ft_expande_special_param_in_dble_g(char *str, int *i, char **expanded,
 		ft_expand_exit_status(i, expanded, exit_status);
 	else if (str[*i + 1] && str[*i + 1] != '\"'
 		&& str[*i + 1] != ' ')
-		ft_skip_characters_env_not_exist(str,i);
+		ft_skip_characters_env_not_exist(str, i);
 	else //// just a 1 dollar sign
 		get_dollar_sign(str, i, expanded);
-	
 }
 
-int	check_end_of_string(char str,int inside_quotes)
+int	check_end_of_string(char str, int inside_quotes)
 {
 	if (inside_quotes == 0)
 	{
@@ -401,7 +399,7 @@ void	ft_skip_characters_non_env_variable(char *str, int *i, char **expanded,
 	end_of_string = 0;
 	tmp = NULL;
 	tmp1 = NULL;
-	end_of_string = check_end_of_string(str[*i + 1],inside_quotes);
+	end_of_string = check_end_of_string(str[*i + 1], inside_quotes);
 	if (end_of_string) //get last dollar after double dollarssign
 	{
 		tmp = *expanded;
@@ -436,17 +434,16 @@ void	ft_expand_env_variable(t_expansion *expd, int *i, t_env **env_list,
 				last_env[0]);
 		else /// env variavle not exist  no multiple sign dollars
 			ft_skip_characters_non_env_variable(expd->word, i,
-				&(expd->expanded),0);
+				&(expd->expanded), 0);
 	}
 }
+
 void	ft_expand_backslashes_in_dble_qts(char *str, int *i, char **expanded)
 {
 	int		j;
 	char	*tmp1;
 	char	*tmp;
 
-	tmp = NULL;
-	tmp1 = NULL;
 	j = *i;
 	if (ft_strchr("$\"\\\n`", str[j + 1]))
 	{
@@ -468,10 +465,10 @@ void	ft_expand_backslashes_in_dble_qts(char *str, int *i, char **expanded)
 	}
 	*i = j;
 }
-void	ft_expand_env_variable_in_dble_qte(t_expansion *expd, int *j, t_env **env_list,
-		char **last_env)
+
+void	ft_expand_env_variable_in_dble_qte(t_expansion *expd, int *j,
+		t_env **env_list, char **last_env)
 {
-	
 	if (expd->word[*j + 1] == '$')
 		ft_expand_squence_of_dollar_sign(expd->word, j, &(expd->expanded));
 	else
@@ -479,8 +476,10 @@ void	ft_expand_env_variable_in_dble_qte(t_expansion *expd, int *j, t_env **env_l
 		expd->tmp = get_env_variable_value(expd->word + *j, env_list);
 		if (expd->tmp)
 		{
-			ft_expand_underscore_in_double_qts(expd->word, *j, &(expd->tmp), last_env[1]);
-			ft_replace_env_by_value(expd->word, j, &(expd->expanded),&(expd->tmp));
+			ft_expand_underscore_in_double_qts(expd->word, *j, &(expd->tmp),
+				last_env[1]);
+			ft_replace_env_by_value(expd->word, j, &(expd->expanded),
+				&(expd->tmp));
 		}
 		else if (j == 0 || expd->word[*j - 1] != '$')
 			ft_expande_special_param_in_dble_g(expd->word, j,
@@ -494,8 +493,8 @@ void	ft_expand_env_variable_in_dble_qte(t_expansion *expd, int *j, t_env **env_l
 char	*ft_remove_double_quotes(char *word, int *i, t_env **env_list,
 		char **last_env)
 {
-	t_expansion expd;
-	int		j;
+	t_expansion	expd;
+	int			j;
 
 	expd.expanded = NULL;
 	j = *i + 1;
@@ -507,7 +506,8 @@ char	*ft_remove_double_quotes(char *word, int *i, t_env **env_list,
 		else
 		{
 			if (expd.word[j] == '$')
-				ft_expand_env_variable_in_dble_qte(&expd, &j, env_list, last_env);
+				ft_expand_env_variable_in_dble_qte(&expd, &j, env_list,
+					last_env);
 			else
 				ft_get_charachter(expd.word, &j, &expd.expanded);
 		}

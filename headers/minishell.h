@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/07 16:19:43 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/07 20:41:01 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,6 @@ typedef struct	s_expansion
 {
 	char	*word;
 	char	*expanded;
-	int		i;
 	char	*tmp1;
 	char	*tmp;
 }				t_expansion;

@@ -300,6 +300,7 @@ int				micro_read_line(char **line, int *status);
 void			ft_delete_char_list(t_char_list *char_list);
 t_lines_list	*ft_destory_node(t_lines_list *node);
 t_lines_list	*ft_destroy_history(t_lines_list *lines_list);
+void	ft_print_char_list(t_char_list *chars_list);
 
 char			*get_last_argument_or_command(t_pipe_line *current_pipe_line);
 t_simple_cmd	*ft_delete_emty_simple_cmds(t_pipe_line **pipe_line);

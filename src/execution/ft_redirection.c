@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/10 16:39:20 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 19:51:44 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/06 09:56:59 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,17 +47,15 @@ int	ft_double_great(int *fd, t_redirection *redirect)
 
 int	ft_file_err(t_redirection *redirect)
 {
-	struct stat		*buf;
+	struct stat		buf;
 
-	buf = malloc(sizeof(struct stat));
-	if (stat(redirect->file_name, buf) == 0)
+	if (stat(redirect->file_name, &buf) == 0)
 	{
-		if (buf->st_mode & S_IFDIR)
+		if (buf.st_mode & S_IFDIR)
 			return (ft_put_err(redirect->file_name, ": Is a directory", 1));
-		else if ((buf->st_mode & S_IXUSR) == 0)
+		else if ((buf.st_mode & S_IXUSR) == 0)
 			return (ft_put_err(redirect->file_name, ": Permission denied", 1));
 	}
-	free(buf);
 	return (ft_put_err(redirect->file_name, ": No such file or directory", 1));
 }
 

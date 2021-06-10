@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/26 18:50:32 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/03 16:14:51 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/05 20:32:25 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,14 @@ int	ft_echo(t_args *args)
 		ft_putchar_fd('\n', 1);
 		return (0);
 	}
-	while (args->value != NULL && args->value[0] == '-'
+	while (args && args->value != NULL && args->value[0] == '-'
 		&& args->value[1] == 'n')
 	{
 		new_line = NO;
 		if (args && ft_isitn(args->value + 1))
 			args = args->next;
+		else
+			break ;
 	}
 	ft_loop(args);
 	if (new_line == YES)

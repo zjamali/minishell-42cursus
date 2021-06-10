@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utlis.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:00:11 by mbari             #+#    #+#             */
 /*   Updated: 2021/06/06 10:06:02 by mbari            ###   ########.fr       */
@@ -12,7 +12,7 @@
 
 #include "../../headers/execution.h"
 
-void	ft_destroy_list(t_env *head)
+void	ft_destroy_env_list(t_env *head)
 {
 	t_env	*temp;
 	t_env	*change;

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/21 20:32:35 by mbari             #+#    #+#             */
 /*   Updated: 2021/06/06 09:49:42 by mbari            ###   ########.fr       */
@@ -58,7 +58,7 @@ int	ft_print_export(t_env **head)
 		ft_putchar_fd('\n', 1);
 		newnode = newnode->next;
 	}
-	ft_destroy_list(sort_list);
+	ft_destroy_env_list(sort_list);
 	return (0);
 }
 

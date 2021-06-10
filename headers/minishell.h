@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/10 20:24:04 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/10 20:56:28 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,6 +303,35 @@ t_lines_list	*ft_destroy_history(t_lines_list *lines_list);
 
 char			*get_last_argument_or_command(t_pipe_line *current_pipe_line);
 t_simple_cmd	*ft_delete_emty_simple_cmds(t_pipe_line **pipe_line);
+t_lines_list	*push_curr_node_to_list(t_lines_list **list,
+					t_lines_list *current, int history);
+char			*ft_return_line(t_readline readline);
+t_lines_list	*ft_down_in_history(t_readline *readline,
+					t_lines_list **history);
+t_lines_list	*ft_up_in_history(t_readline *readline, t_lines_list **history);
+t_lines_list	*ft_create_line_node(void);
+char			*create_line_from_chars_list(t_char_list *char_list);
+t_lines_list	*ft_delete_node_from_list(t_lines_list *current);
+t_char_list		*ft_copy_char_list(t_char_list *char_list);
+t_lines_list	*ft_handle_history_buttons(long character, t_readline readline,
+					t_lines_list *current);
+t_lines_list	*ft_init_history(long *character, int *newline_break);
+void			ft_move_cursor_and_clear(t_cursor cursor);
+void			ft_print_char_list(t_char_list *chars_list);
+char			*ft_get_input(t_readline readline, int *status,
+					struct termios old_term);
+int				add_curr_node_to_history(t_readline *readline,
+					t_lines_list *current, t_lines_list **history);
+void			ft_init_readline(t_readline *readline);
+void			set_terminal(struct termios *termios, struct termios *old,
+					int fd);
+void			reset_terminal(struct termios old_termios, int fd);
+int				ft_copy_char_value(int len, t_char_list **origin,
+					t_char_list **tmp);
+void			ft_get_cursor_position(int *x, int *y);
+int				get_char_list_lenght(t_char_list *char_list);
+void			ft_add_to_char_list(t_readline *readline, char c,
+					t_char_list **chars_list);
 void			show_prompt(void);
 void			ft_minishell(char **env);
 

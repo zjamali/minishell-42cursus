@@ -6,7 +6,7 @@
 #    By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2021/06/10 20:20:47 by zjamali          ###   ########.fr        #
+#    Updated: 2021/06/10 20:45:36 by zjamali          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,12 @@ SRC_PARSE=    src/lexer/lexer.c src/lexer/lexer_debug.c src/lexer/lexer_get_toke
 				  src/expansion/expand_word.c\
 				  src/expansion/expand_redirction.c\
 				  src/expansion/utils_continue.c\
+				  src/readline/chars_list_rest.c\
+				  src/readline/chars_list.c\
+				  src/readline/get_input.c  \
+				  src/readline/history.c\
+				  src/readline/line_nodes.c\
+				  src/readline/terminal_config.c\
 				 #src/readline/get_next_line.c
 
 SRC_MAIN= src/main.c 

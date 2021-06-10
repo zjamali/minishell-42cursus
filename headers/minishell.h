@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/10 20:56:28 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/10 21:11:54 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,7 +300,7 @@ int				micro_read_line(char **line, int *status);
 void			ft_delete_char_list(t_char_list *char_list);
 t_lines_list	*ft_destory_node(t_lines_list *node);
 t_lines_list	*ft_destroy_history(t_lines_list *lines_list);
-void	ft_print_char_list(t_char_list *chars_list);
+void			ft_print_char_list(t_char_list *chars_list);
 
 char			*get_last_argument_or_command(t_pipe_line *current_pipe_line);
 t_simple_cmd	*ft_delete_emty_simple_cmds(t_pipe_line **pipe_line);

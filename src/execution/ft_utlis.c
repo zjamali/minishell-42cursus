@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utlis.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:00:11 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/08 20:57:23 by zjamali          ###   ########.fr       */
+/*   Updated: 2022/01/18 15:30:14 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	ft_destroy_env_list(t_env *head)
 {
 	t_env	*temp;
+	t_env	*change;
 
 	temp = head;
 	if (head == NULL)
@@ -23,8 +24,9 @@ void	ft_destroy_env_list(t_env *head)
 	{
 		free(temp->name);
 		free(temp->value);
+		change = temp->next;
 		free(temp);
-		temp = temp->next;
+		temp = change;
 	}
 }
 

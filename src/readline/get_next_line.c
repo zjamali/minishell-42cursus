@@ -3,43 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/29 15:14:24 by zjamali           #+#    #+#             */
-/*   Updated: 2021/05/01 09:06:09 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/06 09:25:26 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stdlib.h"
 #include "string.h"
+#include "../libft/libft.h"
 #include <unistd.h>
 
-size_t ft_strlen(char *str)
-{
-	int i = 0;
-	if (str == NULL)
-		return (0);
-	while(str[i])
-		i++;
-	return i;
-}
-char *ft_strdup(char *str)
-{
-	char *strdup;
-	int i = 0;
+// size_t ft_strlen(char *str)
+// {
+// 	int i = 0;
+// 	if (str == NULL)
+// 		return (0);
+// 	while(str[i])
+// 		i++;
+// 	return i;
+// }
+// char *ft_strdup(char *str)
+// {
+// 	char *strdup;
+// 	int i = 0;
 
-	if (str == NULL)
-		return (NULL);
-	if (!(strdup = (char*)malloc(ft_strlen(str) + 1)))
-		return NULL;
-	while(str[i])
-	{
-		strdup[i] = str[i];
-		i++;
-	}
-	strdup[i] = '\0';
-	return strdup;
-}
+// 	if (str == NULL)
+// 		return (NULL);
+// 	if (!(strdup = (char *)malloc(sizeof(char) * ft_strlen(str) + 1)))
+// 		return NULL;
+// 	while(str[i])
+// 	{
+// 		strdup[i] = str[i];
+// 		i++;
+// 	}
+// 	strdup[i] = '\0';
+// 	return strdup;
+// }
 char *ft_substrr(char *str,int start,int end)
 {
 	char *sub;
@@ -83,18 +84,18 @@ char *ft_strjoin_l(char *str1, char *str2)
 	join[j] = '\0';
 	return join;
 }
-int ft_strchr(char *str,int c)
-{
-	char ch = c;
-	int i =  0;
-	while (str[i])
-	{
-		if (str[i] == ch)
-			return 1;
-		i++;
-	}
-	return 0;
-}
+// int ft_strchr(char *str,int c)
+// {
+// 	char ch = c;
+// 	int i =  0;
+// 	while (str[i])
+// 	{
+// 		if (str[i] == ch)
+// 			return 1;
+// 		i++;
+// 	}
+// 	return 0;
+// }
 
 int get_next_line(char **line)
 {

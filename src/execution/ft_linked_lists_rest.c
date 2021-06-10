@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 19:50:02 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/02 20:02:48 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/06 09:59:30 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	**ft_list_to_arr(t_env **head)
 
 	temp = *head;
 	i = ft_count_list(head);
-	env = (char **)malloc(sizeof(char *) * i + 1);
+	env = (char **)malloc(sizeof(char *) * (i + 1));
 	i = 0;
 	while (temp != NULL)
 	{
@@ -60,7 +60,10 @@ t_env	*ft_copy_list(t_env **head)
 	while (temp != NULL)
 	{
 		newnode = ft_create_node(temp->name, temp->value);
-		ft_add_to_list(&copy, newnode);
+		if (copy == NULL)
+			copy = newnode;
+		else
+			ft_add_to_list(&copy, newnode);
 		temp = temp->next;
 	}
 	return (copy);

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 19:58:33 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/03 16:12:32 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/06 09:56:06 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,15 @@ char 	*ft_join_slash(char 	*cmd)
 
 int	ft_file_check(t_simple_cmd *cmd, t_env **head)
 {
-	struct stat		*buf;
+	struct stat		buf;
 
-	buf = malloc(sizeof(struct stat));
 	cmd->command = ft_join_slash(cmd->command);
-	if (stat(cmd->command, buf) == -1)
-	{
-		free(buf);
+	if (stat(cmd->command, &buf) == -1)
 		return (ft_put_err(cmd->command, ": No such file or directory", 127));
-	}
-	else if (buf->st_mode & S_IFDIR)
-	{
-		free(buf);
+	else if (buf.st_mode & S_IFDIR)
 		return (ft_put_err(cmd->command, ": Is a directory", 126));
-	}
-	else if ((buf->st_mode & S_IXUSR) == 0)
-	{
-		free(buf);
+	else if ((buf.st_mode & S_IXUSR) == 0)
 		return (ft_put_err(cmd->command, ": Permission denied", 126));
-	}
-	free(buf);
 	return (ft_exec(cmd, head));
 }
 

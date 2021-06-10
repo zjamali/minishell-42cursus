@@ -3,16 +3,27 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+         #
+#    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2021/06/10 20:45:36 by zjamali          ###   ########.fr        #
+#    Updated: 2022/01/18 15:29:47 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME= minishell
+# Name of the final executable
+NAME = minishell
 
-SRC_EXECUTE= src/execution/*
+# Project's directories
+SOURCEDIR := ./src
+HEADERSDIR := ./headers
+OBJECTSDIR := ./objects
+EXEC_FOLDER = execution
+LEX_FOLDER = lexer
+PARS_FOLDER = parse
+EXPA_FOLDER = expansion
+READ_FOLDER = readline
+LIBFT_HEADER = $(SOURCEDIR)/libft/libft.h
+LIBFT_FOLDER = $(SOURCEDIR)/libft
 
 SRC_PARSE=    src/lexer/lexer.c src/lexer/lexer_debug.c src/lexer/lexer_get_tokens.c src/lexer/lexer_get_tokens_op.c src/lexer/lexer_get_tokens_word.c\
 				 src/parse/parser.c src/parse/parser_debug.c src/parse/check_syntax.c\
@@ -44,27 +55,121 @@ SRC_PARSE=    src/lexer/lexer.c src/lexer/lexer_debug.c src/lexer/lexer_get_toke
 				  src/readline/terminal_config.c\
 				 #src/readline/get_next_line.c
 
-SRC_MAIN= src/main.c 
+# Execution files variable
+EXEC_FILES =  ft_cd.c \
+ft_check_path.c \
+ft_echo_pwd_env.c \
+ft_execution.c \
+ft_exit.c \
+ft_export.c \
+ft_init_env.c \
+ft_linked_lists.c \
+ft_linked_lists_rest.c \
+ft_pipes.c \
+ft_redirection.c \
+ft_unset.c \
+ft_utlis.c
 
-LIBFT= src/libft/libft.a
+# Lexer files variable
 
-# *****     flags     ***** #
+LEX_FILES = lexer_debug.c \
+lexer_get_tokens_op.c \
+lexer_get_tokens_word.c \
+lexer_get_tokens.c \
+lexer.c
 
-COM= gcc
-CFLAGE= -Wall -Wextra -Werror
+# Parse files variable
 
-all: libft $(NAME)
+PARS_FILES = check_syntax.c \
+parser_debug.c \
+parser.c
+
+# Readline files variable
+READ_FILES = readline_debug.c \
+readline.c \
+get_next_line.c
+
+# Expansion files variable
+EXPA_FILES = expansion.c
+
+# Main file variable
+
+MAIN_FILE = main.c
+
+# Decide whether the commands will be shwon or not
+VERBOSE = F
+
+
+# Define objects for all sources
+OBJ_EXEC = $(addprefix $(OBJECTSDIR)/$(EXEC_FOLDER)/, $(EXEC_FILES:.c=.o))
+OBJ_LEX = $(addprefix $(OBJECTSDIR)/$(LEX_FOLDER)/, $(LEX_FILES:.c=.o))
+OBJ_EXPA = $(addprefix $(OBJECTSDIR)/$(EXPA_FOLDER)/, $(EXPA_FILES:.c=.o))
+OBJ_PARS = $(addprefix $(OBJECTSDIR)/$(PARS_FOLDER)/, $(PARS_FILES:.c=.o))
+OBJ_READ = $(addprefix $(OBJECTSDIR)/$(READ_FOLDER)/, $(READ_FILES:.c=.o))
+OBJ_MAIN = $(addprefix $(OBJECTSDIR)/, $(MAIN_FILE:.c=.o))
+OBJS := $(OBJ_EXEC) $(OBJ_LEX) $(OBJ_EXPA) $(OBJ_PARS) $(OBJ_READ) $(OBJ_MAIN)
+LIBFT_FILE := $(LIBFT_FOLDER)/$(LIBFT_LIB)
+
+# Name the compiler
+CC = gcc
+
+# OS specific part
+RM = rm -rf
+RMDIR = rm -rf
+MKDIR = mkdir -p
+MAKE = make -C
+ECHO = /bin/echo
+ERRIGNORE = 2>/dev/null
+
+
+# Hide or not the calls depending of VERBOSE
+ifeq ($(VERBOSE),T)
+    HIDE =
+else
+    HIDE = @
+endif
+
+
+.PHONY: all fclean
+
+all: credit $(NAME)
 
 libft:
-	@make -sC src/libft/
+	$(HIDE)echo "$(BLUE)█████████████████████████ Making LIBFT █████████████████████████$(RESET)"
+	$(HIDE)$(MAKE) $(LIBFT_FOLDER)
+	$(HIDE)echo "$(BLUE)███████████████████████ Making minishell ███████████████████████$(RESET)"
 
-$(NAME):
-	@echo "         Made by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
+$(NAME): libft $(OBJS)
+	$(HIDE)$(CC) -I $(HEADERSDIR) -I $(LIBFT_FOLDER) $(OBJS) $(LIBFT_FOLDER)/$(LIBFT_LIB) $(LIBS) -o $@
+	$(HIDE)echo "$(BLUE)███████████████████████ Compiling is DONE ██████████████████████$(RESET)"
+	$(HIDE)echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
+
+$(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c
+	$(HIDE)$(MKDIR) $(dir $@)
+	$(HIDE)echo "$(BLUE)█ $(YELLOW)Compiling$(RESET) $<:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
+	$(HIDE)$(CC) $(FLAGS) -I $(HEADERSDIR) -I $(LIBFT_HEADER) -o $@ -c $<
+
+# Remove all objects, dependencies and executable files generated during the build
+
+clean:
+	$(HIDE)echo "$(RED)deleting$(RESET): " $(OBJECTSDIR)
+	$(HIDE)$(RMDIR) $(OBJECTSDIR) $(ERRIGNORE)
+	$(HIDE)echo "$(RED)deleting$(RESET): " "libft objects"
+	$(HIDE)$(MAKE) $(LIBFT_FOLDER) clean
+
+fclean: clean
+	$(HIDE)echo "$(RED)deleting$(RESET): " $(LIBFT_FOLDER)/$(LIBFT_LIB)
+	$(HIDE)$(RM) $(LIBFT_FOLDER)/$(LIBFT_LIB) $(ERRIGNORE)
+	$(HIDE)echo "$(RED)deleting$(RESET): " $(NAME)
+	$(HIDE)$(RM) $(NAME) $(ERRIGNORE)
+
+re: fclean $(NAME)
+
+credit:
 	@echo "███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     "
 	@echo "████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║     "
 	@echo "██╔████╔██║██║██╔██╗ ██║██║███████╗███████║█████╗  ██║     ██║     "
 	@echo "██║╚██╔╝██║██║██║╚█f█╗██║██║╚════██║██╔══██║██╔══╝  ██║     ██║     "
 	@echo "██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗"
 	@echo "╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝"
-	@echo "Compilation of minishell:  \033[1;32mOK\033[m"
-	@$(COM) -g $(CFLAGE) $(SRC_MAIN) $(SRC_PARSE) $(SRC_EXECUTE) $(LIBFT) -g -lncurses
+	@echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"

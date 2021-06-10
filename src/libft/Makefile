@@ -6,11 +6,16 @@
 #    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/30 09:48:13 by mbari             #+#    #+#              #
-#    Updated: 2021/06/01 17:35:34 by mbari            ###   ########.fr        #
+#    Updated: 2021/06/06 20:05:41 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
+RED = \033[1;31m
+GREEN = \033[1;32m
+YELLOW = \033[1;33m
+BLUE = \033[1;34m
+RESET = \033[0m
 
 SRC = ft_atoi.c ft_bzero.c ft_calloc.c ft_intsize.c ft_isalnum.c ft_isalpha.c \
 	  	ft_isdigit.c ft_isascii.c ft_isprint.c ft_itoa.c ft_memccpy.c ft_memchr.c \
@@ -25,21 +30,24 @@ OBJ = $(SRC:%.c=%.o)
 
 CC = gcc
 
-CFLAGS = #-Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		ar rc $(NAME) $(OBJ)
-		ranlib $(NAME)
+	@echo "$(BLUE)█ $(YELLOW)Create and maintain library archives$(RESET) for all .o:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
+	@ar rc $(NAME) $(OBJ)
+	@echo "$(BLUE)█ $(YELLOW)Creating$(RESET) $@:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
+	@ranlib $(NAME)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $<
+	@echo "$(BLUE)█ $(YELLOW)Compiling$(RESET) $<:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
+	@$(CC) $(CFLAGS) -c $<
 
 clean: 
-	/bin/rm -f $(OBJ) $(BONUS_OBJ)
+	@/bin/rm -f $(OBJ) $(BONUS_OBJ)
 
 fclean: clean
-		/bin/rm -f $(NAME)
+	@/bin/rm -f $(NAME)
 
 re: fclean all

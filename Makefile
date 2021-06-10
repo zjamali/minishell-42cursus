@@ -6,7 +6,7 @@
 #    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2021/06/06 20:01:24 by mbari            ###   ########.fr        #
+#    Updated: 2022/01/18 15:31:47 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,15 +25,35 @@ READ_FOLDER = readline
 LIBFT_HEADER = $(SOURCEDIR)/libft/libft.h
 LIBFT_FOLDER = $(SOURCEDIR)/libft
 
-# Name of variables
-LIBFT_LIB = libft.a
-LIBS = -lncurses
-FLAGS = -Wall -Wextra -Werror
-RED = \033[1;31m
-GREEN = \033[1;32m
-YELLOW = \033[1;33m
-BLUE = \033[1;34m
-RESET = \033[0m
+SRC_PARSE=    src/lexer/lexer.c src/lexer/lexer_debug.c src/lexer/lexer_get_tokens.c src/lexer/lexer_get_tokens_op.c src/lexer/lexer_get_tokens_word.c\
+				 src/parse/parser.c src/parse/parser_debug.c src/parse/check_syntax.c\
+				 src/expansion/expansion.c \
+				 src/readline/readline.c \
+				 src/last_arg.c \
+				  src/minishell.c\
+				  src/parse/destoy_nodes.c\
+				  src/parse/create_ast.c\
+				  src/parse/create_nodes.c\
+				  src/parse/check_tokens.c\
+				  src/parse/check_word.c \
+				  src/parse/check_token_continue.c \
+				  src/expansion/utils.c\
+				  src/expansion/expand_command.c\
+				  src/expansion/expand_non_qoutes_word.c\
+				  src/expansion/expand_dble_qoutes_word.c\
+				  src/expansion/expand_special_params.c\
+				  src/expansion/expand_special_params_in_quotes.c\
+				  src/expansion/expand_args.c\
+				  src/expansion/expand_word.c\
+				  src/expansion/expand_redirction.c\
+				  src/expansion/utils_continue.c\
+				  src/readline/chars_list_rest.c\
+				  src/readline/chars_list.c\
+				  src/readline/get_input.c  \
+				  src/readline/history.c\
+				  src/readline/line_nodes.c\
+				  src/readline/terminal_config.c\
+				 #src/readline/get_next_line.c
 
 # Execution files variable
 EXEC_FILES =  ft_cd.c \
@@ -52,8 +72,7 @@ ft_utlis.c
 
 # Lexer files variable
 
-LEX_FILES = lexer_debug.c \
-lexer_get_tokens_op.c \
+LEX_FILES = lexer_get_tokens_op.c \
 lexer_get_tokens_word.c \
 lexer_get_tokens.c \
 lexer.c
@@ -61,24 +80,41 @@ lexer.c
 # Parse files variable
 
 PARS_FILES = check_syntax.c \
-parser_debug.c \
+check_token_continue.c \
+check_tokens.c \
+check_word.c \
+create_ast.c \
+create_nodes.c \
+destoy_nodes.c \
 parser.c
 
 # Readline files variable
-READ_FILES = readline_debug.c \
+READ_FILES = chars_list_rest.c \
+chars_list.c \
+get_input.c \
+history.c \
+line_nodes.c \
 readline.c \
-get_next_line.c
+terminal_config.c
 
 # Expansion files variable
-EXPA_FILES = expansion.c
+EXPA_FILES = expand_args.c \
+expand_command.c \
+expand_dble_qoutes_word.c \
+expand_non_qoutes_word.c \
+expand_redirction.c \
+expand_special_params_in_quotes.c \
+expand_special_params.c \
+expand_word.c \
+expansion.c \
+utils_continue.c \
+utils.c
 
 # Main file variable
 
-MAIN_FILE = main.c
-
-# Decide whether the commands will be shwon or not
-VERBOSE = F
-
+MAIN_FILE = last_arg.c \
+main.c \
+minishell.c
 
 # Define objects for all sources
 OBJ_EXEC = $(addprefix $(OBJECTSDIR)/$(EXEC_FOLDER)/, $(EXEC_FILES:.c=.o))
@@ -94,54 +130,58 @@ LIBFT_FILE := $(LIBFT_FOLDER)/$(LIBFT_LIB)
 CC = gcc
 
 # OS specific part
-RM = rm -rf 
-RMDIR = rm -rf 
+RM = rm -rf
+RMDIR = rm -rf
 MKDIR = mkdir -p
 MAKE = make -C
 ECHO = /bin/echo
 ERRIGNORE = 2>/dev/null
 
 
+<<<<<<< HEAD
 # Hide or not the calls depending of VERBOSE
 ifeq ($(VERBOSE),T)
-    HIDE =  
+    HIDE =
 else
     HIDE = @
 endif
 
 
-.PHONY: all fclean 
+.PHONY: all fclean
+=======
+.PHONY: all fclean
+>>>>>>> ac7e940... fix some bugs
 
 all: credit $(NAME)
-	
+
 libft:
-	$(HIDE)echo "$(BLUE)█████████████████████████ Making LIBFT █████████████████████████$(RESET)"
-	$(HIDE)$(MAKE) $(LIBFT_FOLDER)
-	$(HIDE)echo "$(BLUE)███████████████████████ Making minishell ███████████████████████$(RESET)"
+	@echo "$(BLUE)█████████████████████████ Making LIBFT █████████████████████████$(RESET)"
+	@$(MAKE) $(LIBFT_FOLDER)
+	@echo "$(BLUE)███████████████████████ Making minishell ███████████████████████$(RESET)"
 
 $(NAME): libft $(OBJS)
-	$(HIDE)$(CC) -I $(HEADERSDIR) -I $(LIBFT_FOLDER) $(OBJS) $(LIBFT_FOLDER)/$(LIBFT_LIB) $(LIBS) -o $@
-	$(HIDE)echo "$(BLUE)███████████████████████ Compiling is DONE ██████████████████████$(RESET)"
-	$(HIDE)echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
+	@$(CC) -I $(HEADERSDIR) -I $(LIBFT_FOLDER) $(OBJS) $(LIBFT_FOLDER)/$(LIBFT_LIB) $(LIBS) -o $@
+	@echo "$(BLUE)███████████████████████ Compiling is DONE ██████████████████████$(RESET)"
+	@echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
 
-$(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c
-	$(HIDE)$(MKDIR) $(dir $@)
-	$(HIDE)echo "$(BLUE)█ $(YELLOW)Compiling$(RESET) $<:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
-	$(HIDE)$(CC) $(FLAGS) -I $(HEADERSDIR) -I $(LIBFT_HEADER) -o $@ -c $<
+$(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c $(HEADERSDIR)/*.h
+	@$(MKDIR) $(dir $@)
+	@echo "$(BLUE)█ $(YELLOW)Compiling$(RESET) $<:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
+	@$(CC) $(FLAGS) -I $(HEADERSDIR) -I $(LIBFT_HEADER) -o $@ -c $<
 
 # Remove all objects, dependencies and executable files generated during the build
 
 clean:
-	$(HIDE)echo "$(RED)deleting$(RESET): " $(OBJECTSDIR)
-	$(HIDE)$(RMDIR) $(OBJECTSDIR) $(ERRIGNORE)
-	$(HIDE)echo "$(RED)deleting$(RESET): " "libft objects"
-	$(HIDE)$(MAKE) $(LIBFT_FOLDER) clean
+	@echo "$(RED)deleting$(RESET): " $(OBJECTSDIR)
+	@$(RMDIR) $(OBJECTSDIR) $(ERRIGNORE)
+	@echo "$(RED)deleting$(RESET): " "libft objects"
+	@$(MAKE) $(LIBFT_FOLDER) clean
 
 fclean: clean
-	$(HIDE)echo "$(RED)deleting$(RESET): " $(LIBFT_FOLDER)/$(LIBFT_LIB)
-	$(HIDE)$(RM) $(LIBFT_FOLDER)/$(LIBFT_LIB) $(ERRIGNORE)
-	$(HIDE)echo "$(RED)deleting$(RESET): " $(NAME)
-	$(HIDE)$(RM) $(NAME) $(ERRIGNORE)
+	@echo "$(RED)deleting$(RESET): " $(LIBFT_FOLDER)/$(LIBFT_LIB)
+	@$(RM) $(LIBFT_FOLDER)/$(LIBFT_LIB) $(ERRIGNORE)
+	@echo "$(RED)deleting$(RESET): " $(NAME)
+	@$(RM) $(NAME) $(ERRIGNORE)
 
 re: fclean $(NAME)
 

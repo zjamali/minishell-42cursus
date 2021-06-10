@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/08 19:51:08 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/10 18:49:02 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,40 @@ void			ft_print_cmd_list(t_command_list *cmd_list);
 void			ft_print_simple_cmd(t_simple_cmd *cmd);
 char			*ft_int_to_string(int n);
 void			ft_destroy_simple(t_simple_cmd *cmd);
+t_command_list	*ft_create_ast(t_token *tokens_list);
+t_command_list	*init_cmd_list(void);
+t_simple_cmd	*ft_create_simple_cmd(t_token **tokens);
+void			ft_insert_simple_cmd(t_simple_cmd *head,
+					t_simple_cmd *current_cmd);
+t_redirection	*ft_insert_redirection(t_redirection *redirection,
+					t_token **tokens, int index);
+t_args			*ft_create_arg(char *value);
+void			ft_insert_arg(t_args *head, t_args *current_args);
+int				check_tokn_next_semi(t_token *tokens_list, t_token *token,
+					int *status);
+int				check_word_token(t_token *tokens_list, t_token *token,
+					int *status);
+int				check_last_word_token(t_token *tokens_list, t_token *token,
+					int *status);
+int				check_first_token(t_token *tokens_list, t_token *first_token,
+					int *status);
+int				check_redirection(t_token *tokens_list, t_token *token,
+					int *status);
+int				check_tokn_nxt_pipe(t_token *tokens_list, t_token *token,
+					int *status);
+void			ft_print_systax_error(t_token *token);
+int				ft_check_backslash(char *word);
+int				ft_check_backslash(char *word);
+int				ft_check_closing_quotes(char *word);
+int				count_bachslashes(char *word, int *index, int back_slash);
+int				ft_get_first_double_quotes(char *word, int *index,
+					int *back_slash);
+int				ft_get_first_single_quotes(char *word, int *index,
+					int *back_slash);
+void			ft_get_close_double_quotes(char *word, int *index,
+					int *back_slash, int *quote);
+void			ft_get_close_single_quotes(int *index, int *back_slash,
+					int *quote);
 
 /* ************************************************************************** */
 /*                                 EXPANSION                                  */
@@ -214,5 +248,10 @@ int				micro_read_line(char **line, int *status);
 void			ft_delete_char_list(t_char_list *char_list);
 t_lines_list	*ft_destory_node(t_lines_list *node);
 t_lines_list	*ft_destroy_history(t_lines_list *lines_list);
+
+char			*get_last_argument_or_command(t_pipe_line *current_pipe_line);
+t_simple_cmd	*ft_delete_emty_simple_cmds(t_pipe_line **pipe_line);
+void			show_prompt(void);
+void			ft_minishell(char **env);
 
 #endif

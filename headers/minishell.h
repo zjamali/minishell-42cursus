@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/10 18:49:02 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/10 20:24:04 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,58 @@ void			ft_get_close_single_quotes(int *index, int *back_slash,
 
 void			ft_expanding(t_pipe_line *pipe_line, t_env **env,
 					char **last_env);
+void			ft_repalce_space_by_tab(t_simple_cmd **cmd, int args_or_cmd);
+void			ft_replace_tilde(char **string);
+char			*get_env_variable_value(char *env_variable, t_env **env);
+char			*ft_int_to_string(int n);
+
+void			ft_expande_word(char **string, t_env **env_list,
+					char **last_env, int redirection);
+void			ft_handle_empty_command(t_simple_cmd **cmd);
+void			ft_expand_command(t_simple_cmd **cmd, t_env **env,
+					char **last_env);
+void			ft_expande_redirection(t_simple_cmd **cmd, t_env **env,
+					char **last_env);
+void			check_word_expand_redtion(int redirection, char **expanded,
+					char **word, char **string);
+int				check_end_of_string(char str, int inside_quotes);
+void			ft_delete_emty_args_nodes(t_args **args);
+void			ft_return_spaces(t_simple_cmd **cmd);
+void			ft_assign_value_to_arg(char	**splited, int i,
+					t_args **new_args);
+void			ft_expand_arguments(t_simple_cmd **cmd, t_env **env,
+					char **last_env);
+int				check_exiting_of_qoutes(char *str);
+void			ft_expand_squence_of_dollar_sign(char *str, int *i,
+					char **expanded);
+
+void			ft_replace_env_by_value(char *str, int *i, char **expanded,
+					char **env_value);
+void			ft_expande_special_params(char *str, int *i, char **expanded,
+					char *exit_status);
+void			ft_skip_characters_non_env_variable(char *str, int *i,
+					char **expanded, int inside_quotes);
+
+void			ft_expand_other_special_params(char *str, int *i,
+					char **expanded);
+
+void			ft_expande_special_param_in_dble_g(char *str, int *i,
+					char **expanded, char *exit_status);
+void			ft_get_charachter(char *str, int *i, char **expanded);
+void			ft_expand_exit_status(int *i, char **expanded,
+					char *exit_status);
+void			ft_skip_characters_env_not_exist(char *str, int *i);
+void			get_dollar_sign(char *str, int *i, char **expanded);
+void			ft_digit_env(char *str, int *i, char **expanded);
+void			ft_expand_back_slash(int *i, char **expanded);
+void			ft_expand_backslashes(char *str, int *i, char **expanded);
+char			*ft_expand_double_quotes(t_expansion expd, int *i,
+					t_env **env_list, char **last_env);
+void			ft_remove_single_quotes(char *str, int *i, char **expanded);
+void			ft_expand_env_variable_in_dble_qte(t_expansion *expd, int *j,
+					t_env **env_list, char **last_env);
+void			ft_expand_env_variable(t_expansion *expd, int *i,
+					t_env **env_list, char **last_env);
 
 /* ************************************************************************** */
 /*                                 READLINE                                   */

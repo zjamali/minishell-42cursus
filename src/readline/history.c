@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 20:34:27 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/10 20:36:48 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/10 20:59:07 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,3 @@ t_lines_list	*ft_handle_history_buttons(long character, t_readline readline,
 		current = ft_down_in_history(&readline, &current);
 	return (current);
 }
-

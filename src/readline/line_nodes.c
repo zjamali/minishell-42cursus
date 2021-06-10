@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 20:32:35 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/10 20:34:10 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/10 20:58:51 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,3 @@ t_lines_list	*ft_delete_node_from_list(t_lines_list *current)
 	current = ft_destory_node(current);
 	return (next_line);
 }
-

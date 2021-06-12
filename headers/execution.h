@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/12 14:00:28 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/12 16:07:44 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define EXECUTION_H
 
 # include "minishell.h"
-
 typedef struct s_mini
 {
 	int	*fd;

@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:01:59 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/05 21:00:12 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/12 13:58:42 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	ft_init_env(t_env **head, char **env)
 	i = 0;
 	while (env[i])
 	{
-		var = ft_split(env[i], '=');
+		var = my_split(env[i]);
 		newnode = ft_create_node(var[0], var[1]);
 		if (!head)
 			head = &newnode;

@@ -6,30 +6,16 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 19:58:33 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/06 09:56:06 by mbari            ###   ########.fr       */
+/*   Updated: 2021/06/12 13:59:59 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/execution.h"
 
-char 	*ft_join_slash(char 	*cmd)
-{
-	char	*tmp;
-
-	if ((ft_strchr(cmd, '/') && cmd[0] != '/'))
-	{
-		tmp = ft_strjoin("/", cmd);
-		free(cmd);
-		cmd = tmp;
-	}
-	return (cmd);
-}
-
 int	ft_file_check(t_simple_cmd *cmd, t_env **head)
 {
 	struct stat		buf;
 
-	cmd->command = ft_join_slash(cmd->command);
 	if (stat(cmd->command, &buf) == -1)
 		return (ft_put_err(cmd->command, ": No such file or directory", 127));
 	else if (buf.st_mode & S_IFDIR)

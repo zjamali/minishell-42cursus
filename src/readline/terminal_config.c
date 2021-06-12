@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 20:29:06 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/10 20:31:42 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/12 16:06:59 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	ft_init_readline(t_readline *readline)
 		type is not defined in termcap\n", 1);
 	}
 	readline->path = ttyname(1);
-	readline->term_fd = open(readline->path, O_RDWR | O_NOCTTY | O_NDELAY);
+	readline->term_fd = open(readline->path, O_RDWR);
 	if (!isatty(readline->term_fd))
 		ft_putstr_fd("file descriptors not point to terminal\n", 1);
 	readline->colums_count = tgetnum("co");

@@ -6,7 +6,7 @@
 /*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 20:39:48 by zjamali           #+#    #+#             */
-/*   Updated: 2021/06/10 20:42:20 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/12 16:07:25 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char	*ft_get_input(t_readline readline, int *status, struct termios old_term)
 	current = ft_init_history(&character, &newline_break);
 	while (newline_break)
 	{
-		read(0, &character, 6);
+		read(readline.term_fd, &character, 6);
 		if (current && (character == D_KEY_DOWN || character == D_KEY_UP))
 			current = ft_handle_history_buttons(character, readline, current);
 		else if (character == D_KEY_ENTER)

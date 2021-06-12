@@ -6,7 +6,7 @@
 #    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2022/01/18 15:31:12 by mbari            ###   ########.fr        #
+#    Updated: 2022/01/18 15:32:03 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -164,7 +164,11 @@ $(NAME): libft $(OBJS)
 	@echo "$(BLUE)███████████████████████ Compiling is DONE ██████████████████████$(RESET)"
 	@echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
 
+<<<<<<< HEAD
 $(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c
+=======
+$(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c $(HEADERSDIR)/*.h
+>>>>>>> 8620a372a25639077ee758d926f0efe9e3617949
 	@$(MKDIR) $(dir $@)
 	@echo "$(BLUE)█ $(YELLOW)Compiling$(RESET) $<:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
 	@$(CC) $(FLAGS) -I $(HEADERSDIR) -I $(LIBFT_HEADER) -o $@ -c $<

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/24 15:45:53 by mbari             #+#    #+#             */
-/*   Updated: 2021/06/08 20:58:09 by zjamali          ###   ########.fr       */
+/*   Updated: 2021/06/12 14:00:28 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int		ft_checkargs(t_args **args);
 void	ft_destroy_env_list(t_env *head);
 int		ft_count_args(t_args **args);
 int		ft_print_export(t_env **head);
-char	*ft_join_slash(char 	*cmd);
 char	**ft_list_to_arr(t_env **head);
 int		ft_cd(t_args *args, t_env **head);
 char	**ft_args_to_arr(t_simple_cmd *cmd);

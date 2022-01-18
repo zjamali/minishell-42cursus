@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utlis.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/02 20:00:11 by mbari             #+#    #+#             */
 /*   Updated: 2022/01/18 15:30:14 by mbari            ###   ########.fr       */

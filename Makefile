@@ -6,7 +6,7 @@
 #    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2022/01/18 15:32:03 by mbari            ###   ########.fr        #
+#    Updated: 2022/01/18 15:33:44 by mbari            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ READ_FOLDER = readline
 LIBFT_HEADER = $(SOURCEDIR)/libft/libft.h
 LIBFT_FOLDER = $(SOURCEDIR)/libft
 
+<<<<<<< HEAD
 SRC_PARSE=    src/lexer/lexer.c src/lexer/lexer_debug.c src/lexer/lexer_get_tokens.c src/lexer/lexer_get_tokens_op.c src/lexer/lexer_get_tokens_word.c\
 				 src/parse/parser.c src/parse/parser_debug.c src/parse/check_syntax.c\
 				 src/expansion/expansion.c \
@@ -54,6 +55,19 @@ SRC_PARSE=    src/lexer/lexer.c src/lexer/lexer_debug.c src/lexer/lexer_get_toke
 				  src/readline/line_nodes.c\
 				  src/readline/terminal_config.c\
 				 #src/readline/get_next_line.c
+=======
+
+# Name of variables
+LIBFT_LIB = libft.a
+LIBS = -lncurses
+FLAGS = -Wall -Wextra -Werror
+RED = \033[1;31m
+GREEN = \033[1;32m
+YELLOW = \033[1;33m
+BLUE = \033[1;34m
+RESET = \033[0m
+>>>>>>> a9bd5eba2c61909775ec22573b726e991b670f5c
+
 
 # Execution files variable
 EXEC_FILES =  ft_cd.c \
@@ -137,8 +151,6 @@ MAKE = make -C
 ECHO = /bin/echo
 ERRIGNORE = 2>/dev/null
 
-
-<<<<<<< HEAD
 # Hide or not the calls depending of VERBOSE
 ifeq ($(VERBOSE),T)
     HIDE =
@@ -148,9 +160,6 @@ endif
 
 
 .PHONY: all fclean
-=======
-.PHONY: all fclean
->>>>>>> ac7e940... fix some bugs
 
 all: credit $(NAME)
 
@@ -164,11 +173,7 @@ $(NAME): libft $(OBJS)
 	@echo "$(BLUE)███████████████████████ Compiling is DONE ██████████████████████$(RESET)"
 	@echo "         Made with love by : \033[1;91mzjamali\033[m and \033[1;91mmbari\033[m"
 
-<<<<<<< HEAD
-$(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c
-=======
 $(OBJECTSDIR)/%.o : $(SOURCEDIR)/%.c $(HEADERSDIR)/*.h
->>>>>>> 8620a372a25639077ee758d926f0efe9e3617949
 	@$(MKDIR) $(dir $@)
 	@echo "$(BLUE)█ $(YELLOW)Compiling$(RESET) $<:\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
 	@$(CC) $(FLAGS) -I $(HEADERSDIR) -I $(LIBFT_HEADER) -o $@ -c $<

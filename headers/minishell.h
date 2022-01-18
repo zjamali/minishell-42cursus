@@ -6,7 +6,7 @@
 /*   By: mbari <mbari@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/16 11:41:25 by zjamali           #+#    #+#             */
-/*   Updated: 2022/01/18 15:31:28 by mbari            ###   ########.fr       */
+/*   Updated: 2022/01/18 15:33:06 by mbari            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,4 +336,8 @@ void			ft_add_to_char_list(t_readline *readline, char c,
 void			show_prompt(void);
 void			ft_minishell(char **env);
 
+<<<<<<< HEAD
 #endif
+=======
+#endif
+>>>>>>> a9bd5eba2c61909775ec22573b726e991b670f5c

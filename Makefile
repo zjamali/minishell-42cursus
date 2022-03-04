@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mbari <mbari@student.42.fr>                +#+  +:+       +#+         #
+#    By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/02 16:01:57 by mbari             #+#    #+#              #
-#    Updated: 2022/01/18 15:33:44 by mbari            ###   ########.fr        #
+#    Updated: 2022/03/04 08:27:53 by zjamali          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,37 +25,6 @@ READ_FOLDER = readline
 LIBFT_HEADER = $(SOURCEDIR)/libft/libft.h
 LIBFT_FOLDER = $(SOURCEDIR)/libft
 
-<<<<<<< HEAD
-SRC_PARSE=    src/lexer/lexer.c src/lexer/lexer_debug.c src/lexer/lexer_get_tokens.c src/lexer/lexer_get_tokens_op.c src/lexer/lexer_get_tokens_word.c\
-				 src/parse/parser.c src/parse/parser_debug.c src/parse/check_syntax.c\
-				 src/expansion/expansion.c \
-				 src/readline/readline.c \
-				 src/last_arg.c \
-				  src/minishell.c\
-				  src/parse/destoy_nodes.c\
-				  src/parse/create_ast.c\
-				  src/parse/create_nodes.c\
-				  src/parse/check_tokens.c\
-				  src/parse/check_word.c \
-				  src/parse/check_token_continue.c \
-				  src/expansion/utils.c\
-				  src/expansion/expand_command.c\
-				  src/expansion/expand_non_qoutes_word.c\
-				  src/expansion/expand_dble_qoutes_word.c\
-				  src/expansion/expand_special_params.c\
-				  src/expansion/expand_special_params_in_quotes.c\
-				  src/expansion/expand_args.c\
-				  src/expansion/expand_word.c\
-				  src/expansion/expand_redirction.c\
-				  src/expansion/utils_continue.c\
-				  src/readline/chars_list_rest.c\
-				  src/readline/chars_list.c\
-				  src/readline/get_input.c  \
-				  src/readline/history.c\
-				  src/readline/line_nodes.c\
-				  src/readline/terminal_config.c\
-				 #src/readline/get_next_line.c
-=======
 
 # Name of variables
 LIBFT_LIB = libft.a
@@ -66,7 +35,6 @@ GREEN = \033[1;32m
 YELLOW = \033[1;33m
 BLUE = \033[1;34m
 RESET = \033[0m
->>>>>>> a9bd5eba2c61909775ec22573b726e991b670f5c
 
 
 # Execution files variable
